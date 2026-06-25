@@ -1,0 +1,85 @@
+{
+  "surfaces": [
+    { "key": "threats", "label": "Threats", "value": 3, "desc": "Critical incidents open", "trend": "▲ +2 in 24h · MTTR 22m", "trendColor": "var(--crit)", "severity": "cr" },
+    { "key": "devices", "label": "Devices", "value": 12, "desc": "Non-compliant of 847", "trend": "▼ −4 vs yesterday", "trendColor": "var(--ok)", "severity": "hi" },
+    { "key": "monitor", "label": "Monitor", "value": 5, "desc": "Active health alerts", "trend": "98.2% fleet uptime", "trendColor": "var(--high)", "severity": "hi" },
+    { "key": "identity", "label": "Identity", "value": 4, "desc": "High-risk users of 930", "trend": "▲ +1 · 1 offboarding", "trendColor": "var(--crit)", "severity": "cr" },
+    { "key": "cloud", "label": "Cloud", "value": 7, "desc": "Critical misconfigs", "trend": "▼ −3 remediated today", "trendColor": "var(--ok)", "severity": "hi" },
+    { "key": "network", "label": "Network", "value": 2, "desc": "Config drift · 1 offline", "trend": "64 devices · 60s poll", "trendColor": "var(--txt3)", "severity": "ok" },
+    { "key": "privacy", "label": "Privacy", "value": 1, "desc": "Overdue DSAR · RoPA 96%", "trend": "Deadline breached 3d", "trendColor": "var(--med)", "severity": "me" },
+    { "key": "aispm", "label": "AI-SPM", "value": 3, "desc": "Shadow AI detected", "trend": "▲ +3 this week · 10 total", "trendColor": "var(--high)", "severity": "hi" }
+  ],
+  "attentionItems": [
+    {
+      "severity": "cr",
+      "title": "Finance Controller accessed production secrets while on PIP",
+      "chips": ["Identity", "Threats", "HR signal", "Impact 94"],
+      "actions": [
+        { "label": "View Identity", "type": "" },
+        { "label": "Suspend Access", "type": "d" },
+        { "label": "Isolate Device", "type": "" }
+      ],
+      "incidentId": "INC-0841"
+    },
+    {
+      "severity": "cr",
+      "title": "Ransomware-pattern file encryption burst on WIN-FIN-04",
+      "chips": ["Threats", "Monitor", "MITRE T1486", "Impact 91"],
+      "actions": [
+        { "label": "View Incident", "type": "" },
+        { "label": "Approve Isolation", "type": "d" },
+        { "label": "Assign", "type": "" }
+      ],
+      "incidentId": "INC-0840"
+    },
+    {
+      "severity": "hi",
+      "title": "S3 bucket public-read — prod-billing-exports (AWS us-east-1)",
+      "chips": ["Cloud", "P0 · 4h SLA", "Impact 76"],
+      "actions": [
+        { "label": "Auto-Remediate", "type": "p" },
+        { "label": "View Finding", "type": "" },
+        { "label": "Suppress", "type": "" }
+      ],
+      "incidentId": null
+    },
+    {
+      "severity": "hi",
+      "title": "23 endpoints missing patch for CVE-2026-1337 (EPSS 0.81)",
+      "chips": ["Devices", "Monitor", "Impact 68"],
+      "actions": [
+        { "label": "Push Patch", "type": "p" },
+        { "label": "View Devices", "type": "" }
+      ],
+      "incidentId": null
+    },
+    {
+      "severity": "hi",
+      "title": "Shadow AI: Cursor AI sending .env file with credentials to external model",
+      "chips": ["AI-SPM", "DLP triggered", "Impact 65"],
+      "actions": [
+        { "label": "Block Tool", "type": "d" },
+        { "label": "View Asset", "type": "" }
+      ],
+      "incidentId": null
+    }
+  ],
+  "breachProbability": {
+    "score": 41,
+    "label": "MODERATE RISK",
+    "labelColor": "var(--high)",
+    "trend": "↓ down from 48 last week",
+    "trendColor": "var(--ok)",
+    "note": "3 critical incidents · 4 high-risk users · 12 non-compliant devices"
+  },
+  "postureByModule": [
+    { "label": "Threats", "pct": 62, "color": "var(--crit)", "val": "62%" },
+    { "label": "Devices", "pct": 86, "color": "var(--high)", "val": "86%" },
+    { "label": "Monitor", "pct": 92, "color": "var(--ok)", "val": "92%" },
+    { "label": "Identity", "pct": 71, "color": "var(--high)", "val": "71%" },
+    { "label": "Cloud", "pct": 54, "color": "var(--crit)", "val": "54%" },
+    { "label": "Network", "pct": 94, "color": "var(--ok)", "val": "94%" },
+    { "label": "Privacy", "pct": 96, "color": "var(--ok)", "val": "96%" },
+    { "label": "AI-SPM", "pct": 73, "color": "var(--high)", "val": "73%" }
+  ]
+}

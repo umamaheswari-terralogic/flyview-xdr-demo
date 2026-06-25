@@ -1,0 +1,258 @@
+{
+  "summary": {
+    "incidents": {
+      "count": 3,
+      "label": "Critical incidents open",
+      "trend": "+2 in 24h",
+      "trendDirection": "up",
+      "detail": "MTTR 22m"
+    },
+    "volume": {
+      "count": "148K",
+      "label": "Events processed today",
+      "trend": "Ingestion 12,000/min",
+      "trendDirection": "neutral"
+    },
+    "humanRisk": {
+      "count": 4,
+      "label": "High-risk users flagged",
+      "trend": "+1 today",
+      "trendDirection": "up"
+    },
+    "posture": {
+      "count": "B+",
+      "label": "Security posture grade",
+      "trend": "↑ from C+ last month",
+      "trendDirection": "down"
+    }
+  },
+  "incidents": [
+    {
+      "id": "INC-0841",
+      "severity": "CRITICAL",
+      "severityClass": "cr",
+      "title": "Finance Controller accessed production secrets while on PIP",
+      "source": ["IAM", "SIEM"],
+      "time": "09:14",
+      "status": "OPEN",
+      "statusClass": "cr",
+      "actions": ["View", "Escalate"]
+    },
+    {
+      "id": "INC-0840",
+      "severity": "CRITICAL",
+      "severityClass": "cr",
+      "title": "Ransomware-pattern file encryption on WIN-FIN-04",
+      "source": ["Monitor"],
+      "time": "08:57",
+      "status": "OPEN",
+      "statusClass": "cr",
+      "actions": ["View", "Isolate"]
+    },
+    {
+      "id": "INC-0839",
+      "severity": "CRITICAL",
+      "severityClass": "cr",
+      "title": "Impossible travel — login SG→US in 22 minutes",
+      "source": ["IAM"],
+      "time": "08:42",
+      "status": "OPEN",
+      "statusClass": "cr",
+      "actions": ["View", "Suspend"]
+    },
+    {
+      "id": "INC-0838",
+      "severity": "HIGH",
+      "severityClass": "hi",
+      "title": "Suspicious PowerShell base64 command on CORP-DEV-12",
+      "source": ["Threats"],
+      "time": "07:31",
+      "status": "RESOLVED",
+      "statusClass": "ok",
+      "actions": ["View"]
+    },
+    {
+      "id": "INC-0837",
+      "severity": "HIGH",
+      "severityClass": "hi",
+      "title": "23 endpoints missing CVE-2026-1337 patch (EPSS 0.81)",
+      "source": ["Monitor"],
+      "time": "06:10",
+      "status": "OPEN",
+      "statusClass": "cr",
+      "actions": ["PatchNow"]
+    },
+    {
+      "id": "INC-0836",
+      "severity": "MEDIUM",
+      "severityClass": "me",
+      "title": "Network config drift on sw-access-03",
+      "source": ["Network"],
+      "time": "05:44",
+      "status": "RESOLVED",
+      "statusClass": "ok",
+      "actions": ["View"]
+    }
+  ],
+  "eventsWeekly": [52, 71, 48, 93, 118, 88, 148],
+  "eventsDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Today"],
+  "verdictBreakdown": [
+    { "label": "CLEAN", "pct": 63, "color": "var(--ok)", "val": "63%" },
+    { "label": "SUSPICIOUS", "pct": 26, "color": "var(--high)", "val": "26%" },
+    { "label": "HIGH", "pct": 9, "color": "var(--crit)", "val": "9%" },
+    { "label": "CRITICAL", "pct": 2, "color": "var(--crit)", "val": "2%" }
+  ],
+  "mitreTechniques": [
+    { "id": "T1486", "name": "Data Encrypted for Impact", "severity": "CRITICAL", "severityClass": "cr" },
+    { "id": "T1059", "name": "Command & Script Exec", "severity": "HIGH", "severityClass": "hi" },
+    { "id": "T1078", "name": "Valid Accounts", "severity": "HIGH", "severityClass": "hi" },
+    { "id": "T1566", "name": "Phishing", "severity": "MEDIUM", "severityClass": "me" },
+    { "id": "T1190", "name": "Exploit Public App", "severity": "MEDIUM", "severityClass": "me" }
+  ],
+  "incidentDetails": {
+    "INC-0841": {
+      "id": "INC-0841",
+      "severity": "CRITICAL",
+      "severityClass": "cr",
+      "title": "Finance Controller accessed production secrets while on PIP",
+      "riskScore": 94,
+      "source": ["IAM", "SIEM", "HR Signal"],
+      "status": "OPEN",
+      "statusClass": "cr",
+      "assignee": "Sarah Kim",
+      "opened": "2026-05-29 09:14",
+      "lastUpdated": "2026-05-29 09:31",
+      "affectedAssets": ["john.d@acme.com", "prod-secrets-manager", "finance-gke-node"],
+      "mitreIds": ["T1078", "T1552"],
+      "description": "A finance controller currently on a Performance Improvement Plan (PIP) accessed production secrets stored in the secrets manager at 09:14. This access pattern is anomalous — the user has never previously accessed this resource. Cross-correlation with HR signals indicates this user is flagged for involuntary termination review. Immediate access review is recommended.",
+      "timeline": [
+        {
+          "time": "09:14",
+          "title": "Secret access detected",
+          "desc": "User john.d@acme.com read 3 secrets from prod-secrets-manager via CLI",
+          "color": "var(--crit)"
+        },
+        {
+          "time": "09:18",
+          "title": "HR signal correlated",
+          "desc": "HR system indicates user is on active PIP with termination review flag",
+          "color": "var(--high)"
+        },
+        {
+          "time": "09:22",
+          "title": "Incident auto-created",
+          "desc": "Cross-module correlation engine generated INC-0841 with impact score 94",
+          "color": "var(--orange)"
+        },
+        {
+          "time": "09:31",
+          "title": "Alert sent to security team",
+          "desc": "PagerDuty notification dispatched to on-call security analyst",
+          "color": "var(--info)"
+        }
+      ],
+      "recommendedActions": [
+        { "label": "Suspend user access immediately", "type": "d" },
+        { "label": "Rotate all accessed secrets", "type": "p" },
+        { "label": "Capture memory from finance-gke-node", "type": "" },
+        { "label": "Engage HR and Legal", "type": "" }
+      ]
+    },
+    "INC-0840": {
+      "id": "INC-0840",
+      "severity": "CRITICAL",
+      "severityClass": "cr",
+      "title": "Ransomware-pattern file encryption on WIN-FIN-04",
+      "riskScore": 91,
+      "source": ["Monitor", "Endpoint"],
+      "status": "OPEN",
+      "statusClass": "cr",
+      "assignee": "Unassigned",
+      "opened": "2026-05-29 08:57",
+      "lastUpdated": "2026-05-29 09:02",
+      "affectedAssets": ["WIN-FIN-04", "john.d@acme.com", "\\\\finance-nas\\reports"],
+      "mitreIds": ["T1486"],
+      "description": "Rapid file encryption burst detected on WIN-FIN-04 matching MITRE T1486 (Data Encrypted for Impact). The process initiated at 08:57 and encrypted 147 files in 4 minutes. Network share \\\\finance-nas\\reports was also targeted. The device has been flagged for immediate isolation.",
+      "timeline": [
+        {
+          "time": "08:57",
+          "title": "Encryption burst started",
+          "desc": "147 files encrypted in 4 minutes by process svchost32.exe",
+          "color": "var(--crit)"
+        },
+        {
+          "time": "08:59",
+          "title": "Network share targeted",
+          "desc": "Mapped network drive \\\\finance-nas\\reports also being encrypted",
+          "color": "var(--crit)"
+        },
+        {
+          "time": "09:01",
+          "title": "EDR alert fired",
+          "desc": "Endpoint detection rule matched MITRE T1486 pattern",
+          "color": "var(--high)"
+        },
+        {
+          "time": "09:02",
+          "title": "Isolation recommended",
+          "desc": "Automated playbook suggests immediate network isolation of WIN-FIN-04",
+          "color": "var(--orange)"
+        }
+      ],
+      "recommendedActions": [
+        { "label": "Isolate WIN-FIN-04 from network", "type": "d" },
+        { "label": "Capture forensic memory image", "type": "p" },
+        { "label": "Block process hash across fleet", "type": "d" },
+        { "label": "Notify incident response team", "type": "" }
+      ]
+    },
+    "INC-0839": {
+      "id": "INC-0839",
+      "severity": "CRITICAL",
+      "severityClass": "cr",
+      "title": "Impossible travel — login SG→US in 22 minutes",
+      "riskScore": 88,
+      "source": ["IAM"],
+      "status": "OPEN",
+      "statusClass": "cr",
+      "assignee": "Sarah Kim",
+      "opened": "2026-05-29 08:42",
+      "lastUpdated": "2026-05-29 08:55",
+      "affectedAssets": ["sarah.k@acme.com"],
+      "mitreIds": ["T1078"],
+      "description": "User sarah.k@acme.com logged in from Singapore (103.x.x.x) at 08:20 and then from New York, USA (45.x.x.x) at 08:42 — only 22 minutes apart. Physical travel between these locations is impossible in this timeframe, indicating credential compromise or account sharing.",
+      "timeline": [
+        {
+          "time": "08:20",
+          "title": "Login from Singapore",
+          "desc": "Successful auth from IP 103.86.x.x (Singapore, SG) via SSO",
+          "color": "var(--ok)"
+        },
+        {
+          "time": "08:42",
+          "title": "Login from New York",
+          "desc": "Successful auth from IP 45.32.x.x (New York, US) — 22 min gap",
+          "color": "var(--crit)"
+        },
+        {
+          "time": "08:43",
+          "title": "Impossible travel detected",
+          "desc": "IAM engine flagged 14,000km travel in 22 minutes as impossible",
+          "color": "var(--crit)"
+        },
+        {
+          "time": "08:55",
+          "title": "MFA challenge sent",
+          "desc": "Push notification sent to registered device — no response yet",
+          "color": "var(--high)"
+        }
+      ],
+      "recommendedActions": [
+        { "label": "Suspend session from US IP immediately", "type": "d" },
+        { "label": "Force MFA re-verification", "type": "p" },
+        { "label": "Review all actions taken in US session", "type": "" },
+        { "label": "Reset password and revoke all tokens", "type": "d" }
+      ]
+    }
+  }
+}
