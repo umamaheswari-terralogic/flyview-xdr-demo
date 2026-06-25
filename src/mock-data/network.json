@@ -1,0 +1,56 @@
+{
+  "metrics": {
+    "fleet": {
+      "cls": "ok",
+      "num": "63",
+      "desc": "Devices online of 64",
+      "label": "Fleet",
+      "foot": "99% availability"
+    },
+    "offline": {
+      "cls": "cr",
+      "num": "1",
+      "desc": "Device offline – 1h 4m",
+      "label": "Offline",
+      "foot": "sw-dc-02"
+    },
+    "configDrift": {
+      "cls": "hi",
+      "num": "2",
+      "desc": "Unauthorized config changes",
+      "label": "Config Drift",
+      "foot": "vs approved baseline"
+    },
+    "netflow": {
+      "cls": "in",
+      "num": "4",
+      "desc": "Flow anomalies detected",
+      "label": "NetFlow",
+      "foot": "Lateral + exfil patterns"
+    }
+  },
+  "devices": [
+    { "name": "fw-core-01",   "vendor": "Palo Alto", "type": "Firewall",      "ip": "10.0.0.1", "site": "HQ",        "status": "ONLINE",       "statusCls": "ok", "poll": "14s"   },
+    { "name": "sw-access-03", "vendor": "Cisco",     "type": "Switch",        "ip": "10.0.1.3", "site": "HQ",        "status": "CONFIG DRIFT", "statusCls": "hi", "poll": "42s"   },
+    { "name": "velo-edge-01", "vendor": "VMware",    "type": "SD-WAN",        "ip": "10.0.2.1", "site": "Branch-SG", "status": "ONLINE",       "statusCls": "ok", "poll": "28s"   },
+    { "name": "lb-prod-01",   "vendor": "F5",        "type": "Load Balancer", "ip": "10.0.3.1", "site": "DC-1",      "status": "ONLINE",       "statusCls": "ok", "poll": "10s"   },
+    { "name": "sw-dc-02",     "vendor": "Juniper",   "type": "Switch",        "ip": "10.1.0.2", "site": "DC-1",      "status": "OFFLINE",      "statusCls": "cr", "poll": "1h 4m" }
+  ],
+  "flowAnomalies": [
+    { "type": "Lateral movement",    "detail": "10.0.1.44 → 10.0.2.x",   "cls": "hi" },
+    { "type": "Exfiltration pattern","detail": "10.0.1.12 → 185.x.x.x",  "cls": "cr" },
+    { "type": "Port scan",           "detail": "10.0.1.99 → /24",         "cls": "me" },
+    { "type": "Beaconing",           "detail": "10.0.1.55 → 34.x.x.x",   "cls": "me" }
+  ],
+  "configChanges": [
+    { "device": "sw-access-03", "detail": "ACL rule added – no change record", "status": "UNAUTHORIZED", "statusCls": "cr" },
+    { "device": "fw-core-01",   "detail": "Policy update via Panorama",         "status": "AUTHORIZED",   "statusCls": "ok" }
+  ],
+  "vendorCoverage": [
+    { "name": "Palo Alto", "proto": "SNMP + API",     "count": 22 },
+    { "name": "Cisco",     "proto": "SNMP + Syslog",  "count": 18 },
+    { "name": "Juniper",   "proto": "NETCONF",         "count": 14 },
+    { "name": "F5",        "proto": "iControl REST",   "count": 6  },
+    { "name": "VMware",    "proto": "SD-WAN API",      "count": 4  }
+  ]
+}

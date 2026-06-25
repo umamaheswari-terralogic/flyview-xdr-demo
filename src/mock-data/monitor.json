@@ -1,0 +1,96 @@
+{
+  "metrics": {
+    "fleet": {
+      "cls": "ok",
+      "num": "847",
+      "desc": "Online endpoints",
+      "label": "Fleet",
+      "foot": "98.2% uptime"
+    },
+    "activeAlerts": {
+      "cls": "hi",
+      "num": "5",
+      "desc": "Firing health alerts",
+      "label": "Active Alerts",
+      "foot": "<b>▲ +1</b> this hour"
+    },
+    "autoFixed": {
+      "cls": "ok",
+      "num": "3",
+      "desc": "Auto-remediated today",
+      "label": "Auto-fixed",
+      "foot": "Avg MTTR 4 min"
+    },
+    "epssPatches": {
+      "cls": "in",
+      "num": "23",
+      "desc": "Endpoints missing patch",
+      "label": "EPSS Patches",
+      "foot": "CVE-2026-1337"
+    }
+  },
+  "alerts": [
+    {
+      "device": "WEB-PROD-02",
+      "type": "Service stopped",
+      "severity": "HIGH",
+      "sevCls": "hi",
+      "metric": "nginx stopped 15m",
+      "rule": "Service health",
+      "time": "5m"
+    },
+    {
+      "device": "DB-MASTER-01",
+      "type": "Disk pressure",
+      "severity": "HIGH",
+      "sevCls": "hi",
+      "metric": "87% (+1.2%/hr)",
+      "rule": "Disk trend",
+      "time": "12m"
+    },
+    {
+      "device": "CORP-WIN-088",
+      "type": "CPU spike",
+      "severity": "MEDIUM",
+      "sevCls": "me",
+      "metric": "CPU 94% for 8m",
+      "rule": "CPU threshold",
+      "time": "19m"
+    },
+    {
+      "device": "CORP-MAC-055",
+      "type": "Agent offline",
+      "severity": "HIGH",
+      "sevCls": "hi",
+      "metric": "No check-in 32m",
+      "rule": "Heartbeat",
+      "time": "32m"
+    },
+    {
+      "device": "CORP-LAPTOP-007",
+      "type": "Patch missing",
+      "severity": "MEDIUM",
+      "sevCls": "me",
+      "metric": "CVE-2026-1337",
+      "rule": "Vuln policy",
+      "time": "1h"
+    }
+  ],
+  "fleetHealth": [
+    { "label": "CPU > 90%",    "pct": 35, "color": "var(--crit)", "val": "3" },
+    { "label": "Disk > 85%",   "pct": 59, "color": "var(--high)", "val": "5" },
+    { "label": "Memory > 90%", "pct": 24, "color": "var(--med)",  "val": "2" },
+    { "label": "Offline",      "pct": 12, "color": "var(--crit)", "val": "1" }
+  ],
+  "scriptCatalog": [
+    { "name": "Clear temp files",    "platform": "macOS + Windows", "type": "disk",     "cls": "in" },
+    { "name": "Restart service",     "platform": "All platforms",   "type": "process",  "cls": "in" },
+    { "name": "Patch CVE-2026-1337", "platform": "Windows only",    "type": "security", "cls": "cr" },
+    { "name": "Quarantine endpoint", "platform": "All platforms",   "type": "security", "cls": "cr" }
+  ],
+  "patchGaps": [
+    { "cve": "CVE-2026-1337", "epss": "0.81", "sev": "HIGH",   "devices": 23 },
+    { "cve": "CVE-2026-0422", "epss": "0.61", "sev": "HIGH",   "devices": 11 },
+    { "cve": "CVE-2025-9981", "epss": "0.44", "sev": "MEDIUM", "devices": 8  }
+  ]
+}
