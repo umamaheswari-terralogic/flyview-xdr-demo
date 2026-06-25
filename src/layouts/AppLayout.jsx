@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Sidebar from '../components/Sidebar.jsx'
 import TopBar from '../components/TopBar.jsx'
 import TabNavigation from '../components/TabNavigation.jsx'
+import { ToastProvider } from '../components/Toast.jsx'
 import { useState, useEffect } from 'react'
 
 const MODULE_CONFIG = {
@@ -104,6 +105,7 @@ export default function AppLayout() {
           <Outlet context={{ activeTab, setActiveTab, moduleConfig: cfg }} />
         </div>
       </div>
+      <ToastProvider />
     </div>
   )
 }

@@ -1,10 +1,10 @@
 import WidgetCard from '../../../components/WidgetCard.jsx'
 
 const USERS = [
-  { name: 'John Doe', email: 'john.d@acme.com', dept: 'Finance', score: 87, mfa: 'TOTP', flag: 'PIP', cls: 'cr' },
-  { name: 'Robert Chen', email: 'r.chen@acme.com', dept: 'Finance', score: 91, mfa: 'NONE', flag: 'OFFBOARDING', cls: 'cr' },
-  { name: 'Sarah Kim', email: 'sarah.k@acme.com', dept: 'Engineering', score: 72, mfa: 'WebAuthn', flag: 'TRAVEL', cls: 'hi' },
-  { name: 'Mike Ross', email: 'mike.r@acme.com', dept: 'Sales', score: 44, mfa: 'Push', flag: '', cls: 'me' },
+  { name: 'John Doe', email: 'john.d@terralogic.com', dept: 'Finance', score: 87, mfa: 'TOTP', flag: 'PIP', cls: 'cr' },
+  { name: 'Robert Chen', email: 'r.chen@terralogic.com', dept: 'Finance', score: 91, mfa: 'NONE', flag: 'OFFBOARDING', cls: 'cr' },
+  { name: 'Sarah Kim', email: 'sarah.k@terralogic.com', dept: 'Engineering', score: 72, mfa: 'WebAuthn', flag: 'TRAVEL', cls: 'hi' },
+  { name: 'Mike Ross', email: 'mike.r@terralogic.com', dept: 'Sales', score: 44, mfa: 'Push', flag: '', cls: 'me' },
 ]
 
 export default function HumanRiskTab() {

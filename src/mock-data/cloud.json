@@ -1,0 +1,176 @@
+{
+  "summary": {
+    "critical": { "count": "2", "label": "P0 findings – 4h SLA",    "trend": "Immediate action" },
+    "high":     { "count": "5", "label": "P1 findings – 24h SLA",    "trend": "2 SLAs at risk" },
+    "accounts": { "count": "3", "label": "Cloud accounts linked",     "trend": "AWS · GCP · Azure" },
+    "posture":  { "count": "C+","label": "Overall cloud posture",     "trend": "↑ from D last month" }
+  },
+  "findings": [
+    {
+      "id": "CF-0412", "severity": "CRITICAL", "sevCls": "cr",
+      "resource": "S3: prod-billing-exports", "provider": "AWS", "providerColor": "#FF9900",
+      "issue": "Public read access", "sla": "4h", "slaColor": "var(--crit)",
+      "status": "OPEN", "statusCls": "cr",
+      "detail": {
+        "description": "The S3 bucket prod-billing-exports has a bucket policy granting s3:GetObject to the public (Principal: *). Any unauthenticated user on the internet can download billing export files containing PII and financial records.",
+        "recommendation": "Remove the public-access bucket policy, enable S3 Block Public Access at bucket level, and audit CloudTrail for any prior unauthorised reads.",
+        "affectedRegion": "us-east-1",
+        "firstSeen": "2026-06-18 14:22",
+        "lastSeen": "2026-06-25 09:01",
+        "owner": { "name": "John Doe", "email": "john.d@terralogic.com", "dept": "Finance", "riskScore": 87 },
+        "mitre": ["T1530 – Data from Cloud Storage Object"]
+      }
+    },
+    {
+      "id": "CF-0411", "severity": "CRITICAL", "sevCls": "cr",
+      "resource": "Cloud SQL: prod-db", "provider": "GCP", "providerColor": "#4285F4",
+      "issue": "Public IP · No SSL", "sla": "4h", "slaColor": "var(--crit)",
+      "status": "OPEN", "statusCls": "cr",
+      "detail": {
+        "description": "Cloud SQL instance prod-db is configured with a public IP address and SSL enforcement is disabled. Database credentials transmitted in plaintext are at risk of interception.",
+        "recommendation": "Disable public IP, configure a private IP within the VPC, enable requireSSL, and restrict authorised networks to known CIDR ranges only.",
+        "affectedRegion": "asia-south1",
+        "firstSeen": "2026-06-20 08:44",
+        "lastSeen": "2026-06-25 09:01",
+        "owner": { "name": "Sarah Kim", "email": "sarah.k@terralogic.com", "dept": "Engineering", "riskScore": 72 },
+        "mitre": ["T1190 – Exploit Public-Facing Application"]
+      }
+    },
+    {
+      "id": "CF-0410", "severity": "HIGH", "sevCls": "hi",
+      "resource": "IAM User: dev-admin", "provider": "GCP", "providerColor": "#4285F4",
+      "issue": "Owner role · 12% used", "sla": "24h", "slaColor": "var(--high)",
+      "status": "OPEN", "statusCls": "hi",
+      "detail": {
+        "description": "Service account dev-admin has the Owner role at project level but only 12% of granted permissions are exercised. This violates the principle of least privilege and creates a large blast radius if the account is compromised.",
+        "recommendation": "Audit actual permissions used via Policy Analyzer, downscope to a custom role with only required permissions, and rotate the service account key.",
+        "affectedRegion": "global",
+        "firstSeen": "2026-05-10 11:00",
+        "lastSeen": "2026-06-25 09:01",
+        "owner": { "name": "Sarah Kim", "email": "sarah.k@terralogic.com", "dept": "Engineering", "riskScore": 72 },
+        "mitre": ["T1078 – Valid Accounts", "T1548 – Abuse Elevation Control Mechanism"]
+      }
+    },
+    {
+      "id": "CF-0409", "severity": "HIGH", "sevCls": "hi",
+      "resource": "Storage: acme-prod", "provider": "Azure", "providerColor": "#0089D6",
+      "issue": "Public blob access", "sla": "24h", "slaColor": "var(--high)",
+      "status": "IN REVIEW", "statusCls": "or",
+      "detail": {
+        "description": "Azure Storage account acme-prod has Allow Blob Public Access enabled, permitting anonymous reads on all blob containers within the account.",
+        "recommendation": "Set AllowBlobPublicAccess to false at the storage account level and review individual container ACLs to remove any anonymous-read configurations.",
+        "affectedRegion": "East US",
+        "firstSeen": "2026-06-22 16:15",
+        "lastSeen": "2026-06-25 09:01",
+        "owner": { "name": "Mike Ross", "email": "mike.r@terralogic.com", "dept": "Sales", "riskScore": 44 },
+        "mitre": ["T1530 – Data from Cloud Storage Object"]
+      }
+    },
+    {
+      "id": "CF-0408", "severity": "HIGH", "sevCls": "hi",
+      "resource": "EC2 SG: sg-0a1b2c", "provider": "AWS", "providerColor": "#FF9900",
+      "issue": "0.0.0.0/0 inbound 22", "sla": "24h", "slaColor": "var(--high)",
+      "status": "OPEN", "statusCls": "hi",
+      "detail": {
+        "description": "Security group sg-0a1b2c allows unrestricted inbound SSH access (port 22) from 0.0.0.0/0 and ::/0. Brute-force and credential stuffing attacks are actively observed against this IP range.",
+        "recommendation": "Restrict inbound SSH to the corporate VPN CIDR only, or replace direct SSH with AWS Systems Manager Session Manager and remove port 22 entirely.",
+        "affectedRegion": "us-east-1",
+        "firstSeen": "2026-06-01 09:30",
+        "lastSeen": "2026-06-25 09:01",
+        "owner": { "name": "Robert Chen", "email": "r.chen@terralogic.com", "dept": "Finance", "riskScore": 91 },
+        "mitre": ["T1110 – Brute Force", "T1021.004 – Remote Services: SSH"]
+      }
+    },
+    {
+      "id": "CF-0407", "severity": "MEDIUM", "sevCls": "me",
+      "resource": "CloudTrail: us-east-1", "provider": "AWS", "providerColor": "#FF9900",
+      "issue": "Logging disabled", "sla": "7d", "slaColor": "var(--txt2)",
+      "status": "OPEN", "statusCls": "hi",
+      "detail": {
+        "description": "AWS CloudTrail is not enabled in the us-east-1 region. All API activity in this region is unrecorded, preventing incident investigation and compliance auditing.",
+        "recommendation": "Enable a multi-region CloudTrail trail with S3 log file validation, and configure CloudWatch Logs integration for real-time alerting on suspicious API calls.",
+        "affectedRegion": "us-east-1",
+        "firstSeen": "2026-06-23 07:00",
+        "lastSeen": "2026-06-25 09:01",
+        "owner": { "name": "Emma Clark", "email": "emma.c@terralogic.com", "dept": "HR", "riskScore": 21 },
+        "mitre": ["T1562.008 – Disable Cloud Logs"]
+      }
+    },
+    {
+      "id": "CF-0406", "severity": "HIGH", "sevCls": "hi",
+      "resource": "Lambda: data-exporter", "provider": "AWS", "providerColor": "#FF9900",
+      "issue": "Wildcard IAM role attached", "sla": "24h", "slaColor": "var(--high)",
+      "status": "OPEN", "statusCls": "hi",
+      "detail": {
+        "description": "Lambda function data-exporter has an execution role with Action: * Resource: * — full administrator privileges. If the function is compromised, the attacker inherits full AWS account access.",
+        "recommendation": "Create a least-privilege IAM role granting only s3:PutObject on the target bucket and replace the current wildcard role.",
+        "affectedRegion": "us-west-2",
+        "firstSeen": "2026-06-19 13:11",
+        "lastSeen": "2026-06-25 09:01",
+        "owner": { "name": "Sarah Kim", "email": "sarah.k@terralogic.com", "dept": "Engineering", "riskScore": 72 },
+        "mitre": ["T1098 – Account Manipulation"]
+      }
+    },
+    {
+      "id": "CF-0405", "severity": "CRITICAL", "sevCls": "cr",
+      "resource": "GKE Cluster: prod-cluster", "provider": "GCP", "providerColor": "#4285F4",
+      "issue": "Dashboard exposed publicly", "sla": "4h", "slaColor": "var(--crit)",
+      "status": "OPEN", "statusCls": "cr",
+      "detail": {
+        "description": "Kubernetes Dashboard is exposed on a public LoadBalancer IP with no authentication configured. This provides a web UI with full cluster control to any unauthenticated user.",
+        "recommendation": "Delete the Dashboard service or change service type to ClusterIP. Access the dashboard only via kubectl proxy over an authenticated session.",
+        "affectedRegion": "asia-south1",
+        "firstSeen": "2026-06-24 06:00",
+        "lastSeen": "2026-06-25 09:01",
+        "owner": { "name": "Sarah Kim", "email": "sarah.k@terralogic.com", "dept": "Engineering", "riskScore": 72 },
+        "mitre": ["T1613 – Container and Resource Discovery", "T1190 – Exploit Public-Facing Application"]
+      }
+    },
+    {
+      "id": "CF-0404", "severity": "MEDIUM", "sevCls": "me",
+      "resource": "Azure Key Vault: kv-prod", "provider": "Azure", "providerColor": "#0089D6",
+      "issue": "Soft-delete disabled", "sla": "7d", "slaColor": "var(--txt2)",
+      "status": "OPEN", "statusCls": "hi",
+      "detail": {
+        "description": "Azure Key Vault kv-prod has soft-delete and purge protection disabled. Accidental or malicious deletion of secrets would be permanent and unrecoverable.",
+        "recommendation": "Enable soft-delete (90-day retention) and purge protection on the Key Vault. These settings cannot be disabled once enabled — plan before applying.",
+        "affectedRegion": "East US",
+        "firstSeen": "2026-06-15 10:30",
+        "lastSeen": "2026-06-25 09:01",
+        "owner": { "name": "Mike Ross", "email": "mike.r@terralogic.com", "dept": "Sales", "riskScore": 44 },
+        "mitre": ["T1485 – Data Destruction"]
+      }
+    },
+    {
+      "id": "CF-0403", "severity": "HIGH", "sevCls": "hi",
+      "resource": "RDS: finance-db-prod", "provider": "AWS", "providerColor": "#FF9900",
+      "issue": "Backups disabled · Multi-AZ off", "sla": "24h", "slaColor": "var(--high)",
+      "status": "OPEN", "statusCls": "hi",
+      "detail": {
+        "description": "RDS instance finance-db-prod has automated backups disabled and Multi-AZ is not configured. A hardware failure or ransomware event would result in permanent data loss for finance records.",
+        "recommendation": "Enable automated backups with at least 7-day retention, enable Multi-AZ for high availability, and test restoration procedures quarterly.",
+        "affectedRegion": "us-east-1",
+        "firstSeen": "2026-06-21 14:00",
+        "lastSeen": "2026-06-25 09:01",
+        "owner": { "name": "John Doe", "email": "john.d@terralogic.com", "dept": "Finance", "riskScore": 87 },
+        "mitre": ["T1485 – Data Destruction", "T1486 – Data Encrypted for Impact"]
+      }
+    }
+  ],
+  "compliancePosture": [
+    { "label": "CIS AWS v3.0", "pct": 68, "color": "var(--high)", "val": "68%" },
+    { "label": "SOC 2",        "pct": 74, "color": "var(--high)", "val": "74%" },
+    { "label": "ISO 27001",    "pct": 81, "color": "var(--ok)",   "val": "81%" },
+    { "label": "PCI DSS",      "pct": 59, "color": "var(--crit)", "val": "59%" }
+  ],
+  "ciemRisks": [
+    { "id": "dev-admin SA",          "desc": "Owner role · only 12% used",    "cls": "hi" },
+    { "id": "allAuthenticatedUsers", "desc": "GCS cross-tenant binding",       "cls": "cr" },
+    { "id": "contractor-mjones",     "desc": "90 days stale · not in HR",      "cls": "hi" }
+  ],
+  "linkedAccounts": [
+    { "name": "AWS – us-east-1",   "findings": "212 findings", "cls": "cr" },
+    { "name": "GCP – asia-south1", "findings": "88 findings",  "cls": "hi" },
+    { "name": "Azure – East US",   "findings": "42 findings",  "cls": "hi" }
+  ]
+}

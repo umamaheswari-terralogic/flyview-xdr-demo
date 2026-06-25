@@ -1,0 +1,30 @@
+{
+  "summary": {
+    "directory": { "count": "930", "label": "Total managed users", "trend": "+3", "detail": "this week" },
+    "highRisk":  { "count": "4",   "label": "High-risk users",    "trend": "+1", "detail": "today" },
+    "offboarding":{ "count": "1",  "label": "User in offboarding","trend": "≤15min deprovision" },
+    "mfa":       { "count": "94%", "label": "MFA enrollment rate","trend": "6% on TOTP only" }
+  },
+  "users": [
+    { "name": "John Doe",    "email": "john.d@terralogic.com",  "dept": "Finance",     "risk": 87, "riskCls": "cr", "mfa": "TOTP",     "login": "09:14",    "status": "ACTIVE",      "statusCls": "ok" },
+    { "name": "Robert Chen", "email": "r.chen@terralogic.com",  "dept": "Finance",     "risk": 91, "riskCls": "cr", "mfa": null,        "login": "Yesterday","status": "OFFBOARDING", "statusCls": "hi" },
+    { "name": "Sarah Kim",   "email": "sarah.k@terralogic.com", "dept": "Engineering", "risk": 72, "riskCls": "hi", "mfa": "WebAuthn", "login": "09:02",    "status": "ACTIVE",      "statusCls": "ok" },
+    { "name": "Mike Ross",   "email": "mike.r@terralogic.com",  "dept": "Sales",       "risk": 44, "riskCls": "me", "mfa": "Push",     "login": "08:55",    "status": "ACTIVE",      "statusCls": "ok" },
+    { "name": "Emma Clark",  "email": "emma.c@terralogic.com",  "dept": "HR",          "risk": 21, "riskCls": "ok", "mfa": "WebAuthn", "login": "08:30",    "status": "ACTIVE",      "statusCls": "ok" }
+  ],
+  "riskDistribution": [
+    { "label": "CRITICAL", "pct": 11,  "color": "var(--crit)", "val": "1" },
+    { "label": "HIGH",     "pct": 33,  "color": "var(--high)", "val": "3" },
+    { "label": "MEDIUM",   "pct": 100, "color": "var(--med)",  "val": "48" },
+    { "label": "LOW",      "pct": 100, "color": "var(--ok)",   "val": "878" }
+  ],
+  "pamSessions": [
+    { "user": "alice@terralogic.com", "host": "prod-db-01",   "timeLeft": "47m left" },
+    { "user": "bob@terralogic.com",   "host": "gke-cluster",  "timeLeft": "1h 12m" }
+  ],
+  "ssoFederation": [
+    { "name": "Google Workspace", "sessions": 847, "status": "ok" },
+    { "name": "Microsoft 365",    "sessions": 83,  "status": "ok" },
+    { "name": "Okta",             "sessions": null, "status": "ne", "note": "Phase 2 – not connected" }
+  ]
+}

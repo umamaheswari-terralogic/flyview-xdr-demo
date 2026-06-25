@@ -5,12 +5,12 @@ import StatusBadge from '../../components/StatusBadge.jsx'
 import { Icons } from '../../shared/icons.jsx'
 
 const DEVICES = [
-  { name: 'CORP-MAC-101', user: 'sarah.k@acme.com', platform: '🍎 macOS 14.5', status: 'COMPLIANT', statusCls: 'ok', enrollment: 'DEP', lastSeen: '2 min' },
-  { name: 'WIN-FIN-04', user: 'john.d@acme.com', platform: '⊞ Windows 11', status: 'NON-COMPLIANT', statusCls: 'cr', enrollment: 'MSI', lastSeen: '14 min' },
-  { name: 'CORP-iPAD-22', user: 'amy.t@acme.com', platform: '📱 iPadOS 17.4', status: 'COMPLIANT', statusCls: 'ok', enrollment: 'DEP', lastSeen: '1 min' },
-  { name: 'DROID-SALES-07', user: 'mike.r@acme.com', platform: '🤖 Android 14', status: 'GRACE PERIOD', statusCls: 'hi', enrollment: 'Work Profile', lastSeen: '8 min' },
-  { name: 'CORP-MAC-055', user: 'priya.v@acme.com', platform: '🍎 macOS 13.7', status: 'NON-COMPLIANT', statusCls: 'cr', enrollment: 'DEP', lastSeen: '32 min' },
-  { name: 'CORP-WIN-088', user: 'carlos.m@acme.com', platform: '⊞ Windows 10', status: 'NON-COMPLIANT', statusCls: 'cr', enrollment: 'MSI', lastSeen: '1h 4m' },
+  { name: 'CORP-MAC-101', user: 'sarah.k@terralogic.com', platform: '🍎 macOS 14.5', status: 'COMPLIANT', statusCls: 'ok', enrollment: 'DEP', lastSeen: '2 min' },
+  { name: 'WIN-FIN-04', user: 'john.d@terralogic.com', platform: '⊞ Windows 11', status: 'NON-COMPLIANT', statusCls: 'cr', enrollment: 'MSI', lastSeen: '14 min' },
+  { name: 'CORP-iPAD-22', user: 'amy.t@terralogic.com', platform: '📱 iPadOS 17.4', status: 'COMPLIANT', statusCls: 'ok', enrollment: 'DEP', lastSeen: '1 min' },
+  { name: 'DROID-SALES-07', user: 'mike.r@terralogic.com', platform: '🤖 Android 14', status: 'GRACE PERIOD', statusCls: 'hi', enrollment: 'Work Profile', lastSeen: '8 min' },
+  { name: 'CORP-MAC-055', user: 'priya.v@terralogic.com', platform: '🍎 macOS 13.7', status: 'NON-COMPLIANT', statusCls: 'cr', enrollment: 'DEP', lastSeen: '32 min' },
+  { name: 'CORP-WIN-088', user: 'carlos.m@terralogic.com', platform: '⊞ Windows 10', status: 'NON-COMPLIANT', statusCls: 'cr', enrollment: 'MSI', lastSeen: '1h 4m' },
 ]
 
 function RowBar({ label, pct, color, val }) {

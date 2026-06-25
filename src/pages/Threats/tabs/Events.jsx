@@ -3,11 +3,11 @@ import { ThreatService } from '../../../services/ThreatService.js'
 import WidgetCard from '../../../components/WidgetCard.jsx'
 
 const MOCK_EVENTS = [
-  { id: 'EVT-89142', type: 'Auth', verdict: 'SUSPICIOUS', device: 'CORP-MAC-101', user: 'sarah.k@acme.com', time: '09:14:22', score: 84 },
-  { id: 'EVT-89141', type: 'Process', verdict: 'HIGH', device: 'WIN-FIN-04', user: 'john.d@acme.com', time: '08:57:11', score: 91 },
-  { id: 'EVT-89140', type: 'Network', verdict: 'CLEAN', device: 'CORP-MAC-055', user: 'priya.v@acme.com', time: '08:55:03', score: 12 },
-  { id: 'EVT-89139', type: 'File', verdict: 'CRITICAL', device: 'WIN-FIN-04', user: 'john.d@acme.com', time: '08:57:08', score: 98 },
-  { id: 'EVT-89138', type: 'Registry', verdict: 'SUSPICIOUS', device: 'CORP-WIN-088', user: 'carlos.m@acme.com', time: '07:31:45', score: 74 },
+  { id: 'EVT-89142', type: 'Auth', verdict: 'SUSPICIOUS', device: 'CORP-MAC-101', user: 'sarah.k@terralogic.com', time: '09:14:22', score: 84 },
+  { id: 'EVT-89141', type: 'Process', verdict: 'HIGH', device: 'WIN-FIN-04', user: 'john.d@terralogic.com', time: '08:57:11', score: 91 },
+  { id: 'EVT-89140', type: 'Network', verdict: 'CLEAN', device: 'CORP-MAC-055', user: 'priya.v@terralogic.com', time: '08:55:03', score: 12 },
+  { id: 'EVT-89139', type: 'File', verdict: 'CRITICAL', device: 'WIN-FIN-04', user: 'john.d@terralogic.com', time: '08:57:08', score: 98 },
+  { id: 'EVT-89138', type: 'Registry', verdict: 'SUSPICIOUS', device: 'CORP-WIN-088', user: 'carlos.m@terralogic.com', time: '07:31:45', score: 74 },
 ]
 
 const VERDICT_CLS = { CLEAN: 'ok', SUSPICIOUS: 'hi', HIGH: 'cr', CRITICAL: 'cr' }

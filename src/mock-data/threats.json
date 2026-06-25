@@ -122,14 +122,14 @@
       "assignee": "Sarah Kim",
       "opened": "2026-05-29 09:14",
       "lastUpdated": "2026-05-29 09:31",
-      "affectedAssets": ["john.d@acme.com", "prod-secrets-manager", "finance-gke-node"],
+      "affectedAssets": ["john.d@terralogic.com", "prod-secrets-manager", "finance-gke-node"],
       "mitreIds": ["T1078", "T1552"],
       "description": "A finance controller currently on a Performance Improvement Plan (PIP) accessed production secrets stored in the secrets manager at 09:14. This access pattern is anomalous — the user has never previously accessed this resource. Cross-correlation with HR signals indicates this user is flagged for involuntary termination review. Immediate access review is recommended.",
       "timeline": [
         {
           "time": "09:14",
           "title": "Secret access detected",
-          "desc": "User john.d@acme.com read 3 secrets from prod-secrets-manager via CLI",
+          "desc": "User john.d@terralogic.com read 3 secrets from prod-secrets-manager via CLI",
           "color": "var(--crit)"
         },
         {
@@ -170,7 +170,7 @@
       "assignee": "Unassigned",
       "opened": "2026-05-29 08:57",
       "lastUpdated": "2026-05-29 09:02",
-      "affectedAssets": ["WIN-FIN-04", "john.d@acme.com", "\\\\finance-nas\\reports"],
+      "affectedAssets": ["WIN-FIN-04", "john.d@terralogic.com", "\\\\finance-nas\\reports"],
       "mitreIds": ["T1486"],
       "description": "Rapid file encryption burst detected on WIN-FIN-04 matching MITRE T1486 (Data Encrypted for Impact). The process initiated at 08:57 and encrypted 147 files in 4 minutes. Network share \\\\finance-nas\\reports was also targeted. The device has been flagged for immediate isolation.",
       "timeline": [
@@ -218,9 +218,9 @@
       "assignee": "Sarah Kim",
       "opened": "2026-05-29 08:42",
       "lastUpdated": "2026-05-29 08:55",
-      "affectedAssets": ["sarah.k@acme.com"],
+      "affectedAssets": ["sarah.k@terralogic.com"],
       "mitreIds": ["T1078"],
-      "description": "User sarah.k@acme.com logged in from Singapore (103.x.x.x) at 08:20 and then from New York, USA (45.x.x.x) at 08:42 — only 22 minutes apart. Physical travel between these locations is impossible in this timeframe, indicating credential compromise or account sharing.",
+      "description": "User sarah.k@terralogic.com logged in from Singapore (103.x.x.x) at 08:20 and then from New York, USA (45.x.x.x) at 08:42 — only 22 minutes apart. Physical travel between these locations is impossible in this timeframe, indicating credential compromise or account sharing.",
       "timeline": [
         {
           "time": "08:20",

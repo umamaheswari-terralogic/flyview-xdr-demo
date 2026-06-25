@@ -1,0 +1,34 @@
+{
+  "summary": {
+    "shadowAI":      { "count": "3",  "label": "Shadow AI tools found",    "trend": "+3", "detail": "this week" },
+    "criticalRisk":  { "count": "1",  "label": "Critical risk AI system",  "detail": "procurement-assist" },
+    "sanctioned":    { "count": "6",  "label": "Approved AI assets",       "detail": "Active and governed" },
+    "complianceGap": { "count": "2",  "label": "EU AI Act gaps open",      "detail": "Overdue assessments" }
+  },
+  "assets": [
+    { "name": "ChatGPT Plus",          "vendor": "OpenAI",      "type": "Hosted SaaS",     "users": 47, "risk": 74, "riskCls": "hi", "dataScope": "INTERNAL",     "scopeCls": "hi", "sanction": "SHADOW",     "sanctionCls": "cr" },
+    { "name": "Cursor AI",             "vendor": "Cursor",      "type": "IDE AI",           "users": 8,  "risk": 81, "riskCls": "cr", "dataScope": "CREDENTIALS",  "scopeCls": "cr", "sanction": "SHADOW",     "sanctionCls": "cr" },
+    { "name": "procurement-assist",    "vendor": "Internal",    "type": "Agentic AI",       "users": 5,  "risk": 89, "riskCls": "cr", "dataScope": "CONFIDENTIAL", "scopeCls": "hi", "sanction": "REVIEW",     "sanctionCls": "or" },
+    { "name": "GitHub Copilot",        "vendor": "GitHub/MS",   "type": "IDE AI",           "users": 23, "risk": 58, "riskCls": "me", "dataScope": "CONFIDENTIAL", "scopeCls": "hi", "sanction": "SANCTIONED", "sanctionCls": "ok" },
+    { "name": "Notion AI",             "vendor": "Notion",      "type": "SaaS Feature",     "users": 31, "risk": 42, "riskCls": "me", "dataScope": "INTERNAL",     "scopeCls": "ne", "sanction": "SANCTIONED", "sanctionCls": "ok" },
+    { "name": "Azure OpenAI CRM",      "vendor": "Microsoft",   "type": "API Integration",  "users": 2,  "risk": 36, "riskCls": "ok", "dataScope": "PII",          "scopeCls": "cr", "sanction": "SANCTIONED", "sanctionCls": "ok" }
+  ],
+  "detectionEvents": [
+    { "event": "DLP – source code pasted",     "source": "Cursor AI · 09:11",          "cls": "cr" },
+    { "event": ".env file sent to model",       "source": "Cursor AI · 08:47",          "cls": "cr" },
+    { "event": "Prompt injection attempt",      "source": "procurement-assist · 08:22", "cls": "hi" },
+    { "event": "Anomalous egress 3x baseline",  "source": "GPT-4o API · 07:30",         "cls": "me" }
+  ],
+  "euAiActRegistry": [
+    { "name": "procurement-assist",    "desc": "High risk · conformity assessment", "cls": "cr", "status": "OVERDUE" },
+    { "name": "GPT-4o API (CRM)",      "desc": "High risk · human oversight",       "cls": "hi", "status": "IN REVIEW" },
+    { "name": "churn-predictor-v3",    "desc": "Limited risk · transparency",       "cls": "ok", "status": "REGISTERED" },
+    { "name": "Azure Doc Intelligence","desc": "Minimal risk",                      "cls": "ok", "status": "REGISTERED" }
+  ],
+  "nistRmf": [
+    { "label": "GOVERN",  "pct": 62, "color": "var(--high)", "val": "62%" },
+    { "label": "MAP",     "pct": 71, "color": "var(--high)", "val": "71%" },
+    { "label": "MEASURE", "pct": 55, "color": "var(--crit)", "val": "55%" },
+    { "label": "MANAGE",  "pct": 68, "color": "var(--high)", "val": "68%" }
+  ]
+}
