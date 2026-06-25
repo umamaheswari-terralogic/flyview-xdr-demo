@@ -1,0 +1,127 @@
+{
+  "metrics": {
+    "totalEnrolled": {
+      "cls": "ok",
+      "num": "847",
+      "desc": "Total enrolled devices",
+      "label": "Fleet",
+      "foot": "<b>+12</b> this week"
+    },
+    "nonCompliant": {
+      "cls": "cr",
+      "num": "12",
+      "desc": "Non-compliant of 847",
+      "label": "Non-Compliant",
+      "foot": "<b>▼ −4</b> vs yesterday"
+    },
+    "gracePeriod": {
+      "cls": "hi",
+      "num": "3",
+      "desc": "In 72h grace period",
+      "label": "Grace Period",
+      "foot": "Window active"
+    },
+    "encrypted": {
+      "cls": "ok",
+      "num": "832",
+      "desc": "Disk encryption enforced",
+      "label": "Encrypted",
+      "foot": "98.2% coverage"
+    }
+  },
+  "inventory": {
+    "total": 847,
+    "platforms": 4,
+    "devices": [
+      {
+        "name": "CORP-MAC-101",
+        "user": "sarah.k@acme.com",
+        "platform": "🍎 macOS 14.5",
+        "status": "COMPLIANT",
+        "statusCls": "ok",
+        "enrollment": "DEP",
+        "lastSeen": "2 min"
+      },
+      {
+        "name": "WIN-FIN-04",
+        "user": "john.d@acme.com",
+        "platform": "⊞ Windows 11",
+        "status": "NON-COMPLIANT",
+        "statusCls": "cr",
+        "enrollment": "MSI",
+        "lastSeen": "14 min"
+      },
+      {
+        "name": "CORP-iPAD-22",
+        "user": "amy.t@acme.com",
+        "platform": "📱 iPadOS 17.4",
+        "status": "COMPLIANT",
+        "statusCls": "ok",
+        "enrollment": "DEP",
+        "lastSeen": "1 min"
+      },
+      {
+        "name": "DROID-SALES-07",
+        "user": "mike.r@acme.com",
+        "platform": "🤖 Android 14",
+        "status": "GRACE PERIOD",
+        "statusCls": "hi",
+        "enrollment": "Work Profile",
+        "lastSeen": "8 min"
+      },
+      {
+        "name": "CORP-MAC-055",
+        "user": "priya.v@acme.com",
+        "platform": "🍎 macOS 13.7",
+        "status": "NON-COMPLIANT",
+        "statusCls": "cr",
+        "enrollment": "DEP",
+        "lastSeen": "32 min"
+      },
+      {
+        "name": "CORP-WIN-088",
+        "user": "carlos.m@acme.com",
+        "platform": "⊞ Windows 10",
+        "status": "NON-COMPLIANT",
+        "statusCls": "cr",
+        "enrollment": "MSI",
+        "lastSeen": "1h 4m"
+      },
+      {
+        "name": "LT-VyshnaviT-3941",
+        "user": "vyshnavi.t@acme.com",
+        "platform": "⊞ Windows 11",
+        "status": "COMPLIANT",
+        "statusCls": "ok",
+        "enrollment": "DEP",
+        "lastSeen": "Just now",
+        "sim": true,
+        "simEvent": {
+          "status": "NON-COMPLIANT",
+          "statusCls": "cr",
+          "failingCheck": "Antivirus disabled",
+          "lastSeen": "Just now"
+        }
+      }
+    ]
+  },
+  "platformSplit": [
+    { "label": "macOS",      "pct": 50, "color": "var(--info)",   "val": "423" },
+    { "label": "Windows",    "pct": 28, "color": "var(--orange)", "val": "241" },
+    { "label": "iOS/iPadOS", "pct": 13, "color": "var(--ok)",     "val": "112" },
+    { "label": "Android",    "pct": 9,  "color": "var(--high)",   "val": "71"  }
+  ],
+  "failingChecks": [
+    { "label": "OS version",    "pct": 58, "color": "var(--crit)", "val": "7" },
+    { "label": "Screen lock",   "pct": 42, "color": "var(--high)", "val": "5" },
+    { "label": "Required apps", "pct": 33, "color": "var(--high)", "val": "4" },
+    { "label": "Encryption",    "pct": 25, "color": "var(--med)",  "val": "3" },
+    { "label": "Firewall",      "pct": 17, "color": "var(--med)",  "val": "2" }
+  ],
+  "apnsCert": {
+    "daysRemaining": 81,
+    "expiryLabel": "Aug 18 2026",
+    "status": "HEALTHY",
+    "statusCls": "ok"
+  }
+}

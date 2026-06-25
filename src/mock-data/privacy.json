@@ -1,0 +1,99 @@
+{
+  "metrics": {
+    "dsarsOverdue": {
+      "cls": "cr",
+      "num": "1",
+      "desc": "Erasure OVERDUE 3 days",
+      "label": "DSARs Overdue",
+      "foot": "GDPR Art.17 · Action now"
+    },
+    "openDsars": {
+      "cls": "hi",
+      "num": "3",
+      "desc": "Open DSARs in progress",
+      "label": "Open DSARs",
+      "foot": "30/45d SLA running"
+    },
+    "ropa": {
+      "cls": "ok",
+      "num": "96%",
+      "desc": "RoPA entry completeness",
+      "label": "RoPA",
+      "foot": "4% missing lawful basis"
+    },
+    "legalHolds": {
+      "cls": "in",
+      "num": "2",
+      "desc": "Active legal holds",
+      "label": "Legal Holds",
+      "foot": "Blocks DSAR deletion"
+    }
+  },
+  "dsars": [
+    {
+      "id": "DSAR-2026-041",
+      "type": "Erasure",
+      "subject": "John Smith",
+      "jurisdiction": "GDPR",
+      "submitted": "2026-05-26",
+      "deadline": "2026-06-25 ⚠",
+      "deadlineColor": "var(--crit)",
+      "status": "OVERDUE",
+      "statusCls": "cr"
+    },
+    {
+      "id": "DSAR-2026-040",
+      "type": "Access",
+      "subject": "Maria Garcia",
+      "jurisdiction": "CCPA",
+      "submitted": "2026-05-28",
+      "deadline": "2026-07-12",
+      "deadlineColor": "var(--txt2)",
+      "status": "IN PROGRESS",
+      "statusCls": "hi"
+    },
+    {
+      "id": "DSAR-2026-039",
+      "type": "Portability",
+      "subject": "Wei Zhang",
+      "jurisdiction": "PIPL",
+      "submitted": "2026-05-29",
+      "deadline": "2026-06-13",
+      "deadlineColor": "var(--high)",
+      "status": "SUBMITTED",
+      "statusCls": "ne"
+    },
+    {
+      "id": "DSAR-2026-038",
+      "type": "Correction",
+      "subject": "Aisha Patel",
+      "jurisdiction": "DPDP",
+      "submitted": "2026-05-20",
+      "deadline": "2026-06-19",
+      "deadlineColor": "var(--txt2)",
+      "status": "COMPLETED",
+      "statusCls": "ok"
+    }
+  ],
+  "piiDiscovery": [
+    { "name": "Production DB",    "desc": "PII · Financial data",         "cls": "hi" },
+    { "name": "CRM (Salesforce)", "desc": "PII · Contact info",           "cls": "hi" },
+    { "name": "Log archive S3",   "desc": "PII in logs · 68% confidence", "cls": "me" },
+    { "name": "Dev S3 bucket",    "desc": "Credentials exposed",          "cls": "cr" }
+  ],
+  "jurisdictionSlas": [
+    { "jur": "GDPR", "sla": "30 days",  "state": "1 overdue", "cls": "cr" },
+    { "jur": "CCPA", "sla": "45 days",  "state": "On track",  "cls": "ok" },
+    { "jur": "PIPL", "sla": "15 days",  "state": "1 pending", "cls": "hi" },
+    { "jur": "DPDP", "sla": "~30 days", "state": "On track",  "cls": "ok" }
+  ],
+  "ropaCompleteness": {
+    "pct": 96,
+    "complete": 140,
+    "total": 146,
+    "gaps": [
+      { "label": "Missing lawful basis",    "cls": "cr", "count": 4 },
+      { "label": "Missing retention period","cls": "hi", "count": 2 }
+    ]
+  }
+}
