@@ -95,12 +95,7 @@
         "statusCls": "ok",
         "enrollment": "DEP",
         "lastSeen": "Just now",
-        "sim": true,
-        "simEvent": {
-          "status": "NON-COMPLIANT",
-          "statusCls": "cr",
-          "lastSeen": "Just now"
-        }
+        "sim": true
       }
     ]
   },

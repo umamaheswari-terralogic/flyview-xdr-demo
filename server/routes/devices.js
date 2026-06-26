@@ -59,13 +59,38 @@ const DEVICES = [
   },
 ]
 
-// GET /api/devices — full device list
+// Sim device — status toggled via POST /api/devices/LT-VyshnaviT-3941/trigger
+let simCompliant = true
+
+const getSimDevice = () => ({
+  name: 'LT-VyshnaviT-3941',
+  user: 'vyshnavi.thatikonda@terralogic.com',
+  platform: '⊞ Windows 11',
+  status: simCompliant ? 'COMPLIANT' : 'NON-COMPLIANT',
+  statusCls: simCompliant ? 'ok' : 'cr',
+  enrollment: 'DEP',
+  lastSeen: 'Just now',
+  sim: true,
+  failingChecks: simCompliant ? [] : ['Antivirus disabled'],
+})
+
+// POST /api/devices/LT-VyshnaviT-3941/trigger — toggle sim device status
+router.post('/LT-VyshnaviT-3941/trigger', (_req, res) => {
+  simCompliant = !simCompliant
+  res.json({ triggered: true, device: getSimDevice() })
+})
+
+// GET /api/devices — full device list including sim device
 router.get('/', (_req, res) => {
-  res.json({ total: DEVICES.length, devices: DEVICES })
+  const all = [...DEVICES, getSimDevice()]
+  res.json({ total: all.length, devices: all })
 })
 
 // GET /api/devices/:name — single device by name
 router.get('/:name', (req, res) => {
+  if (req.params.name.toLowerCase() === 'lt-vyshnavit-3941') {
+    return res.json(getSimDevice())
+  }
   const device = DEVICES.find(
     d => d.name.toLowerCase() === req.params.name.toLowerCase()
   )

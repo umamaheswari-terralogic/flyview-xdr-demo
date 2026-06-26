@@ -21,53 +21,40 @@ export default function Devices() {
 
   const [metrics, setMetrics] = useState(null)
   const [inventory, setInventory] = useState(null)
+  const [devices, setDevices] = useState(null)
   const [platformSplit, setPlatformSplit] = useState([])
   const [failingChecks, setFailingChecks] = useState([])
   const [apnsCert, setApnsCert] = useState(null)
-
-  const [eventFired, setEventFired] = useState(false)
-
   useEffect(() => {
+    // Static cards — always from JSON
     DeviceService.getMetrics().then(setMetrics)
     DeviceService.getInventory().then(setInventory)
     DeviceService.getPlatformSplit().then(setPlatformSplit)
     DeviceService.getFailingChecks().then(setFailingChecks)
     DeviceService.getApnsCert().then(setApnsCert)
+
+    // Device rows — server is authoritative; fall back to JSON only if server is down
+    fetch('http://localhost:3001/api/devices')
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => setDevices(data.devices))
+      .catch(() => DeviceService.getInventory().then(inv => setDevices(inv.devices)))
   }, [])
 
-  // Called by the external API trigger
-  function triggerEvent() {
-    setEventFired(prev => !prev)
-  }
+  if (!metrics || !inventory || !devices || !apnsCert) return null
 
-  function replay() {
-    setEventFired(false)
-  }
+  const simDevice = devices.find(d => d.sim)
+  const simIsNonCompliant = simDevice?.statusCls === 'cr'
 
-  if (!metrics || !inventory || !apnsCert) return null
-
-  const simDevice = inventory.devices.find(d => d.sim)
-
-  const displayDevices = inventory.devices.map(d =>
-    d.sim && eventFired ? { ...d, ...d.simEvent } : d
-  )
-
-  const nonCompliantNum = eventFired
+  const nonCompliantNum = simIsNonCompliant
     ? String(parseInt(metrics.nonCompliant.num) + 1)
     : metrics.nonCompliant.num
 
-  const displayFailingChecks = eventFired
+  const displayFailingChecks = simIsNonCompliant
     ? [...failingChecks, { label: 'Antivirus', pct: 8, color: 'var(--crit)', val: '1' }]
     : failingChecks
 
   return (
     <>
-<div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
-        <button className="btn" onClick={replay} style={{ fontSize: 11, gap: 6, display: 'flex', alignItems: 'center' }}>
-          ↺ Replay demo
-        </button>
-      </div>
-
       <div className="kg k4">
         <MetricCard cls={metrics.totalEnrolled.cls} num={metrics.totalEnrolled.num} desc={metrics.totalEnrolled.desc} label={metrics.totalEnrolled.label} foot={metrics.totalEnrolled.foot} icon={Icons.laptop} />
         <MetricCard cls={metrics.nonCompliant.cls} num={nonCompliantNum} desc={metrics.nonCompliant.desc} label={metrics.nonCompliant.label} foot={metrics.nonCompliant.foot} icon={Icons.alert} />
@@ -86,10 +73,9 @@ export default function Devices() {
         <table>
           <thead><tr>{['Device', 'User', 'Platform', 'Status', 'Enrollment', 'Last Seen', ''].map(h => <th key={h}>{h}</th>)}</tr></thead>
           <tbody>
-            {displayDevices.map(d => (
+            {devices.map(d => (
               <tr
                 key={d.name}
-                style={d.sim && eventFired ? { animation: 'rowFlash 1.2s ease' } : {}}
               >
                 <td className="pr">{d.name}</td>
                 <td style={{ fontSize: 12, color: 'var(--txt2)' }}>{d.user}</td>
