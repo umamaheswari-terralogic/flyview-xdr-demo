@@ -89,7 +89,7 @@
       },
       {
         "name": "LT-VyshnaviT-3941",
-        "user": "vyshnavi.t@acme.com",
+        "user": "vyshnavi.thatikonda@terralogic.com",
         "platform": "⊞ Windows 11",
         "status": "COMPLIANT",
         "statusCls": "ok",
@@ -99,7 +99,6 @@
         "simEvent": {
           "status": "NON-COMPLIANT",
           "statusCls": "cr",
-          "failingCheck": "Antivirus disabled",
           "lastSeen": "Just now"
         }
       }

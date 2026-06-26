@@ -1,11 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import MetricCard from '../../components/MetricCard.jsx'
 import StatusBadge from '../../components/StatusBadge.jsx'
 import { DeviceService } from '../../services/DeviceService.js'
 import { Icons } from '../../shared/icons.jsx'
-
-const SIM_DELAY = 10000
 
 function RowBar({ label, pct, color, val }) {
   return (
@@ -17,35 +15,6 @@ function RowBar({ label, pct, color, val }) {
   )
 }
 
-function SimToast({ device, onDismiss }) {
-  return (
-    <div style={{
-      position: 'fixed', top: 20, right: 20, zIndex: 9999,
-      background: '#1e1e2e', border: '1px solid var(--crit)',
-      borderLeft: '4px solid var(--crit)',
-      borderRadius: 10, padding: '14px 18px',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
-      display: 'flex', alignItems: 'flex-start', gap: 12,
-      minWidth: 320, maxWidth: 380,
-      animation: 'slideInRight 0.35s cubic-bezier(.16,1,.3,1)',
-      color: '#fff'
-    }}>
-      <div style={{ fontSize: 20, marginTop: 1 }}>⚠</div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 3 }}>Compliance violation detected</div>
-        <div style={{ fontSize: 12, opacity: 0.85, marginBottom: 6 }}>
-          <span style={{ fontFamily: 'JetBrains Mono,monospace', color: 'var(--crit)', fontWeight: 600 }}>{device.name}</span>
-          {' '}— {device.simEvent.failingCheck}
-        </div>
-        <div style={{ fontSize: 11, opacity: 0.6 }}>Status changed · COMPLIANT → NON-COMPLIANT</div>
-      </div>
-      <button onClick={onDismiss} style={{
-        background: 'none', border: 'none', color: '#fff', opacity: 0.5,
-        cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: 0, marginTop: 2
-      }}>✕</button>
-    </div>
-  )
-}
 
 export default function Devices() {
   const { activeTab } = useOutletContext()
@@ -57,8 +26,6 @@ export default function Devices() {
   const [apnsCert, setApnsCert] = useState(null)
 
   const [eventFired, setEventFired] = useState(false)
-  const [toastVisible, setToastVisible] = useState(false)
-  const timerRef = useRef(null)
 
   useEffect(() => {
     DeviceService.getMetrics().then(setMetrics)
@@ -68,22 +35,13 @@ export default function Devices() {
     DeviceService.getApnsCert().then(setApnsCert)
   }, [])
 
-  useEffect(() => {
-    timerRef.current = setTimeout(() => {
-      setEventFired(true)
-      setToastVisible(true)
-    }, SIM_DELAY)
-    return () => clearTimeout(timerRef.current)
-  }, [])
+  // Called by the external API trigger
+  function triggerEvent() {
+    setEventFired(prev => !prev)
+  }
 
   function replay() {
     setEventFired(false)
-    setToastVisible(false)
-    clearTimeout(timerRef.current)
-    timerRef.current = setTimeout(() => {
-      setEventFired(true)
-      setToastVisible(true)
-    }, SIM_DELAY)
   }
 
   if (!metrics || !inventory || !apnsCert) return null
@@ -104,11 +62,7 @@ export default function Devices() {
 
   return (
     <>
-      {toastVisible && simDevice && (
-        <SimToast device={simDevice} onDismiss={() => setToastVisible(false)} />
-      )}
-
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+<div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
         <button className="btn" onClick={replay} style={{ fontSize: 11, gap: 6, display: 'flex', alignItems: 'center' }}>
           ↺ Replay demo
         </button>
@@ -137,14 +91,7 @@ export default function Devices() {
                 key={d.name}
                 style={d.sim && eventFired ? { animation: 'rowFlash 1.2s ease' } : {}}
               >
-                <td className="pr">
-                  {d.name}
-                  {d.sim && eventFired && (
-                    <span style={{ marginLeft: 6, fontSize: 10, fontFamily: 'JetBrains Mono,monospace', color: 'var(--crit)', fontWeight: 600 }}>
-                      ● {d.failingCheck}
-                    </span>
-                  )}
-                </td>
+                <td className="pr">{d.name}</td>
                 <td style={{ fontSize: 12, color: 'var(--txt2)' }}>{d.user}</td>
                 <td>{d.platform}</td>
                 <td><StatusBadge status={d.status} cls={d.statusCls} /></td>
