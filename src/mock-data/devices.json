@@ -34,8 +34,8 @@
     "platforms": 4,
     "devices": [
       {
-        "name": "CORP-MAC-101",
-        "user": "sarah.k@acme.com",
+        "name": "LT-Ramya-3865",
+        "user": "Ramya@terralogic.com",
         "platform": "🍎 macOS 14.5",
         "status": "COMPLIANT",
         "statusCls": "ok",
@@ -43,8 +43,8 @@
         "lastSeen": "2 min"
       },
       {
-        "name": "WIN-FIN-04",
-        "user": "john.d@acme.com",
+        "name": "LT-srinivasa-3424",
+        "user": "srinivasa@terralogic.com",
         "platform": "⊞ Windows 11",
         "status": "NON-COMPLIANT",
         "statusCls": "cr",
@@ -52,8 +52,8 @@
         "lastSeen": "14 min"
       },
       {
-        "name": "CORP-iPAD-22",
-        "user": "amy.t@acme.com",
+        "name": "LT-vijayalaxmi-3421",
+        "user": "vijayalaxmin@terralogic.com",
         "platform": "📱 iPadOS 17.4",
         "status": "COMPLIANT",
         "statusCls": "ok",
@@ -61,8 +61,8 @@
         "lastSeen": "1 min"
       },
       {
-        "name": "DROID-SALES-07",
-        "user": "mike.r@acme.com",
+        "name": "LT-faiz-3961",
+        "user": "faiz@terralogic.com",
         "platform": "🤖 Android 14",
         "status": "GRACE PERIOD",
         "statusCls": "hi",
@@ -70,8 +70,8 @@
         "lastSeen": "8 min"
       },
       {
-        "name": "CORP-MAC-055",
-        "user": "priya.v@acme.com",
+        "name": "LT-uma-3865",
+        "user": "uma@terralogic.com",
         "platform": "🍎 macOS 13.7",
         "status": "NON-COMPLIANT",
         "statusCls": "cr",
@@ -79,8 +79,8 @@
         "lastSeen": "32 min"
       },
       {
-        "name": "CORP-WIN-088",
-        "user": "carlos.m@acme.com",
+        "name": "LT-Yamini-3621",
+        "user": "yamini.kalvai@terralogic.com",
         "platform": "⊞ Windows 10",
         "status": "NON-COMPLIANT",
         "statusCls": "cr",

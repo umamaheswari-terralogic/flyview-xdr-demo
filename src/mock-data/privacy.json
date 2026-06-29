@@ -1,79 +1,66 @@
 {
   "metrics": {
-    "dsarsOverdue": {
-      "cls": "cr",
-      "num": "1",
-      "desc": "Erasure OVERDUE 3 days",
-      "label": "DSARs Overdue",
-      "foot": "GDPR Art.17 · Action now"
-    },
-    "openDsars": {
-      "cls": "hi",
-      "num": "3",
-      "desc": "Open DSARs in progress",
-      "label": "Open DSARs",
-      "foot": "30/45d SLA running"
-    },
-    "ropa": {
-      "cls": "ok",
-      "num": "96%",
-      "desc": "RoPA entry completeness",
-      "label": "RoPA",
-      "foot": "4% missing lawful basis"
-    },
-    "legalHolds": {
-      "cls": "in",
-      "num": "2",
-      "desc": "Active legal holds",
-      "label": "Legal Holds",
-      "foot": "Blocks DSAR deletion"
-    }
+    "dsarsOverdue": { "cls": "cr", "num": "1",   "desc": "Erasure OVERDUE 3 days",    "label": "DSARs Overdue", "foot": "GDPR Art.17 · Action now" },
+    "openDsars":    { "cls": "hi", "num": "3",   "desc": "Open DSARs in progress",    "label": "Open DSARs",    "foot": "30/45d SLA running" },
+    "ropa":         { "cls": "ok", "num": "96%", "desc": "RoPA entry completeness",   "label": "RoPA",          "foot": "4% missing lawful basis" },
+    "legalHolds":   { "cls": "in", "num": "2",   "desc": "Active legal holds",        "label": "Legal Holds",   "foot": "Blocks DSAR deletion" }
   },
   "dsars": [
-    {
-      "id": "DSAR-2026-041",
-      "type": "Erasure",
-      "subject": "John Smith",
-      "jurisdiction": "GDPR",
-      "submitted": "2026-05-26",
-      "deadline": "2026-06-25 ⚠",
-      "deadlineColor": "var(--crit)",
-      "status": "OVERDUE",
-      "statusCls": "cr"
-    },
-    {
-      "id": "DSAR-2026-040",
-      "type": "Access",
-      "subject": "Maria Garcia",
-      "jurisdiction": "CCPA",
-      "submitted": "2026-05-28",
-      "deadline": "2026-07-12",
-      "deadlineColor": "var(--txt2)",
-      "status": "IN PROGRESS",
-      "statusCls": "hi"
-    },
-    {
-      "id": "DSAR-2026-039",
-      "type": "Portability",
-      "subject": "Wei Zhang",
-      "jurisdiction": "PIPL",
-      "submitted": "2026-05-29",
-      "deadline": "2026-06-13",
-      "deadlineColor": "var(--high)",
-      "status": "SUBMITTED",
-      "statusCls": "ne"
-    },
-    {
-      "id": "DSAR-2026-038",
-      "type": "Correction",
-      "subject": "Aisha Patel",
-      "jurisdiction": "DPDP",
-      "submitted": "2026-05-20",
-      "deadline": "2026-06-19",
-      "deadlineColor": "var(--txt2)",
-      "status": "COMPLETED",
-      "statusCls": "ok"
-    }
+    { "id": "DSAR-2026-041", "type": "Erasure",     "subject": "John Smith",    "email": "jsmith@gmail.com",     "jurisdiction": "GDPR", "submitted": "2026-05-26", "deadline": "2026-06-25 ⚠", "deadlineColor": "var(--crit)", "status": "OVERDUE",     "statusCls": "cr", "assignee": "Emma Clark",  "legalHold": false },
+    { "id": "DSAR-2026-040", "type": "Access",       "subject": "Maria Garcia",  "email": "m.garcia@yahoo.com",   "jurisdiction": "CCPA", "submitted": "2026-05-28", "deadline": "2026-07-12",   "deadlineColor": "var(--txt2)", "status": "IN PROGRESS", "statusCls": "hi", "assignee": "Priya Sharma","legalHold": false },
+    { "id": "DSAR-2026-039", "type": "Portability",  "subject": "Wei Zhang",     "email": "w.zhang@outlook.com",  "jurisdiction": "PIPL", "submitted": "2026-05-29", "deadline": "2026-06-13",   "deadlineColor": "var(--high)", "status": "SUBMITTED",   "statusCls": "ne", "assignee": "Priya Sharma","legalHold": false },
+    { "id": "DSAR-2026-038", "type": "Correction",   "subject": "Aisha Patel",   "email": "aisha.p@hotmail.com",  "jurisdiction": "DPDP", "submitted": "2026-05-20", "deadline": "2026-06-19",   "deadlineColor": "var(--txt2)", "status": "COMPLETED",   "statusCls": "ok", "assignee": "Emma Clark",  "legalHold": false },
+    { "id": "DSAR-2026-037", "type": "Erasure",      "subject": "Carlos Mena",   "email": "c.mena@icloud.com",    "jurisdiction": "GDPR", "submitted": "2026-05-10", "deadline": "2026-06-09",   "deadlineColor": "var(--txt2)", "status": "COMPLETED",   "statusCls": "ok", "assignee": "Emma Clark",  "legalHold": false },
+    { "id": "DSAR-2026-036", "type": "Access",       "subject": "Fatima Al-Saud","email": "f.alsaud@gmail.com",   "jurisdiction": "GDPR", "submitted": "2026-05-08", "deadline": "2026-06-07",   "deadlineColor": "var(--txt2)", "status": "COMPLETED",   "statusCls": "ok", "assignee": "Priya Sharma","legalHold": true  },
+    { "id": "DSAR-2026-035", "type": "Erasure",      "subject": "Liam Murphy",   "email": "l.murphy@outlook.com", "jurisdiction": "GDPR", "submitted": "2026-04-28", "deadline": "2026-05-28",   "deadlineColor": "var(--txt2)", "status": "ON HOLD",     "statusCls": "hi", "assignee": "Emma Clark",  "legalHold": true  }
+  ],
+  "dataMap": [
+    { "source": "Website forms",     "category": "Contact, Consent",           "processor": "Production DB",    "destination": "CRM (Salesforce)", "legalBasis": "Consent",         "region": "EU / US", "encrypted": true  },
+    { "source": "HR onboarding",     "category": "Employment, Identity, Bank", "processor": "HRIS (Workday)",   "destination": "Payroll (SAP)",    "legalBasis": "Contract",        "region": "IN / US", "encrypted": true  },
+    { "source": "Support tickets",   "category": "Contact, Behavioural",       "processor": "CRM (Salesforce)", "destination": "Log archive S3",   "legalBasis": "Legitimate int.", "region": "US",      "encrypted": false },
+    { "source": "Analytics SDK",     "category": "Behavioural, Device",        "processor": "Data warehouse",   "destination": "BigQuery",         "legalBasis": "Consent",         "region": "US",      "encrypted": true  },
+    { "source": "App authentication","category": "Identity, Auth tokens",      "processor": "Auth service",     "destination": "Audit log S3",     "legalBasis": "Contract",        "region": "EU / US", "encrypted": true  },
+    { "source": "Marketing emails",  "category": "Contact, Preferences",       "processor": "Mailchimp",        "destination": "CRM (Salesforce)", "legalBasis": "Consent",         "region": "US",      "encrypted": true  },
+    { "source": "Dev / test DB",     "category": "PII (not anonymised)",       "processor": "Dev S3 bucket",    "destination": "—",                "legalBasis": "None identified", "region": "US",      "encrypted": false }
+  ],
+  "dataInventory": [
+    { "name": "Production DB",    "type": "Database",    "host": "prod-db-01",        "piiTypes": ["Name", "Email", "Phone", "Address"],  "records": "2.4M", "confidence": 99, "risk": "HIGH",     "riskCls": "hi", "encrypted": true,  "lastScan": "2h ago"  },
+    { "name": "CRM (Salesforce)", "type": "SaaS",        "host": "salesforce.com",    "piiTypes": ["Name", "Email", "Phone"],             "records": "84K",  "confidence": 98, "risk": "HIGH",     "riskCls": "hi", "encrypted": true,  "lastScan": "6h ago"  },
+    { "name": "Log archive S3",   "type": "Object store","host": "s3://logs-archive", "piiTypes": ["Email", "IP address"],                "records": "~1M",  "confidence": 68, "risk": "MEDIUM",   "riskCls": "me", "encrypted": true,  "lastScan": "1d ago"  },
+    { "name": "Dev S3 bucket",    "type": "Object store","host": "s3://dev-data-raw", "piiTypes": ["Name", "Email", "SSN"],               "records": "120K", "confidence": 91, "risk": "CRITICAL", "riskCls": "cr", "encrypted": false, "lastScan": "1d ago"  },
+    { "name": "HRIS (Workday)",   "type": "SaaS",        "host": "workday.com",       "piiTypes": ["Name", "DOB", "Bank", "Address"],     "records": "930",  "confidence": 99, "risk": "HIGH",     "riskCls": "hi", "encrypted": true,  "lastScan": "12h ago" },
+    { "name": "Data warehouse",   "type": "Database",    "host": "dw-prod-01",        "piiTypes": ["Email", "Behavioural"],               "records": "18M",  "confidence": 82, "risk": "MEDIUM",   "riskCls": "me", "encrypted": true,  "lastScan": "4h ago"  },
+    { "name": "Audit log S3",     "type": "Object store","host": "s3://audit-logs",   "piiTypes": ["Email", "IP address"],                "records": "~5M",  "confidence": 75, "risk": "LOW",      "riskCls": "ok", "encrypted": true,  "lastScan": "2h ago"  },
+    { "name": "Mailchimp",        "type": "SaaS",        "host": "mailchimp.com",     "piiTypes": ["Name", "Email", "Preferences"],       "records": "22K",  "confidence": 97, "risk": "LOW",      "riskCls": "ok", "encrypted": true,  "lastScan": "1d ago"  }
+  ],
+  "ropaEntries": [
+    { "id": "RPA-001", "activity": "Customer account management",   "purpose": "Contract fulfilment",         "categories": ["Identity", "Contact"],           "legalBasis": "Contract",         "retention": "7 years",  "controller": "Terralogic",  "status": "COMPLETE",  "statusCls": "ok" },
+    { "id": "RPA-002", "activity": "Marketing communications",      "purpose": "Direct marketing",            "categories": ["Contact", "Preferences"],         "legalBasis": "Consent",          "retention": "Until opt-out","controller": "Terralogic","status": "COMPLETE",  "statusCls": "ok" },
+    { "id": "RPA-003", "activity": "Employee payroll processing",   "purpose": "Employment contract",         "categories": ["Identity", "Bank", "Tax"],        "legalBasis": "Contract",         "retention": "10 years", "controller": "Terralogic",  "status": "COMPLETE",  "statusCls": "ok" },
+    { "id": "RPA-004", "activity": "Website analytics",            "purpose": "Product improvement",         "categories": ["Behavioural", "Device"],          "legalBasis": "Consent",          "retention": "2 years",  "controller": "Terralogic",  "status": "COMPLETE",  "statusCls": "ok" },
+    { "id": "RPA-005", "activity": "Support ticket handling",       "purpose": "Customer service",            "categories": ["Contact", "Behavioural"],         "legalBasis": "Legitimate int.",  "retention": "3 years",  "controller": "Terralogic",  "status": "COMPLETE",  "statusCls": "ok" },
+    { "id": "RPA-006", "activity": "Security event logging",        "purpose": "Security monitoring",         "categories": ["IP address", "Auth events"],      "legalBasis": "Legitimate int.",  "retention": "1 year",   "controller": "Terralogic",  "status": "COMPLETE",  "statusCls": "ok" },
+    { "id": "RPA-007", "activity": "Partner data sharing",          "purpose": "Business operations",         "categories": ["Contact", "Transaction"],         "legalBasis": "Contract",         "retention": "5 years",  "controller": "Joint",       "status": "INCOMPLETE","statusCls": "cr" },
+    { "id": "RPA-008", "activity": "HR recruitment pipeline",       "purpose": "Hiring",                      "categories": ["Identity", "CV", "Assessment"],   "legalBasis": "Legitimate int.",  "retention": "2 years",  "controller": "Terralogic",  "status": "COMPLETE",  "statusCls": "ok" },
+    { "id": "RPA-009", "activity": "Dev/test data usage",           "purpose": "Software development",        "categories": ["PII (not anonymised)"],           "legalBasis": "None identified",  "retention": "Undefined","controller": "Terralogic",  "status": "INCOMPLETE","statusCls": "cr" },
+    { "id": "RPA-010", "activity": "Financial reporting",           "purpose": "Legal obligation",            "categories": ["Transaction", "Tax"],             "legalBasis": "Legal obligation", "retention": "7 years",  "controller": "Terralogic",  "status": "COMPLETE",  "statusCls": "ok" },
+    { "id": "RPA-011", "activity": "Customer feedback surveys",     "purpose": "Service improvement",         "categories": ["Contact", "Opinions"],            "legalBasis": "Consent",          "retention": "1 year",   "controller": "Terralogic",  "status": "INCOMPLETE","statusCls": "hi" },
+    { "id": "RPA-012", "activity": "CCTV / physical access logs",  "purpose": "Physical security",           "categories": ["Image", "Location"],              "legalBasis": "Legitimate int.",  "retention": "90 days",  "controller": "Terralogic",  "status": "COMPLETE",  "statusCls": "ok" }
+  ],
+  "ropaCompleteness": {
+    "pct": 96,
+    "complete": 140,
+    "total": 146,
+    "gaps": [
+      { "label": "Missing lawful basis",    "cls": "cr", "count": 4 },
+      { "label": "Missing retention period","cls": "hi", "count": 2 }
+    ]
+  },
+  "legalHolds": [
+    { "id": "LH-2026-02", "title": "SEC investigation – Q4 2025 financials",   "caseRef": "SEC-ENF-2026-0112", "imposedBy": "Legal",      "imposedAt": "2026-02-14", "scope": "Finance records, email archives",    "dsarsBlocked": 1, "expiresAt": "TBD",        "status": "ACTIVE", "statusCls": "cr" },
+    { "id": "LH-2026-01", "title": "Employment tribunal – Robert Chen",         "caseRef": "ET-2026-TRB-0044",  "imposedBy": "HR Legal",   "imposedAt": "2026-01-29", "scope": "HR records, HRIS data, email",       "dsarsBlocked": 1, "expiresAt": "2026-09-30", "status": "ACTIVE", "statusCls": "cr" },
+    { "id": "LH-2025-03", "title": "GDPR regulatory inquiry – DSAR processing","caseRef": "DPC-INQ-2025-0381", "imposedBy": "DPC Ireland","imposedAt": "2025-11-01", "scope": "DSAR workflow, consent records",     "dsarsBlocked": 0, "expiresAt": "2026-08-01", "status": "ACTIVE", "statusCls": "hi" },
+    { "id": "LH-2025-01", "title": "IP litigation – client data dispute",       "caseRef": "HC-2025-IP-0228",   "imposedBy": "Legal",      "imposedAt": "2025-08-10", "scope": "CRM data, contract records",         "dsarsBlocked": 0, "expiresAt": "2025-12-31", "status": "RELEASED", "statusCls": "ok" }
   ],
   "piiDiscovery": [
     { "name": "Production DB",    "desc": "PII · Financial data",         "cls": "hi" },
@@ -86,14 +73,5 @@
     { "jur": "CCPA", "sla": "45 days",  "state": "On track",  "cls": "ok" },
     { "jur": "PIPL", "sla": "15 days",  "state": "1 pending", "cls": "hi" },
     { "jur": "DPDP", "sla": "~30 days", "state": "On track",  "cls": "ok" }
-  ],
-  "ropaCompleteness": {
-    "pct": 96,
-    "complete": 140,
-    "total": 146,
-    "gaps": [
-      { "label": "Missing lawful basis",    "cls": "cr", "count": 4 },
-      { "label": "Missing retention period","cls": "hi", "count": 2 }
-    ]
-  }
+  ]
 }

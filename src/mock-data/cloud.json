@@ -172,5 +172,58 @@
     { "name": "AWS – us-east-1",   "findings": "212 findings", "cls": "cr" },
     { "name": "GCP – asia-south1", "findings": "88 findings",  "cls": "hi" },
     { "name": "Azure – East US",   "findings": "42 findings",  "cls": "hi" }
+  ],
+  "cloudIdentities": [
+    { "id": "dev-admin",              "type": "Service Account", "provider": "GCP",   "providerColor": "#4285F4", "email": "dev-admin@proj.iam.gserviceaccount.com", "permissionsGranted": 842, "permissionsUsed": 101, "usagePct": 12, "riskCls": "cr", "risk": "CRITICAL", "stale": false, "crossAccount": false, "finding": "Owner role at project level — only 12% used" },
+    { "id": "allAuthenticatedUsers",  "type": "IAM Binding",     "provider": "GCP",   "providerColor": "#4285F4", "email": "allAuthenticatedUsers",                   "permissionsGranted": 14,  "permissionsUsed": 14,  "usagePct": 100,"riskCls": "cr", "risk": "CRITICAL", "stale": false, "crossAccount": true,  "finding": "GCS bucket accessible to all Google-authenticated users globally" },
+    { "id": "contractor-mjones",      "type": "IAM User",        "provider": "AWS",   "providerColor": "#FF9900", "email": "m.jones@contractor.com",                  "permissionsGranted": 228, "permissionsUsed": 0,   "usagePct": 0,  "riskCls": "hi", "risk": "HIGH",     "stale": true,  "crossAccount": false, "finding": "90+ days inactive — not present in current HR roster" },
+    { "id": "lambda-data-exporter",   "type": "Lambda Role",     "provider": "AWS",   "providerColor": "#FF9900", "email": "arn:aws:iam::123:role/lambda-data-exporter","permissionsGranted": 9999,"permissionsUsed": 8,  "usagePct": 0,  "riskCls": "cr", "risk": "CRITICAL", "stale": false, "crossAccount": false, "finding": "Action:* Resource:* wildcard — full admin privileges on Lambda role" },
+    { "id": "svc-ci-pipeline",        "type": "Service Account", "provider": "GCP",   "providerColor": "#4285F4", "email": "svc-ci-pipeline@proj.iam.gserviceaccount.com","permissionsGranted": 412,"permissionsUsed": 58, "usagePct": 14,"riskCls": "hi", "risk": "HIGH",     "stale": false, "crossAccount": false, "finding": "Storage Admin + Cloud Build Admin — more than CI needs" },
+    { "id": "azure-sp-legacy",        "type": "Service Principal","provider": "Azure", "providerColor": "#0089D6", "email": "legacy-deploy-sp (app ID: a1b2c3d4)",     "permissionsGranted": 180, "permissionsUsed": 0,   "usagePct": 0,  "riskCls": "hi", "risk": "HIGH",     "stale": true,  "crossAccount": false, "finding": "Secret expired 6 months ago — Contributor on 3 subscriptions" },
+    { "id": "admin-john.doe",         "type": "IAM User",        "provider": "AWS",   "providerColor": "#FF9900", "email": "john.doe@terralogic.com",                 "permissionsGranted": 560, "permissionsUsed": 210, "usagePct": 38, "riskCls": "me", "risk": "MEDIUM",   "stale": false, "crossAccount": true,  "finding": "Cross-account assume-role to prod — no business justification recorded" },
+    { "id": "svc-monitoring",         "type": "Service Account", "provider": "GCP",   "providerColor": "#4285F4", "email": "svc-monitoring@proj.iam.gserviceaccount.com","permissionsGranted": 62, "permissionsUsed": 58, "usagePct": 94,"riskCls": "ok", "risk": "LOW",      "stale": false, "crossAccount": false, "finding": "Well-scoped — Monitoring Viewer only" }
+  ],
+  "auditLog": [
+    { "id": "EVT-9041", "time": "09:14",    "provider": "AWS",   "providerColor": "#FF9900", "actor": "john.doe@terralogic.com",     "action": "s3:PutBucketPolicy",          "resource": "prod-billing-exports",    "region": "us-east-1",   "result": "SUCCESS", "resultCls": "cr", "risk": "HIGH",   "riskCls": "hi" },
+    { "id": "EVT-9040", "time": "09:11",    "provider": "GCP",   "providerColor": "#4285F4", "actor": "dev-admin SA",                "action": "container.clusters.update",   "resource": "prod-cluster",            "region": "asia-south1", "result": "SUCCESS", "resultCls": "cr", "risk": "CRITICAL","riskCls": "cr" },
+    { "id": "EVT-9039", "time": "08:55",    "provider": "AWS",   "providerColor": "#FF9900", "actor": "m.jones@contractor.com",      "action": "iam:CreateAccessKey",         "resource": "contractor-mjones",       "region": "us-east-1",   "result": "SUCCESS", "resultCls": "hi", "risk": "HIGH",   "riskCls": "hi" },
+    { "id": "EVT-9038", "time": "08:47",    "provider": "Azure", "providerColor": "#0089D6", "actor": "mike.r@terralogic.com",       "action": "Microsoft.Storage/write",     "resource": "acme-prod",               "region": "East US",     "result": "SUCCESS", "resultCls": "ok", "risk": "MEDIUM", "riskCls": "me" },
+    { "id": "EVT-9037", "time": "08:22",    "provider": "AWS",   "providerColor": "#FF9900", "actor": "lambda-data-exporter role",   "action": "sts:AssumeRole",              "resource": "arn:aws:iam::456:role/*", "region": "us-west-2",   "result": "SUCCESS", "resultCls": "cr", "risk": "CRITICAL","riskCls": "cr" },
+    { "id": "EVT-9036", "time": "07:30",    "provider": "GCP",   "providerColor": "#4285F4", "actor": "allAuthenticatedUsers",       "action": "storage.objects.get",         "resource": "prod-assets-bucket",      "region": "asia-south1", "result": "SUCCESS", "resultCls": "hi", "risk": "HIGH",   "riskCls": "hi" },
+    { "id": "EVT-9035", "time": "1h ago",   "provider": "AWS",   "providerColor": "#FF9900", "actor": "r.chen@terralogic.com",       "action": "ec2:AuthorizeSecurityGroup",  "resource": "sg-0a1b2c",               "region": "us-east-1",   "result": "SUCCESS", "resultCls": "hi", "risk": "HIGH",   "riskCls": "hi" },
+    { "id": "EVT-9034", "time": "2h ago",   "provider": "Azure", "providerColor": "#0089D6", "actor": "azure-sp-legacy",             "action": "Microsoft.Compute/read",      "resource": "vm-prod-01",              "region": "East US",     "result": "DENIED",  "resultCls": "ok", "risk": "MEDIUM", "riskCls": "me" },
+    { "id": "EVT-9033", "time": "3h ago",   "provider": "AWS",   "providerColor": "#FF9900", "actor": "svc-ci-pipeline",             "action": "s3:GetObject",                "resource": "build-artifacts",         "region": "us-east-1",   "result": "SUCCESS", "resultCls": "ok", "risk": "LOW",    "riskCls": "ok" },
+    { "id": "EVT-9032", "time": "4h ago",   "provider": "GCP",   "providerColor": "#4285F4", "actor": "admin@terralogic.com",        "action": "cloudresourcemanager.setIamPolicy","resource": "proj-production",    "region": "global",      "result": "SUCCESS", "resultCls": "hi", "risk": "HIGH",   "riskCls": "hi" }
+  ],
+  "accounts": [
+    {
+      "id": "aws-prod",    "name": "AWS Production",   "provider": "AWS",   "providerColor": "#FF9900",
+      "accountId": "123456789012", "region": "us-east-1",   "status": "CONNECTED", "statusCls": "ok",
+      "findings": { "critical": 3, "high": 6, "medium": 4, "low": 8 },
+      "compliance": 68, "complianceCls": "hi", "lastScan": "9 min ago",
+      "services": ["EC2", "S3", "RDS", "Lambda", "IAM", "CloudTrail"]
+    },
+    {
+      "id": "gcp-prod",    "name": "GCP Production",   "provider": "GCP",   "providerColor": "#4285F4",
+      "accountId": "proj-terralogic-prod", "region": "asia-south1", "status": "CONNECTED", "statusCls": "ok",
+      "findings": { "critical": 2, "high": 3, "medium": 5, "low": 6 },
+      "compliance": 74, "complianceCls": "hi", "lastScan": "9 min ago",
+      "services": ["GCE", "GCS", "Cloud SQL", "GKE", "IAM", "Cloud Audit"]
+    },
+    {
+      "id": "azure-prod",  "name": "Azure Production", "provider": "Azure", "providerColor": "#0089D6",
+      "accountId": "sub-a1b2c3d4-prod", "region": "East US",     "status": "CONNECTED", "statusCls": "ok",
+      "findings": { "critical": 0, "high": 2, "medium": 3, "low": 4 },
+      "compliance": 81, "complianceCls": "ok", "lastScan": "9 min ago",
+      "services": ["VMs", "Storage", "Key Vault", "AKS", "Azure AD", "Monitor"]
+    }
+  ],
+  "complianceReports": [
+    { "framework": "CIS AWS v3.0",  "score": 68, "scoreCls": "hi", "passed": 142, "failed": 67, "na": 12, "lastRun": "2026-06-25",  "status": "FAILING",  "statusCls": "cr" },
+    { "framework": "SOC 2 Type II", "score": 74, "scoreCls": "hi", "passed": 89,  "failed": 31, "na": 8,  "lastRun": "2026-06-25",  "status": "FAILING",  "statusCls": "cr" },
+    { "framework": "ISO 27001",     "score": 81, "scoreCls": "ok", "passed": 98,  "failed": 23, "na": 5,  "lastRun": "2026-06-25",  "status": "PASSING",  "statusCls": "ok" },
+    { "framework": "PCI DSS v4.0",  "score": 59, "scoreCls": "cr", "passed": 71,  "failed": 49, "na": 14, "lastRun": "2026-06-25",  "status": "FAILING",  "statusCls": "cr" },
+    { "framework": "NIST CSF",      "score": 72, "scoreCls": "hi", "passed": 86,  "failed": 33, "na": 9,  "lastRun": "2026-06-24",  "status": "FAILING",  "statusCls": "cr" },
+    { "framework": "CIS GCP v2.0",  "score": 77, "scoreCls": "hi", "passed": 54,  "failed": 16, "na": 4,  "lastRun": "2026-06-24",  "status": "PASSING",  "statusCls": "ok" }
   ]
 }

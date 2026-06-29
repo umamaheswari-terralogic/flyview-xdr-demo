@@ -1,28 +1,12 @@
 import { fetchJson } from './mockApi.js'
 
 export const AISPMService = {
-  async getSummary() {
-    const data = await fetchJson('aispm')
-    return data.summary
-  },
-
-  async getAssets() {
-    const data = await fetchJson('aispm')
-    return data.assets
-  },
-
-  async getDetectionEvents() {
-    const data = await fetchJson('aispm')
-    return data.detectionEvents
-  },
-
-  async getEuAiActRegistry() {
-    const data = await fetchJson('aispm')
-    return data.euAiActRegistry
-  },
-
-  async getNistRmf() {
-    const data = await fetchJson('aispm')
-    return data.nistRmf
-  },
+  async getSummary()            { const d = await fetchJson('aispm'); return d.summary },
+  async getAssets()             { const d = await fetchJson('aispm'); return d.assets },
+  async getAssessments()        { const d = await fetchJson('aispm'); return d.assessments },
+  async getDetectionEvents()    { const d = await fetchJson('aispm'); return d.detectionEvents },
+  async getEuAiActRegistry()    { const d = await fetchJson('aispm'); return d.euAiActRegistry },
+  async getGovernancePolicies() { const d = await fetchJson('aispm'); return d.governancePolicies },
+  async getNistRmf()            { const d = await fetchJson('aispm'); return d.nistRmf },
+  async getResponseActions()    { const d = await fetchJson('aispm'); return d.responseActions },
 }

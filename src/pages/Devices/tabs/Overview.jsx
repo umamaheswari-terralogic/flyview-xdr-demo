@@ -18,30 +18,51 @@ function RowBar({ label, pct, color, val }) {
 export default function DevicesOverview() {
   const [metrics, setMetrics] = useState(null)
   const [inventory, setInventory] = useState(null)
-  const [devices, setDevices] = useState(null)
+  const [devices, setDevices] = useState([])
   const [platformSplit, setPlatformSplit] = useState([])
   const [failingChecks, setFailingChecks] = useState([])
   const [apnsCert, setApnsCert] = useState(null)
   const [selectedDevice, setSelectedDevice] = useState(null)
+  const [simCompliant, setSimCompliant] = useState(true)
 
+  // All data from JSON
   useEffect(() => {
     DeviceService.getMetrics().then(setMetrics)
-    DeviceService.getInventory().then(setInventory)
+    DeviceService.getInventory().then(inv => { setInventory(inv); setDevices(inv.devices) })
     DeviceService.getPlatformSplit().then(setPlatformSplit)
     DeviceService.getFailingChecks().then(setFailingChecks)
     DeviceService.getApnsCert().then(setApnsCert)
-
-    fetch('http://localhost:3001/api/devices')
-      .then(r => r.ok ? r.json() : Promise.reject())
-      .then(data => setDevices(data.devices))
-      .catch(() => DeviceService.getInventory().then(inv => setDevices(inv.devices)))
   }, [])
 
-  if (!metrics || !inventory || !devices || !apnsCert) return null
+  // Poll server only to detect sim trigger — does not affect other device data
+  useEffect(() => {
+    let cancelled = false
+    async function poll() {
+      if (cancelled) return
+      try {
+        const res = await fetch('http://localhost:3001/api/devices/LT-VyshnaviT-3941')
+        if (res.ok) {
+          const data = await res.json()
+          setSimCompliant(data.status === 'COMPLIANT')
+        }
+      } catch { /* server not running — sim stays in default state */ }
+      if (!cancelled) setTimeout(poll, 3000)
+    }
+    poll()
+    return () => { cancelled = true }
+  }, [])
 
-  const simDevice = devices.find(d => d.sim)
-  const simIsNonCompliant = simDevice?.statusCls === 'cr'
-  const nonCompliantNum = String(devices.filter(d => d.statusCls === 'cr').length)
+  if (!metrics || !inventory || !apnsCert) return null
+
+  // Apply sim status on top of JSON data locally
+  const displayDevices = devices.map(d =>
+    d.sim
+      ? { ...d, status: simCompliant ? 'COMPLIANT' : 'NON-COMPLIANT', statusCls: simCompliant ? 'ok' : 'cr', failingChecks: simCompliant ? [] : ['Antivirus disabled'] }
+      : d
+  )
+
+  const simIsNonCompliant = !simCompliant
+  const nonCompliantNum = String(displayDevices.filter(d => d.statusCls === 'cr').length)
   const displayFailingChecks = simIsNonCompliant
     ? [...failingChecks, { label: 'Antivirus', pct: 8, color: 'var(--crit)', val: '1' }]
     : failingChecks
@@ -70,7 +91,7 @@ export default function DevicesOverview() {
         <table>
           <thead><tr>{['Device', 'User', 'Platform', 'Status', 'Enrollment', 'Last Seen', ''].map(h => <th key={h}>{h}</th>)}</tr></thead>
           <tbody>
-            {devices.map(d => (
+            {displayDevices.map(d => (
               <tr key={d.name}>
                 <td className="pr">{d.name}</td>
                 <td style={{ fontSize: 12, color: 'var(--txt2)' }}>{d.user}</td>
