@@ -2,30 +2,34 @@ import { Router } from 'express'
 
 const router = Router()
 
-// ── Sim state ─────────────────────────────────────────────────
-let cliLlmActive  = false
-let chatgptActive = false
+// ── Sim state — same pattern as devices ───────────────────────
+let chatgptDetected = false
 
-// GET /api/aispm/sim — current sim state (polled by frontend every 3s)
+const getSimEvent = () => chatgptDetected ? {
+  id:       'SHADOW-001',
+  domain:   'chatgpt.com',
+  device:   'LT-VyshnaviT-3941',
+  user:     'vyshnavi.thatikonda@terralogic.com',
+  source:   'Chrome · Browser',
+  detail:   'User opened chatgpt.com — unauthorized shadow AI tool, no DLP policy applied',
+  risk:     'HIGH',
+  riskCls:  'hi',
+  time:     'Just now',
+  status:   'OPEN',
+  statusCls:'cr',
+} : null
+
+// GET /api/aispm/sim — polled by frontend every 3s
 router.get('/sim', (_req, res) => {
-  res.json({ cliLlmActive, chatgptActive })
+  res.json({ chatgptDetected, event: getSimEvent() })
 })
 
-// POST /api/aispm/trigger/cli-llm — toggle ollama/LLaMA 3 detection
-router.post('/trigger/cli-llm', (_req, res) => {
-  cliLlmActive = !cliLlmActive
-  res.json({ cliLlmActive, chatgptActive })
-})
-
-// POST /api/aispm/trigger/chatgpt — toggle Chrome→ChatGPT session detection
+// POST /api/aispm/trigger/chatgpt — toggle detection on/off
 router.post('/trigger/chatgpt', (_req, res) => {
-  chatgptActive = !chatgptActive
-  res.json({ cliLlmActive, chatgptActive })
+  chatgptDetected = !chatgptDetected
+  res.json({ chatgptDetected, event: getSimEvent() })
 })
 
-// GET /api/aispm — stub (data is served from JSON via frontend service)
-router.get('/', (_req, res) => {
-  res.json({ cliLlmActive, chatgptActive })
-})
+router.get('/', (_req, res) => res.json({ chatgptDetected }))
 
 export default router
