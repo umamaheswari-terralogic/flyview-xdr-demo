@@ -1,0 +1,19 @@
+
+Monitor : To trigger 'execution of a malicious script, after user clicked on a hyperlink from gmail'
+curl -X POST http://localhost:3001/api/monitor/trigger
+
+Cloud : click on the 'scan now' button that adds a new entry in existing table
+and click on 'view' and 'remediate' buttons to see the respective actions.
+no other external triggers are needed here.
+(a correlated finding for Shabbeer appears automatically when the Identity trigger below is fired)
+
+Identity (Vyshnavi T.) : Impossible travel + MFA bypass → CRITICAL risk, UNDER REVIEW status
+curl -X POST http://localhost:3001/api/identity/vyshnavi.t%40terralogic.com/trigger
+
+Identity (Shabbeer) : PIP employee bulk-downloads 4.2 GB from S3 at 2:47 AM → HIGH risk, MONITORING status
+                      Also injects a correlated finding in the Cloud module automatically.
+                      In Cloud module, click 'Revoke IAM' to resolve both modules simultaneously.
+curl -X POST http://localhost:3001/api/identity/shabbeer%40terralogic.com/trigger
+
+Note: All triggers are toggles — calling the same command again resets back to baseline.
+      'Revoke IAM' in Cloud calls /api/cloud/shabbeer/revoke-iam and resets Identity too.

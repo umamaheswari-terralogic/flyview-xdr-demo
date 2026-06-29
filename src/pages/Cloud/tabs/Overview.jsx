@@ -35,20 +35,39 @@ function pickRandom(arr, n) {
   return shuffled.slice(0, n)
 }
 
+const CLOUD_API = 'http://localhost:3001/api/cloud'
+const POLL_MS   = 4000
+
 export default function CloudOverview() {
-  const [summary, setSummary]       = useState(null)
+  const [summary, setSummary]         = useState(null)
   const [allFindings, setAllFindings] = useState([])
-  const [findings, setFindings]     = useState([])
-  const [compliance, setCompliance] = useState([])
-  const [ciem, setCiem]             = useState([])
-  const [accounts, setAccounts]     = useState([])
-  const [filter, setFilter]         = useState('All')
-  const [loading, setLoading]       = useState(true)
-  const [scanning, setScanning]     = useState(false)
+  const [findings, setFindings]       = useState([])
+  const [simFindings, setSimFindings] = useState([])   // server-injected findings
+  const [simActive, setSimActive]     = useState(false)
+  const [compliance, setCompliance]   = useState([])
+  const [ciem, setCiem]               = useState([])
+  const [accounts, setAccounts]       = useState([])
+  const [filter, setFilter]           = useState('All')
+  const [loading, setLoading]         = useState(true)
+  const [scanning, setScanning]       = useState(false)
   const [remediating, setRemediating] = useState(new Set())
   const [selectedFinding, setSelectedFinding] = useState(null)
   const tableRef = useRef(null)
+  const pollRef  = useRef(null)
   const toast = useToast()
+
+  async function fetchServerFindings() {
+    try {
+      const r = await fetch(CLOUD_API)
+      if (!r.ok) throw new Error()
+      const data = await r.json()
+      setSimFindings(data.findings ?? [])
+      setSimActive(data.simActive ?? false)
+    } catch {
+      setSimFindings([])
+      setSimActive(false)
+    }
+  }
 
   useEffect(() => {
     Promise.all([
@@ -57,6 +76,7 @@ export default function CloudOverview() {
       CloudService.getCompliancePosture(),
       CloudService.getCiemRisks(),
       CloudService.getLinkedAccounts(),
+      fetchServerFindings(),
     ]).then(([s, f, c, ci, a]) => {
       setSummary(s)
       setAllFindings(f)
@@ -66,6 +86,9 @@ export default function CloudOverview() {
       setAccounts(a)
       setLoading(false)
     })
+
+    pollRef.current = setInterval(fetchServerFindings, POLL_MS)
+    return () => clearInterval(pollRef.current)
   }, [])
 
   function handleScan() {
@@ -104,29 +127,79 @@ export default function CloudOverview() {
     const delay = 3000 + Math.random() * 2000
     setTimeout(() => {
       setFindings(prev => prev.map(f =>
-        f.id === id
-          ? { ...f, status: 'RESOLVED', statusCls: 'ok' }
-          : f
+        f.id === id ? { ...f, status: 'RESOLVED', statusCls: 'ok' } : f
       ))
-      setRemediating(prev => {
-        const next = new Set(prev)
-        next.delete(id)
-        return next
-      })
+      setRemediating(prev => { const n = new Set(prev); n.delete(id); return n })
       toast(`${id} resolved`, 'Finding status updated to RESOLVED', 'ok')
+    }, delay)
+  }
+
+  // "Revoke IAM" for Shabbeer's sim finding — resolves cloud finding AND
+  // calls /resolve on the identity server so his row resets in Identity module too
+  const [revoking, setRevoking] = useState(false)
+
+  function handleRevokeIAM(findingId) {
+    if (revoking) return
+    setRevoking(true)
+    toast('Revoking IAM credentials…', 'shabbeer@terralogic.com access keys being invalidated', 'hi')
+
+    const delay = 3000 + Math.random() * 2000
+    setTimeout(async () => {
+      // Mark finding RESOLVED locally
+      setSimFindings(prev => prev.map(f =>
+        f.id === findingId ? { ...f, status: 'RESOLVED', statusCls: 'ok' } : f
+      ))
+      // Call server to reset identity entry
+      try {
+        await fetch('http://localhost:3001/api/cloud/shabbeer/revoke-iam', { method: 'POST' })
+      } catch { /* server may be down — local state is already updated */ }
+      setRevoking(false)
+      toast('IAM revoked — both modules resolved', 'shabbeer@terralogic.com credentials invalidated · Identity risk reset', 'ok')
     }, delay)
   }
 
   if (loading) return <div className="loading-state">Loading cloud data…</div>
 
-  const PROVIDERS = ['All', 'AWS', 'GCP', 'Azure']
-  const filtered = filter === 'All' ? findings : findings.filter(f => f.provider === filter)
+  // Merge server-injected sim findings (prepended, deduped by id)
+  const allDisplayed = [
+    ...simFindings,
+    ...findings.filter(f => !simFindings.some(s => s.id === f.id)),
+  ]
 
-  const critCount = findings.filter(f => f.sevCls === 'cr' && f.status !== 'RESOLVED').length
-  const highCount = findings.filter(f => f.sevCls === 'hi' && f.status !== 'RESOLVED').length
+  const PROVIDERS = ['All', 'AWS', 'GCP', 'Azure']
+  const filtered = filter === 'All' ? allDisplayed : allDisplayed.filter(f => f.provider === filter)
+
+  const critCount = allDisplayed.filter(f => f.sevCls === 'cr' && f.status !== 'RESOLVED').length
+  const highCount = allDisplayed.filter(f => f.sevCls === 'hi' && f.status !== 'RESOLVED').length
+  const johnFinding = simFindings.find(f => f.id === 'CF-SHABBEER-001')
 
   return (
     <>
+      {/* Insider threat correlation banner */}
+      {simActive && johnFinding && (
+        <div style={{
+          display: 'flex', alignItems: 'flex-start', gap: 14,
+          background: 'rgba(249,115,22,.07)',
+          border: '1px solid rgba(249,115,22,.3)',
+          borderLeft: '4px solid var(--high)',
+          borderRadius: 10, padding: '14px 18px', marginBottom: 18,
+        }}>
+          <div style={{ fontSize: 22, marginTop: 1 }}>🔗</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--high)', marginBottom: 3 }}>
+              Correlated finding — insider threat activity detected in S3
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--txt2)', lineHeight: 1.5 }}>
+              <b>shabbeer@terralogic.com</b> (PIP employee) made <b>4,200 GetObject calls</b> on{' '}
+              <span className="mono">corp-data-prod</span> at 02:47 AM, transferring 4.2 GB.
+              This finding is correlated with a <b>HIGH risk alert in the Identity module</b>.
+              Click "Revoke IAM" on the finding row to invalidate credentials and resolve both modules.
+            </div>
+          </div>
+          <span className="b hi" style={{ marginTop: 2, flexShrink: 0 }}><i />HIGH</span>
+        </div>
+      )}
+
       {/* KPI Cards — live counts reflect current findings state */}
       <div className="kg k4">
         <MetricCard cls="cr" num={String(critCount)} desc={summary.critical.label} label="P0 Critical"   foot={summary.critical.trend}  icon={Icons.alert} />
@@ -167,30 +240,59 @@ export default function CloudOverview() {
               const isRemediating = remediating.has(f.id)
               const isResolved = f.status === 'RESOLVED'
               return (
-                <tr key={f.id} style={{ opacity: isRemediating ? 0.6 : 1, transition: 'opacity .3s' }}>
+                <tr
+                  key={f.id}
+                  style={{
+                    opacity: isRemediating ? 0.6 : 1,
+                    transition: 'opacity .3s',
+                    ...(f.sim && simActive ? { animation: 'rowFlash 1.2s ease', background: 'rgba(249,115,22,.04)' } : {}),
+                  }}
+                >
                   <td className="mono">{f.id}</td>
                   <td><SeverityBadge severity={f.severity} cls={f.sevCls} /></td>
                   <td className="mono pr">{f.resource}</td>
                   <td><span style={{ fontSize: 11, fontWeight: 700, color: f.providerColor }}>{f.provider}</span></td>
-                  <td>{f.issue}</td>
+                  <td>
+                    {f.issue ?? f.title}
+                    {f.correlatedModule && (
+                      <div style={{ marginTop: 3 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, background: 'rgba(249,115,22,.12)', color: 'var(--high)', padding: '1px 6px', borderRadius: 4 }}>
+                          ↗ Correlated: {f.correlatedModule}
+                        </span>
+                      </div>
+                    )}
+                  </td>
                   <td className="mono" style={{ color: f.slaColor }}>{f.sla}</td>
                   <td>
-                    {isRemediating
-                      ? <span className="b hi"><i />REMEDIATING</span>
+                    {(isRemediating || (f.sim && revoking))
+                      ? <span className="b hi"><i />{f.sim ? 'REVOKING…' : 'REMEDIATING'}</span>
                       : <StatusBadge status={f.status} cls={f.statusCls} />
                     }
                   </td>
                   <td>
                     <div className="brow">
-                      {!isResolved && (
-                        <button
-                          className="btn p"
-                          disabled={isRemediating}
-                          onClick={() => handleRemediate(f.id)}
-                        >
-                          {isRemediating ? '…' : 'Remediate'}
-                        </button>
-                      )}
+                      {f.sim
+                        ? /* sim finding: Revoke IAM instead of Remediate */
+                          !isResolved && (
+                            <button
+                              className="btn d"
+                              disabled={revoking}
+                              onClick={() => handleRevokeIAM(f.id)}
+                            >
+                              {revoking ? '…' : 'Revoke IAM'}
+                            </button>
+                          )
+                        : /* regular finding: Remediate */
+                          !isResolved && (
+                            <button
+                              className="btn p"
+                              disabled={isRemediating}
+                              onClick={() => handleRemediate(f.id)}
+                            >
+                              {isRemediating ? '…' : 'Remediate'}
+                            </button>
+                          )
+                      }
                       <button className="btn" onClick={() => setSelectedFinding(f)}>View</button>
                     </div>
                   </td>

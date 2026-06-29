@@ -45,6 +45,7 @@ app.listen(PORT, () => {
   console.log('    GET /api/identity')
   console.log('    GET /api/cloud')
   console.log('    GET /api/monitor')
+  console.log('    POST /api/monitor/trigger')
   console.log('    GET /api/network')
   console.log('    GET /api/privacy')
   console.log('    GET /api/aispm')
