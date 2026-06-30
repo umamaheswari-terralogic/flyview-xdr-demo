@@ -13,7 +13,7 @@ function getBaseDevices() {
   return data.inventory.devices.filter(d => !d.sim)
 }
 
-// ── Scenario 1: Antivirus disabled ─────────────────────────────────
+// ── Scenario 1: Antivirus disabled — LT-VyshnaviT-3941 ─────────────
 let antivirusCompliant = true
 
 const getAntivirusDevice = () => ({
@@ -37,7 +37,7 @@ router.post('/LT-VyshnaviT-3941/trigger', (_req, res) => {
   res.json({ triggered: true, scenario: 'antivirus', device: getAntivirusDevice() })
 })
 
-// ── Scenario 2: Blocked app installed ──────────────────────────────
+// ── Scenario 2: Unauthorised AI tool installed — LT-ShabbeerM-4102 ──
 let blockedAppCompliant = true
 
 const getBlockedAppDevice = () => ({
@@ -50,7 +50,7 @@ const getBlockedAppDevice = () => ({
   lastSeen:      'Just now',
   sim:           true,
   simScenario:   'blockedapp',
-  failingChecks: blockedAppCompliant ? [] : ['Blocked app installed'],
+  failingChecks: blockedAppCompliant ? [] : ['Unauthorised AI tool installed'],
   extensions:    blockedAppCompliant ? [] : [
     'ChatGPT for Chrome',
     'Grammarly',
@@ -76,27 +76,27 @@ router.post('/LT-VyshnaviT-3941/trigger/blockedapp', (_req, res) => {
 
 // ── GET routes ──────────────────────────────────────────────────────
 
-// Which sim device is currently active? Prefer whichever is non-compliant.
-function getActiveSimDevice() {
-  if (!antivirusCompliant) return getAntivirusDevice()
-  if (!blockedAppCompliant) return getBlockedAppDevice()
-  return getAntivirusDevice() // both compliant — return default
-}
-
-// GET /api/devices
+// Both sim devices always appear at the top; non-compliant ones first
 router.get('/', (_req, res) => {
-  const all = [...getBaseDevices(), getActiveSimDevice()]
+  const av  = getAntivirusDevice()
+  const blk = getBlockedAppDevice()
+
+  // Sort sim devices: non-compliant first, then compliant
+  const simDevices = [av, blk].sort((a, b) => {
+    if (a.statusCls === 'cr' && b.statusCls !== 'cr') return -1
+    if (b.statusCls === 'cr' && a.statusCls !== 'cr') return 1
+    return 0
+  })
+
+  const all = [...simDevices, ...getBaseDevices()]
   res.json({ total: all.length, devices: all })
 })
 
 // GET /api/devices/:name
 router.get('/:name', (req, res) => {
-  if (req.params.name.toLowerCase() === 'lt-vyshnavit-3941') {
-    return res.json(getActiveSimDevice())
-  }
-  const device = getBaseDevices().find(
-    d => d.name.toLowerCase() === req.params.name.toLowerCase()
-  )
+  const n = req.params.name.toLowerCase()
+  if (n === 'lt-vyshnavit-3941')  return res.json(getAntivirusDevice())
+  const device = getBaseDevices().find(d => d.name.toLowerCase() === n)
   if (!device) return res.status(404).json({ error: 'Device not found' })
   res.json(device)
 })

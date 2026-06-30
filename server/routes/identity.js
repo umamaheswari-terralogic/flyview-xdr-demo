@@ -234,15 +234,22 @@ router.get('/', (_req, res) => {
   const vyshnavi  = getVyshnaviUser()
   const isDeviceRisk = !simState.antivirusCompliant
 
+  const simVyshnavi = getSimUser()
+  const vyshnaviEscalated = simEscalated
+
   let all
-  if (isDeviceRisk && johnEscalated) {
-    all = [vyshnavi, shabbeer, ...USERS, getSimUser()]
+  if (vyshnaviEscalated && johnEscalated) {
+    all = [simVyshnavi, shabbeer, vyshnavi, ...USERS]
+  } else if (vyshnaviEscalated) {
+    all = [simVyshnavi, vyshnavi, ...USERS, shabbeer]
+  } else if (isDeviceRisk && johnEscalated) {
+    all = [vyshnavi, shabbeer, ...USERS, simVyshnavi]
   } else if (isDeviceRisk) {
-    all = [vyshnavi, ...USERS, getSimUser(), shabbeer]
+    all = [vyshnavi, ...USERS, simVyshnavi, shabbeer]
   } else if (johnEscalated) {
-    all = [shabbeer, vyshnavi, ...USERS, getSimUser()]
+    all = [shabbeer, ...USERS, simVyshnavi, vyshnavi]
   } else {
-    all = [vyshnavi, ...USERS, getSimUser(), shabbeer]
+    all = [...USERS, simVyshnavi, vyshnavi, shabbeer]
   }
   res.json({ total: all.length, users: all })
 })

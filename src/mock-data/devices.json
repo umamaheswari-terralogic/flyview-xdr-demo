@@ -86,16 +86,6 @@
         "statusCls": "cr",
         "enrollment": "MSI",
         "lastSeen": "1h 4m"
-      },
-      {
-        "name": "LT-VyshnaviT-3941",
-        "user": "vyshnavi.thatikonda@terralogic.com",
-        "platform": "⊞ Windows 11",
-        "status": "COMPLIANT",
-        "statusCls": "ok",
-        "enrollment": "DEP",
-        "lastSeen": "Just now",
-        "sim": true
       }
     ]
   },
