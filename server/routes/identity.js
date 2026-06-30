@@ -189,14 +189,26 @@ const getJohnUser = () =>
 
 // POST /api/identity/vyshnavi.t@terralogic.com/trigger
 router.post(`/${encodeURIComponent(SIM_EMAIL)}/trigger`, (_req, res) => {
-  simEscalated = !simEscalated
+  simEscalated = true
   res.json({ triggered: true, user: getSimUser() })
 })
 
-// POST /api/identity/shabbeer@terralogic.com/trigger  — escalate (toggle)
+// POST /api/identity/vyshnavi.t@terralogic.com/reset
+router.post(`/${encodeURIComponent(SIM_EMAIL)}/reset`, (_req, res) => {
+  simEscalated = false
+  res.json({ reset: true, user: getSimUser() })
+})
+
+// POST /api/identity/shabbeer@terralogic.com/trigger — escalate
 router.post(`/${encodeURIComponent(JOHN_EMAIL)}/trigger`, (_req, res) => {
-  johnEscalated = !johnEscalated
+  johnEscalated = true
   res.json({ triggered: true, user: getJohnUser() })
+})
+
+// POST /api/identity/shabbeer@terralogic.com/reset — reset
+router.post(`/${encodeURIComponent(JOHN_EMAIL)}/reset`, (_req, res) => {
+  johnEscalated = false
+  res.json({ reset: true, user: getJohnUser() })
 })
 
 // POST /api/identity/shabbeer@terralogic.com/resolve  — force-resolve (called by Cloud "Revoke IAM")

@@ -30,14 +30,21 @@ const getAntivirusDevice = () => ({
   extensions:    [],
 })
 
-// POST /api/devices/LT-VyshnaviT-3941/trigger — Scenario 1 toggle
+// POST /api/devices/LT-VyshnaviT-3941/trigger — Scenario 1 trigger
 router.post('/LT-VyshnaviT-3941/trigger', (_req, res) => {
-  antivirusCompliant = !antivirusCompliant
-  simState.antivirusCompliant = antivirusCompliant
+  antivirusCompliant = false
+  simState.antivirusCompliant = false
   res.json({ triggered: true, scenario: 'antivirus', device: getAntivirusDevice() })
 })
 
-// ── Scenario 2: Unauthorised AI tool installed — LT-ShabbeerM-4102 ──
+
+// POST /api/devices/LT-VyshnaviT-3941/reset — Scenario 1 reset
+router.post('/LT-VyshnaviT-3941/reset', (_req, res) => {
+  antivirusCompliant = true
+  simState.antivirusCompliant = true
+  res.json({ reset: true, scenario: 'antivirus', device: getAntivirusDevice() })
+})
+
 let blockedAppCompliant = true
 
 const getBlockedAppDevice = () => ({
@@ -60,11 +67,11 @@ const getBlockedAppDevice = () => ({
   ],
 })
 
-// POST /api/devices/LT-VyshnaviT-3941/trigger/blockedapp — Scenario 2 toggle
+// POST /api/devices/LT-VyshnaviT-3941/trigger/blockedapp — Scenario 2 trigger
 router.post('/LT-VyshnaviT-3941/trigger/blockedapp', (_req, res) => {
-  blockedAppCompliant = !blockedAppCompliant
-  simState.deviceCompliant  = blockedAppCompliant
-  simState.deviceExtensions = blockedAppCompliant ? [] : [
+  blockedAppCompliant = false
+  simState.deviceCompliant  = false
+  simState.deviceExtensions = [
     'ChatGPT for Chrome',
     'Grammarly',
     'LastPass',
@@ -72,6 +79,14 @@ router.post('/LT-VyshnaviT-3941/trigger/blockedapp', (_req, res) => {
     'uBlock Origin',
   ]
   res.json({ triggered: true, scenario: 'blockedapp', device: getBlockedAppDevice() })
+})
+
+// POST /api/devices/LT-VyshnaviT-3941/reset/blockedapp — Scenario 2 reset
+router.post('/LT-VyshnaviT-3941/reset/blockedapp', (_req, res) => {
+  blockedAppCompliant = true
+  simState.deviceCompliant  = true
+  simState.deviceExtensions = []
+  res.json({ reset: true, scenario: 'blockedapp', device: getBlockedAppDevice() })
 })
 
 // ── GET routes ──────────────────────────────────────────────────────

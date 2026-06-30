@@ -1,6 +1,7 @@
 
 Monitor : To trigger 'execution of a malicious script, after user clicked on a hyperlink from gmail'
-curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/monitor/trigger
+tigger :curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/monitor/trigger
+reset:curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/monitor/reset
 
 Cloud : click on the 'scan now' button that adds a new entry in existing table
 and click on 'view' and 'remediate' buttons to see the respective actions.
@@ -8,19 +9,24 @@ no other external triggers are needed here.
 (a correlated finding for Shabbeer appears automatically when the Identity trigger below is fired)
 
 Identity (Vyshnavi T.) : Impossible travel + MFA bypass → CRITICAL risk, UNDER REVIEW status
-curl -X POSThttp://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/identity/vyshnavi.t%40terralogic.com/trigger
+trigger:curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/identity/vyshnavi.t%40terralogic.com/trigger
+reset:  curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/identity/vyshnavi.t%40terralogic.com/reset
 
 Identity (Shabbeer) : PIP employee bulk-downloads 4.2 GB from S3 at 2:47 AM → HIGH risk, MONITORING status
                       Also injects a correlated finding in the Cloud module automatically.
                       In Cloud module, click 'Revoke IAM' to resolve both modules simultaneously.
-curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/identity/shabbeer%40terralogic.com/trigger
+trigger:curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/identity/shabbeer%40terralogic.com/trigger
+reset:curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/identity/shabbeer%40terralogic.com/reset
 
-Note: All triggers are toggles — calling the same command again resets back to baseline.
+Note: Each module has a separate trigger and reset command — they are NOT toggles.
       'Revoke IAM' in Cloud calls /api/cloud/shabbeer/revoke-iam and resets Identity too.
 
-DEVICES :
-curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/devices/LT-VyshnaviT-3941/trigger
+DEVICES — Scenario 1 — Antivirus disabled (→ Threats + Identity):
+EC2:      tigger:curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/devices/LT-VyshnaviT-3941/trigger
+          Reset:curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/devices/LT-VyshnaviT-3941/reset
+localhost: iwr -Method POST http://localhost:3001/api/devices/LT-VyshnaviT-3941/trigger
 
-curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/devices/LT-VyshnaviT-3941/trigger/blockedapp
-
-
+DEVICES — Scenario 2 — Blocked app / ChatGPT (→ AI-SPM + Threats):
+EC2:      tigger: curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/devices/LT-VyshnaviT-3941/trigger/blockedapp
+          Reset  :curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/devices/LT-VyshnaviT-3941/reset/blockedapp
+localhost: iwr -Method POST http://localhost:3001/api/devices/LT-VyshnaviT-3941/trigger/blockedapp
