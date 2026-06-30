@@ -7,6 +7,7 @@ import FindingDrawer from '../../../components/FindingDrawer.jsx'
 import { useToast } from '../../../components/Toast.jsx'
 import { CloudService } from '../../../services/CloudService.js'
 import { Icons } from '../../../shared/icons.jsx'
+import { API_BASE } from '../../../config.js'
 
 function RowBar({ label, pct, color, val }) {
   return (
@@ -35,7 +36,7 @@ function pickRandom(arr, n) {
   return shuffled.slice(0, n)
 }
 
-const CLOUD_API = 'http://localhost:3001/api/cloud'
+const CLOUD_API = `${API_BASE}/api/cloud`
 const POLL_MS   = 4000
 
 export default function CloudOverview() {
@@ -151,7 +152,7 @@ export default function CloudOverview() {
       ))
       // Call server to reset identity entry
       try {
-        await fetch('http://localhost:3001/api/cloud/shabbeer/revoke-iam', { method: 'POST' })
+        await fetch(`${API_BASE}/api/cloud/shabbeer/revoke-iam`, { method: 'POST' })
       } catch { /* server may be down — local state is already updated */ }
       setRevoking(false)
       toast('IAM revoked — both modules resolved', 'shabbeer@terralogic.com credentials invalidated · Identity risk reset', 'ok')

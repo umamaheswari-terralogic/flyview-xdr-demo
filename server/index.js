@@ -1,5 +1,10 @@
 import express from 'express'
 import cors from 'cors'
+import { fileURLToPath } from 'url'
+import { join, dirname } from 'path'
+import { existsSync } from 'fs'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 import threatsRouter  from './routes/threats.js'
 import devicesRouter  from './routes/devices.js'
@@ -31,10 +36,15 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
-// ── 404 fallback ──────────────────────────────────────────────────
-app.use((_req, res) => {
-  res.status(404).json({ error: 'Route not found' })
-})
+// ── Serve built frontend in production ────────────────────────────
+const distDir = join(__dirname, '../dist')
+if (existsSync(distDir)) {
+  app.use(express.static(distDir))
+  // SPA fallback — all non-API routes serve index.html
+  app.get('*', (_req, res) => res.sendFile(join(distDir, 'index.html')))
+} else {
+  app.use((_req, res) => res.status(404).json({ error: 'Route not found' }))
+}
 
 app.listen(PORT, () => {
   console.log(`FlyView API server running on http://localhost:${PORT}`)
