@@ -30,11 +30,18 @@ const getAntivirusDevice = () => ({
   extensions:    [],
 })
 
-// POST /api/devices/LT-VyshnaviT-3941/trigger — Scenario 1 toggle
+// POST /api/devices/LT-VyshnaviT-3941/trigger — Scenario 1 trigger
 router.post('/LT-VyshnaviT-3941/trigger', (_req, res) => {
-  antivirusCompliant = !antivirusCompliant
-  simState.antivirusCompliant = antivirusCompliant
+  antivirusCompliant = false
+  simState.antivirusCompliant = false
   res.json({ triggered: true, scenario: 'antivirus', device: getAntivirusDevice() })
+})
+
+// POST /api/devices/LT-VyshnaviT-3941/reset — Scenario 1 reset
+router.post('/LT-VyshnaviT-3941/reset', (_req, res) => {
+  antivirusCompliant = true
+  simState.antivirusCompliant = true
+  res.json({ reset: true, scenario: 'antivirus', device: getAntivirusDevice() })
 })
 
 // ── Scenario 2: Blocked app installed ──────────────────────────────
