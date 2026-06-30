@@ -79,10 +79,16 @@ const BEC_ALERT = {
 
 let simTriggered = false
 
-// POST /api/monitor/trigger — toggle BEC phishing event
+// POST /api/monitor/trigger — trigger BEC phishing event
 router.post('/trigger', (_req, res) => {
-  simTriggered = !simTriggered
-  res.json({ triggered: simTriggered, alert: simTriggered ? BEC_ALERT : null })
+  simTriggered = true
+  res.json({ triggered: true, alert: BEC_ALERT })
+})
+
+// POST /api/monitor/reset — reset BEC phishing event
+router.post('/reset', (_req, res) => {
+  simTriggered = false
+  res.json({ reset: true, alert: null })
 })
 
 // GET /api/monitor — alerts list (BEC alert prepended when triggered)
