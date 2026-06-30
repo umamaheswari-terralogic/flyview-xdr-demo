@@ -6,7 +6,7 @@
     "mfa":       { "count": "94%", "label": "MFA enrollment rate", "trend": "6% on TOTP only" }
   },
   "users": [
-    { "name": "LT-Vyshnavi-3941",       "email": "john.d@terralogic.com",    "dept": "Finance",     "risk": 87, "riskCls": "cr", "mfa": "TOTP",    "login": "09:14",    "status": "ACTIVE",      "statusCls": "ok" },
+    { "name": "LT-vyshnavi-3941",       "email": "thatikonda.vyshnavi@terralogic.com",    "dept": "Finance",     "risk": 87, "riskCls": "cr", "mfa": "TOTP",    "login": "09:14",    "status": "ACTIVE",      "statusCls": "ok" },
     { "name": "Robert Chen",    "email": "r.chen@terralogic.com",    "dept": "Finance",     "risk": 91, "riskCls": "cr", "mfa": null,       "login": "Yesterday","status": "OFFBOARDING", "statusCls": "hi" },
     { "name": "Sarah Kim",      "email": "sarah.k@terralogic.com",   "dept": "Engineering", "risk": 72, "riskCls": "hi", "mfa": "WebAuthn","login": "09:02",    "status": "ACTIVE",      "statusCls": "ok" },
     { "name": "Mike Ross",      "email": "mike.r@terralogic.com",    "dept": "Sales",       "risk": 44, "riskCls": "me", "mfa": "Push",    "login": "08:55",    "status": "ACTIVE",      "statusCls": "ok" },

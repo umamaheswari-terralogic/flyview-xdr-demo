@@ -18,9 +18,10 @@ curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/i
 Note: All triggers are toggles — calling the same command again resets back to baseline.
       'Revoke IAM' in Cloud calls /api/cloud/shabbeer/revoke-iam and resets Identity too.
 
-DEVICES :
-curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/devices/LT-VyshnaviT-3941/trigger
+DEVICES — Scenario 1 — Antivirus disabled (→ Threats + Identity):
+EC2:       curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/devices/LT-VyshnaviT-3941/trigger
+localhost: iwr -Method POST http://localhost:3001/api/devices/LT-VyshnaviT-3941/trigger
 
-curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/devices/LT-VyshnaviT-3941/trigger/blockedapp
-
-
+DEVICES — Scenario 2 — Blocked app / ChatGPT (→ AI-SPM + Threats):
+EC2:       curl -X POST http://ec2-13-201-73-71.ap-south-1.compute.amazonaws.com:3001/api/devices/LT-VyshnaviT-3941/trigger/blockedapp
+localhost: iwr -Method POST http://localhost:3001/api/devices/LT-VyshnaviT-3941/trigger/blockedapp

@@ -17,10 +17,10 @@ const SEV_CLS   = { CRITICAL: 'cr', HIGH: 'hi', MEDIUM: 'me', LOW: 'ne', INFO: '
 function KpiCard({ label, value, sub, cls, onClick }) {
   const color = cls === 'cr' ? 'var(--crit)' : cls === 'hi' ? 'var(--high)' : cls === 'ok' ? 'var(--ok)' : cls === 'me' ? 'var(--med)' : 'var(--txt1)'
   return (
-    <div className="card" style={{ padding: '14px 18px', cursor: onClick ? 'pointer' : 'default' }} onClick={onClick}>
-      <div style={{ fontSize: 11, color: 'var(--txt3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: .6, marginBottom: 6 }}>{label}</div>
-      <div style={{ fontSize: 32, fontWeight: 800, color, lineHeight: 1, fontFamily: 'JetBrains Mono, monospace' }}>{value}</div>
-      {sub && <div style={{ fontSize: 11, color: 'var(--txt3)', marginTop: 5 }}>{sub}</div>}
+    <div className="card" style={{ padding: '20px 16px', cursor: onClick ? 'pointer' : 'default', textAlign: 'center' }} onClick={onClick}>
+      <div style={{ fontSize: 10, color: 'var(--txt3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .8, marginBottom: 10 }}>{label}</div>
+      <div style={{ fontSize: 38, fontWeight: 800, color, lineHeight: 1, fontFamily: 'JetBrains Mono, monospace' }}>{value}</div>
+      {sub && <div style={{ fontSize: 11, color: 'var(--txt3)', marginTop: 8 }}>{sub}</div>}
     </div>
   )
 }
@@ -38,9 +38,9 @@ function MiniBar({ label, val, total, color }) {
 
 function StatTile({ label, value, color }) {
   return (
-    <div style={{ textAlign: 'center', padding: '12px 8px', background: 'var(--bg3)', borderRadius: 8 }}>
-      <div style={{ fontSize: 26, fontWeight: 800, color, fontFamily: 'JetBrains Mono, monospace' }}>{value}</div>
-      <div style={{ fontSize: 10, color: 'var(--txt3)', marginTop: 4, fontWeight: 600 }}>{label}</div>
+    <div style={{ textAlign: 'center', padding: '16px 8px', background: 'var(--bg3)', borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 78 }}>
+      <div style={{ fontSize: 28, fontWeight: 800, color, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>{value}</div>
+      <div style={{ fontSize: 10, color: 'var(--txt3)', marginTop: 6, fontWeight: 600, textTransform: 'uppercase', letterSpacing: .5 }}>{label}</div>
     </div>
   )
 }
@@ -154,23 +154,27 @@ export default function Overview() {
 
   return (
     <>
-      {/* ── KPI Bar ──────────────────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14, marginBottom: 18 }}>
-        <KpiCard label="Non-Compliant Devices" value={nonCompliant} sub={`of ${totalDevices} total endpoints`}    cls={nonCompliant > 0 ? 'cr' : 'ok'} onClick={() => navigate('/devices')} />
-        <KpiCard label="Critical Alerts"        value={criticalAlerts} sub={`${highAlerts} high severity`}         cls={criticalAlerts > 0 ? 'cr' : 'ok'} onClick={() => navigate('/monitor')} />
-        <KpiCard label="High Risk Users"         value={highRiskUsers}  sub={`MFA coverage ${mfaPct}%`}            cls={highRiskUsers > 0 ? 'hi' : 'ok'}  onClick={() => navigate('/identity')} />
-        <KpiCard label="Critical Cloud Findings" value={criticalFindings} sub={`${highFindings} high severity`}    cls={criticalFindings > 0 ? 'cr' : 'ok'} onClick={() => navigate('/cloud')} />
-        <KpiCard label="Shadow AI Detected"      value={shadowAiCount}  sub={chatgptDetected ? '⚠ Live session detected' : `${aiSummary?.complianceGap?.count ?? 0} compliance gaps`} cls={chatgptDetected ? 'cr' : shadowAiCount > 0 ? 'hi' : 'ok'} onClick={() => navigate('/aispm')} />
-        <KpiCard label="Open DSARs"              value={openDsars}      sub={overdueDsars > 0 ? `${overdueDsars} overdue` : 'All within SLA'} cls={overdueDsars > 0 ? 'cr' : openDsars > 0 ? 'hi' : 'ok'} onClick={() => navigate('/privacy')} />
+      {/* ── KPI Row 1 ────────────────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 16 }}>
+        <KpiCard label="Non-Compliant Devices"   value={nonCompliant}    sub={`of ${totalDevices} total endpoints`}        cls={nonCompliant > 0 ? 'cr' : 'ok'}     onClick={() => navigate('/devices')} />
+        <KpiCard label="Critical Alerts"          value={criticalAlerts}  sub={`${highAlerts} high severity`}                cls={criticalAlerts > 0 ? 'cr' : 'ok'}   onClick={() => navigate('/monitor')} />
+        <KpiCard label="High Risk Users"           value={highRiskUsers}   sub={`MFA coverage ${mfaPct}%`}                   cls={highRiskUsers > 0 ? 'hi' : 'ok'}    onClick={() => navigate('/identity')} />
+      </div>
+
+      {/* ── KPI Row 2 ────────────────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 20 }}>
+        <KpiCard label="Critical Cloud Findings"  value={criticalFindings} sub={`${highFindings} high severity`}             cls={criticalFindings > 0 ? 'cr' : 'ok'} onClick={() => navigate('/cloud')} />
+        <KpiCard label="Shadow AI Detected"        value={shadowAiCount}   sub={chatgptDetected ? '⚠ Live session detected' : `${aiSummary?.complianceGap?.count ?? 0} compliance gaps`} cls={chatgptDetected ? 'cr' : shadowAiCount > 0 ? 'hi' : 'ok'} onClick={() => navigate('/aispm')} />
+        <KpiCard label="Open DSARs"                value={openDsars}       sub={overdueDsars > 0 ? `${overdueDsars} overdue` : 'All within SLA'} cls={overdueDsars > 0 ? 'cr' : openDsars > 0 ? 'hi' : 'ok'} onClick={() => navigate('/privacy')} />
       </div>
 
       {/* ── Row 2: Command Center + Alert Timeline + Endpoint Coverage ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr 1fr', gap: 14, marginBottom: 18 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr 1fr', gap: 16, marginBottom: 20 }}>
 
         {/* Security Command Center */}
         <div className="card">
           <div className="card-h"><h3>Security Command Center</h3></div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, padding: '4px 0' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, padding: '14px 14px' }}>
             {[
               { label: 'Endpoints',      val: totalDevices,      color: 'var(--ok)',   path: '/devices'  },
               { label: 'Network Assets', val: netDevices.length, color: 'var(--txt2)', path: '/network'  },
@@ -180,9 +184,9 @@ export default function Overview() {
               { label: 'Privacy DSARs',  val: dsars.length,      color: 'var(--txt2)', path: '/privacy'  },
             ].map(t => (
               <div key={t.label} onClick={() => navigate(t.path)}
-                style={{ padding: '12px 10px', background: 'var(--bg3)', borderRadius: 8, cursor: 'pointer', textAlign: 'center' }}>
-                <div style={{ fontSize: 24, fontWeight: 800, color: t.color, fontFamily: 'JetBrains Mono, monospace' }}>{t.val}</div>
-                <div style={{ fontSize: 10, color: 'var(--txt3)', marginTop: 3, fontWeight: 600 }}>{t.label}</div>
+                style={{ padding: '16px 10px', background: 'var(--bg3)', borderRadius: 10, cursor: 'pointer', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 78 }}>
+                <div style={{ fontSize: 28, fontWeight: 800, color: t.color, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>{t.val}</div>
+                <div style={{ fontSize: 10, color: 'var(--txt3)', marginTop: 6, fontWeight: 600, textTransform: 'uppercase', letterSpacing: .5 }}>{t.label}</div>
               </div>
             ))}
           </div>
@@ -191,9 +195,9 @@ export default function Overview() {
         {/* Threat Alert Timeline */}
         <div className="card">
           <div className="card-h"><h3>Threat Alert Timeline</h3><span className="meta">Last 24 hours</span></div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <div style={{ padding: '0 16px' }}>
             {recentAlerts.map((a, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 0', borderBottom: i < recentAlerts.length - 1 ? '1px solid var(--border)' : 'none' }}>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: i < recentAlerts.length - 1 ? '1px solid var(--border)' : 'none' }}>
                 <span style={{ fontSize: 11, color: 'var(--txt3)', fontFamily: 'monospace', width: 42, flexShrink: 0 }}>{a.time}</span>
                 <span className={`b ${a.sevCls}`} style={{ flexShrink: 0 }}><i />{a.severity ?? a.sevCls}</span>
                 <span style={{ fontSize: 12, color: 'var(--txt2)', flex: 1 }}>{a.description ?? a.event}</span>
@@ -209,46 +213,53 @@ export default function Overview() {
             <h3>Endpoint Coverage</h3>
             {nonCompliant > 0 && <span className="dot" style={{ background: 'var(--crit)' }} />}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 14 }}>
-            <StatTile label="Compliant"     value={compliant}    color="var(--ok)"   />
-            <StatTile label="Non-Compliant" value={nonCompliant} color="var(--crit)" />
-            <StatTile label="At Risk"       value={atRisk}       color="var(--high)" />
-            <StatTile label="Total"         value={totalDevices} color="var(--txt2)" />
+          <div style={{ padding: '14px 14px 14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 14 }}>
+              <StatTile label="Compliant"     value={compliant}    color="var(--ok)"   />
+              <StatTile label="Non-Compliant" value={nonCompliant} color="var(--crit)" />
+              <StatTile label="At Risk"       value={atRisk}       color="var(--high)" />
+              <StatTile label="Total"         value={totalDevices} color="var(--txt2)" />
+            </div>
+            <MiniBar label="Compliant"     val={compliant}    total={totalDevices} color="var(--ok)"   />
+            <MiniBar label="Non-Compliant" val={nonCompliant} total={totalDevices} color="var(--crit)" />
+            <MiniBar label="At Risk"       val={atRisk}       total={totalDevices} color="var(--high)" />
           </div>
-          <MiniBar label="Compliant"     val={compliant}    total={totalDevices} color="var(--ok)"   />
-          <MiniBar label="Non-Compliant" val={nonCompliant} total={totalDevices} color="var(--crit)" />
-          <MiniBar label="At Risk"       val={atRisk}       total={totalDevices} color="var(--high)" />
         </div>
       </div>
 
       {/* ── Row 3: Identity + Cloud + AI-SPM ─────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, marginBottom: 18 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 20 }}>
 
         {/* Identity Security Posture */}
         <div className="card">
           <div className="card-h"><h3>Identity Security Posture</h3><button className="btn" onClick={() => navigate('/identity')}>View</button></div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 14 }}>
-            <StatTile label="High Risk Users" value={highRiskUsers} color="var(--crit)" />
-            <StatTile label="MFA Coverage"    value={`${mfaPct}%`} color={mfaPct >= 90 ? 'var(--ok)' : 'var(--high)'} />
-            <StatTile label="Dormant Users"   value={dormantUsers}  color="var(--high)" />
+          <div style={{ padding: '14px 14px 14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 14 }}>
+              <StatTile label="High Risk Users" value={highRiskUsers}    color="var(--crit)" />
+              <StatTile label="MFA Coverage"    value={`${mfaPct}%`}    color={mfaPct >= 90 ? 'var(--ok)' : 'var(--high)'} />
+              <StatTile label="Dormant Users"   value={dormantUsers}     color="var(--high)" />
+              <StatTile label="Total Users"     value={users.length}     color="var(--txt2)" />
+            </div>
+            <MiniBar label="MFA enabled"  val={mfaEnabled}              total={users.length} color="var(--ok)"   />
+            <MiniBar label="High risk"    val={highRiskUsers}            total={users.length} color="var(--crit)" />
+            <MiniBar label="Dormant"      val={dormantUsers}             total={users.length} color="var(--high)" />
           </div>
-          <MiniBar label="MFA enabled"  val={mfaEnabled}              total={users.length} color="var(--ok)"   />
-          <MiniBar label="High risk"    val={highRiskUsers}            total={users.length} color="var(--crit)" />
-          <MiniBar label="Dormant"      val={dormantUsers}             total={users.length} color="var(--high)" />
         </div>
 
         {/* Cloud Security Posture */}
         <div className="card">
           <div className="card-h"><h3>Cloud Security Posture</h3><button className="btn" onClick={() => navigate('/cloud')}>View</button></div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 14 }}>
-            <StatTile label="Critical" value={criticalFindings} color="var(--crit)" />
-            <StatTile label="High"     value={highFindings}     color="var(--high)" />
-            <StatTile label="Medium"   value={medFindings}      color="var(--med)"  />
-            <StatTile label="Low"      value={lowFindings}      color="var(--txt3)" />
+          <div style={{ padding: '14px 14px 14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 14 }}>
+              <StatTile label="Critical" value={criticalFindings} color="var(--crit)" />
+              <StatTile label="High"     value={highFindings}     color="var(--high)" />
+              <StatTile label="Medium"   value={medFindings}      color="var(--med)"  />
+              <StatTile label="Low"      value={lowFindings}      color="var(--txt3)" />
+            </div>
+            <MiniBar label="Critical" val={criticalFindings} total={findings.length} color="var(--crit)" />
+            <MiniBar label="High"     val={highFindings}     total={findings.length} color="var(--high)" />
+            <MiniBar label="Medium"   val={medFindings}      total={findings.length} color="var(--med)"  />
           </div>
-          <MiniBar label="Critical" val={criticalFindings} total={findings.length} color="var(--crit)" />
-          <MiniBar label="High"     val={highFindings}     total={findings.length} color="var(--high)" />
-          <MiniBar label="Medium"   val={medFindings}      total={findings.length} color="var(--med)"  />
         </div>
 
         {/* AI Shadow Monitor */}
@@ -260,22 +271,23 @@ export default function Overview() {
             </h3>
             <button className="btn" onClick={() => navigate('/aispm')}>View</button>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 14 }}>
-            <StatTile label="Shadow AI Tools"   value={shadowAiCount}                                          color="var(--high)" />
-            <StatTile label="Live Detections"   value={chatgptDetected ? 1 : 0}                                color={chatgptDetected ? 'var(--crit)' : 'var(--txt3)'} />
-            <StatTile label="Compliance Gaps"   value={aiSummary?.complianceGap?.count ?? 0}                   color="var(--high)" />
-            <StatTile label="Critical Risk"     value={aiSummary?.criticalRisk?.count ?? 0}                    color="var(--crit)" />
+          <div style={{ padding: '14px 14px 14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 14 }}>
+              <StatTile label="Shadow AI Tools"   value={shadowAiCount}                         color="var(--high)" />
+              <StatTile label="Live Detections"   value={chatgptDetected ? 1 : 0}               color={chatgptDetected ? 'var(--crit)' : 'var(--txt3)'} />
+              <StatTile label="Compliance Gaps"   value={aiSummary?.complianceGap?.count ?? 0}  color="var(--high)" />
+              <StatTile label="Critical Risk"     value={aiSummary?.criticalRisk?.count ?? 0}   color="var(--crit)" />
+            </div>
+            {chatgptDetected ? (
+              <div style={{ padding: '8px 12px', background: 'rgba(245,158,11,.08)', borderRadius: 6, border: '1px solid rgba(245,158,11,.25)', fontSize: 11, color: 'var(--high)', fontWeight: 600 }}>
+                ⚠ chatgpt.com session detected · LT-VyshnaviT-3941
+              </div>
+            ) : (
+              <div style={{ fontSize: 11, color: 'var(--txt3)', lineHeight: 1.6 }}>
+                Monitoring for unauthorized AI tool usage across all endpoints.
+              </div>
+            )}
           </div>
-          {chatgptDetected && (
-            <div style={{ padding: '8px 12px', background: 'rgba(245,158,11,.08)', borderRadius: 6, border: '1px solid rgba(245,158,11,.25)', fontSize: 11, color: 'var(--high)', fontWeight: 600 }}>
-              ⚠ chatgpt.com session detected · LT-VyshnaviT-3941
-            </div>
-          )}
-          {!chatgptDetected && (
-            <div style={{ fontSize: 11, color: 'var(--txt3)', lineHeight: 1.6 }}>
-              Monitoring for unauthorized AI tool usage across all endpoints.
-            </div>
-          )}
         </div>
       </div>
 
