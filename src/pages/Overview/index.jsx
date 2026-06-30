@@ -7,8 +7,9 @@ import { CloudService }    from '../../services/CloudService.js'
 import { NetworkService }  from '../../services/NetworkService.js'
 import { PrivacyService }  from '../../services/PrivacyService.js'
 import { AISPMService }    from '../../services/AISPMService.js'
+import { API_BASE } from '../../config.js'
 
-const API = 'http://localhost:3001'
+const API = API_BASE
 
 const SEV_COLOR = { CRITICAL: 'var(--crit)', HIGH: 'var(--high)', MEDIUM: 'var(--med)', LOW: 'var(--txt3)', INFO: 'var(--txt3)' }
 const SEV_CLS   = { CRITICAL: 'cr', HIGH: 'hi', MEDIUM: 'me', LOW: 'ne', INFO: 'ne' }

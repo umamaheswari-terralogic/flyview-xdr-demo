@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import StatusBadge from '../../../components/StatusBadge.jsx'
 import { AISPMService } from '../../../services/AISPMService.js'
+import { API_BASE } from '../../../config.js'
 
-const API = 'http://localhost:3001'
+const API = API_BASE
 const FILTERS = ['All', 'Open', 'Blocked', 'Resolved']
 
 const SIM_CHATGPT_EVENT = {

@@ -8,8 +8,9 @@ import ActionButtons from '../../../components/ActionButtons.jsx'
 import WidgetCard from '../../../components/WidgetCard.jsx'
 import { ThreatService } from '../../../services/ThreatService.js'
 import { Icons } from '../../../shared/icons.jsx'
+import { API_BASE } from '../../../config.js'
 
-const API = 'http://localhost:3001'
+const API = API_BASE
 
 function RowBar({ label, pct, color, val }) {
   return (

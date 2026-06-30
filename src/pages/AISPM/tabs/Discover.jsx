@@ -4,8 +4,9 @@ import StatusBadge from '../../../components/StatusBadge.jsx'
 import WidgetCard from '../../../components/WidgetCard.jsx'
 import { AISPMService } from '../../../services/AISPMService.js'
 import { Icons } from '../../../shared/icons.jsx'
+import { API_BASE } from '../../../config.js'
 
-const API = 'http://localhost:3001'
+const API = API_BASE
 
 const SIM_CLI_ASSET = {
   name: 'Ollama / LLaMA 3',

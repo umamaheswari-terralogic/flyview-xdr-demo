@@ -4,8 +4,9 @@ import TopBar from '../components/TopBar.jsx'
 import TabNavigation from '../components/TabNavigation.jsx'
 import { ToastProvider } from '../components/Toast.jsx'
 import { useState, useEffect, useRef } from 'react'
+import { API_BASE } from '../config.js'
 
-const API = 'http://localhost:3001'
+const API = API_BASE
 
 const MODULE_CONFIG = {
   '/': {

@@ -4,6 +4,7 @@ import StatusBadge from '../../../components/StatusBadge.jsx'
 import DeviceDrawer from '../../../components/DeviceDrawer.jsx'
 import { DeviceService } from '../../../services/DeviceService.js'
 import { Icons } from '../../../shared/icons.jsx'
+import { API_BASE } from '../../../config.js'
 
 function RowBar({ label, pct, color, val }) {
   return (
@@ -40,7 +41,7 @@ export default function DevicesOverview() {
     async function poll() {
       if (cancelled) return
       try {
-        const res = await fetch('http://localhost:3001/api/devices/LT-VyshnaviT-3941')
+        const res = await fetch(`${API_BASE}/api/devices/LT-VyshnaviT-3941`)
         if (res.ok) setSimDevice(await res.json())
       } catch { /* server not running */ }
       if (!cancelled) setTimeout(poll, 3000)

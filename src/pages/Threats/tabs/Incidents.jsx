@@ -4,8 +4,9 @@ import SeverityBadge from '../../../components/SeverityBadge.jsx'
 import StatusBadge from '../../../components/StatusBadge.jsx'
 import ActionButtons from '../../../components/ActionButtons.jsx'
 import { ThreatService } from '../../../services/ThreatService.js'
+import { API_BASE } from '../../../config.js'
 
-const API = 'http://localhost:3001'
+const API = API_BASE
 
 export default function IncidentsTab() {
   const navigate = useNavigate()

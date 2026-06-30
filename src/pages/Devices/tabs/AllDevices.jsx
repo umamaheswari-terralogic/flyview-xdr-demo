@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import StatusBadge from '../../../components/StatusBadge.jsx'
 import DeviceDrawer from '../../../components/DeviceDrawer.jsx'
 import { DeviceService } from '../../../services/DeviceService.js'
+import { API_BASE } from '../../../config.js'
 
 const EXTRA_DEVICES = [
   { name: 'CORP-MAC-102', user: 'james.w@terralogic.com',   platform: '🍎 macOS 14.5',  status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'DEP',          lastSeen: '3 min'  },
@@ -27,7 +28,7 @@ export default function AllDevices() {
   const [selectedDevice, setSelectedDevice] = useState(null)
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/devices')
+    fetch(`${API_BASE}/api/devices`)
       .then(r => r.ok ? r.json() : Promise.reject())
       .then(data => setServerDevices(data.devices))
       .catch(() => DeviceService.getInventory().then(inv => setServerDevices(inv.devices)))
