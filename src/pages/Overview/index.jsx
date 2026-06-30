@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   ShieldAlert, ShieldCheck, ShieldX, Bell, Users, Cloud,
-  Bot, FileText, Monitor, Wifi, Server, Lock,
-  TrendingUp, AlertTriangle, CheckCircle2, Clock,
-  Activity, Cpu, Eye, Layers, Globe, UserX,
+  Bot, FileText, Monitor, Wifi, Lock, AlertTriangle,
+  Activity, Eye, Layers, UserX, Clock, ArrowUpRight,
 } from 'lucide-react'
 import { DeviceService }   from '../../services/DeviceService.js'
 import { MonitorService }  from '../../services/MonitorService.js'
@@ -17,142 +16,147 @@ import { API_BASE } from '../../config.js'
 
 const API = API_BASE
 
-// ── Tiny sparkline ────────────────────────────────────────────────
-function Spark({ color }) {
-  return (
-    <svg width="80" height="24" viewBox="0 0 80 24" fill="none"
-      style={{ position: 'absolute', bottom: 10, right: 12, opacity: .4 }}>
-      <polyline points="0,18 12,14 24,16 36,8 48,12 60,6 72,10 80,4"
-        stroke={color} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
+const SEV_CFG = {
+  CRITICAL: { color: '#ef4444', label: 'Critical' },
+  HIGH:     { color: '#f59e0b', label: 'High'     },
+  MEDIUM:   { color: '#eab308', label: 'Medium'   },
+  LOW:      { color: '#22c55e', label: 'Low'       },
+  INFO:     { color: '#94a3b8', label: 'Info'      },
 }
 
-// ── KPI card ──────────────────────────────────────────────────────
-function KpiCard({ Icon, label, value, sub, accent, onClick }) {
+const STATUS_CLR = {
+  OPEN: '#ef4444', ACK: '#f59e0b', RESOLVED: '#22c55e', 'IN PROGRESS': '#f59e0b',
+}
+
+// ── Gradient KPI card ─────────────────────────────────────────────
+function KpiCard({ Icon, label, value, sub, grad, onClick }) {
   return (
     <div onClick={onClick} style={{
-      background: 'var(--card)', borderRadius: 12, padding: '16px 16px 14px',
-      cursor: onClick ? 'pointer' : 'default', position: 'relative', overflow: 'hidden',
-      border: `1px solid var(--border)`, borderTop: `3px solid ${accent}`,
-      display: 'flex', flexDirection: 'column', gap: 8,
-      transition: 'box-shadow .2s, transform .15s',
+      background: grad, borderRadius: 16, padding: '20px 18px',
+      cursor: 'pointer', position: 'relative', overflow: 'hidden',
+      boxShadow: '0 4px 24px rgba(0,0,0,.18)',
+      transition: 'transform .18s, box-shadow .18s',
+      display: 'flex', flexDirection: 'column', gap: 10,
     }}
-    onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 6px 24px ${accent}28`; e.currentTarget.style.transform = 'translateY(-1px)' }}
-    onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none' }}
+    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 10px 32px rgba(0,0,0,.28)' }}
+    onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(0,0,0,.18)' }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ fontSize: 10, color: 'var(--txt3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .9 }}>{label}</div>
-        <div style={{
-          width: 34, height: 34, borderRadius: 9, background: `${accent}15`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-        }}>
-          <Icon size={17} color={accent} strokeWidth={2} />
+      {/* Background decorative circle */}
+      <div style={{
+        position: 'absolute', right: -18, top: -18,
+        width: 90, height: 90, borderRadius: '50%',
+        background: 'rgba(255,255,255,.08)',
+      }} />
+      <div style={{
+        position: 'absolute', right: 14, bottom: -24,
+        width: 60, height: 60, borderRadius: '50%',
+        background: 'rgba(255,255,255,.06)',
+      }} />
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
+        <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,.7)', textTransform: 'uppercase', letterSpacing: 1 }}>{label}</span>
+        <div style={{ background: 'rgba(255,255,255,.15)', borderRadius: 8, padding: 6, display: 'flex' }}>
+          <Icon size={15} color="#fff" strokeWidth={2.2} />
         </div>
       </div>
-      <div style={{ fontSize: 34, fontWeight: 900, color: accent, lineHeight: 1, fontFamily: 'JetBrains Mono, monospace' }}>{value}</div>
-      {sub && <div style={{ fontSize: 11, color: 'var(--txt3)' }}>{sub}</div>}
-      <Spark color={accent} />
+      <div style={{ fontSize: 38, fontWeight: 900, color: '#fff', lineHeight: 1, fontFamily: 'JetBrains Mono, monospace', position: 'relative' }}>{value}</div>
+      {sub && <div style={{ fontSize: 11, color: 'rgba(255,255,255,.65)', position: 'relative' }}>{sub}</div>}
     </div>
   )
 }
 
-// ── Section header with number badge ─────────────────────────────
-function SectionTitle({ n, title }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-      <div style={{
-        width: 22, height: 22, borderRadius: 6, background: 'var(--purple)',
-        color: '#fff', fontSize: 11, fontWeight: 800,
-        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-      }}>{n}</div>
-      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--txt)' }}>{title}</span>
-    </div>
-  )
-}
-
-// ── Colored command center tile ───────────────────────────────────
-function CmdTile({ label, value, bg, Icon, onClick }) {
+// ── Command center tile ───────────────────────────────────────────
+function CmdTile({ label, value, Icon, color, onClick }) {
   return (
     <div onClick={onClick} style={{
-      background: bg, borderRadius: 10, padding: '14px 12px',
-      cursor: 'pointer', textAlign: 'center', display: 'flex',
-      flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      minHeight: 78, gap: 4, transition: 'opacity .15s, transform .15s',
+      background: 'var(--bg3)', border: `1px solid ${color}30`,
+      borderRadius: 12, padding: '14px 10px', cursor: 'pointer',
+      textAlign: 'center', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', gap: 6,
+      transition: 'background .2s, border-color .2s, transform .15s',
     }}
-    onMouseEnter={e => { e.currentTarget.style.opacity = '.88'; e.currentTarget.style.transform = 'scale(1.02)' }}
-    onMouseLeave={e => { e.currentTarget.style.opacity = '1';   e.currentTarget.style.transform = 'scale(1)' }}
+    onMouseEnter={e => { e.currentTarget.style.background = `${color}12`; e.currentTarget.style.borderColor = `${color}60`; e.currentTarget.style.transform = 'translateY(-2px)' }}
+    onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg3)'; e.currentTarget.style.borderColor = `${color}30`; e.currentTarget.style.transform = 'none' }}
     >
-      <Icon size={20} color="rgba(255,255,255,.85)" strokeWidth={1.8} />
-      <div style={{ fontSize: 24, fontWeight: 900, color: '#fff', fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: 9, color: 'rgba(255,255,255,.75)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .7 }}>{label}</div>
-    </div>
-  )
-}
-
-// ── Severity row bar ──────────────────────────────────────────────
-function SevBar({ label, val, total, color }) {
-  const pct = total > 0 ? Math.round((val / total) * 100) : 0
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-      <div style={{
-        width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0,
-      }} />
-      <span style={{ fontSize: 11, color: 'var(--txt2)', width: 72, flexShrink: 0 }}>{label}</span>
-      <div style={{ flex: 1, height: 6, background: 'var(--bg3)', borderRadius: 3, overflow: 'hidden' }}>
-        <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: 3, transition: 'width .6s ease' }} />
+      <div style={{ background: `${color}18`, borderRadius: 10, padding: 8, display: 'flex' }}>
+        <Icon size={18} color={color} strokeWidth={1.8} />
       </div>
-      <span style={{ fontSize: 11, fontWeight: 700, color, width: 24, textAlign: 'right' }}>{val}</span>
+      <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--txt)', fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>{value}</div>
+      <div style={{ fontSize: 9.5, color: 'var(--txt3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: .6 }}>{label}</div>
     </div>
   )
 }
 
-// ── Stat box (identity / cloud panels) ───────────────────────────
-function StatBox({ label, value, color, Icon }) {
+// ── Panel card wrapper ────────────────────────────────────────────
+function Panel({ title, Icon, iconColor, children, onClick, alert }) {
   return (
-    <div style={{
-      background: `${color}10`, border: `1px solid ${color}28`,
-      borderRadius: 10, padding: '11px 8px', textAlign: 'center',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
-    }}>
-      {Icon && <Icon size={16} color={color} strokeWidth={2} style={{ opacity: .85 }} />}
-      <div style={{ fontSize: 22, fontWeight: 900, color, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: 9, color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5, opacity: .75 }}>{label}</div>
+    <div onClick={onClick} style={{
+      background: 'var(--card)', borderRadius: 14,
+      border: alert ? `1px solid ${alert}40` : '1px solid var(--border)',
+      overflow: 'hidden', cursor: onClick ? 'pointer' : 'default',
+      boxShadow: '0 2px 12px rgba(0,0,0,.08)',
+      transition: 'box-shadow .2s, transform .15s',
+    }}
+    onMouseEnter={e => onClick && (e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,0,0,.14)', e.currentTarget.style.transform = 'translateY(-1px)')}
+    onMouseLeave={e => onClick && (e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,.08)', e.currentTarget.style.transform = 'none')}
+    >
+      {/* Header strip */}
+      <div style={{
+        padding: '12px 16px', display: 'flex', alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottom: '1px solid var(--border)',
+        background: 'var(--bg3)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ background: `${iconColor}18`, borderRadius: 7, padding: '5px 6px', display: 'flex' }}>
+            <Icon size={13} color={iconColor} strokeWidth={2.2} />
+          </div>
+          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--txt)' }}>{title}</span>
+        </div>
+        {onClick && <ArrowUpRight size={13} color="var(--txt3)" />}
+      </div>
+      <div style={{ padding: '14px 16px' }}>{children}</div>
     </div>
   )
 }
 
-// ── Alert severity pill for timeline ─────────────────────────────
-const SEV_CFG = {
-  CRITICAL: { bg: 'var(--crit)', lbl: 'Critical' },
-  HIGH:     { bg: 'var(--high)', lbl: 'High'     },
-  MEDIUM:   { bg: 'var(--med)',  lbl: 'Medium'   },
-  LOW:      { bg: 'var(--ok)',   lbl: 'Low'       },
-  INFO:     { bg: 'var(--txt3)', lbl: 'Info'      },
+// ── Stat row inside panels ────────────────────────────────────────
+function StatRow({ Icon, label, value, color, pct, total }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+      <div style={{ background: `${color}15`, borderRadius: 6, padding: '4px 5px', display: 'flex', flexShrink: 0 }}>
+        <Icon size={12} color={color} strokeWidth={2.2} />
+      </div>
+      <span style={{ fontSize: 11.5, color: 'var(--txt2)', flex: 1 }}>{label}</span>
+      {total !== undefined && (
+        <div style={{ width: 64, height: 4, background: 'var(--bg3)', borderRadius: 2, overflow: 'hidden', marginRight: 6 }}>
+          <div style={{ width: `${total > 0 ? Math.round((value / total) * 100) : 0}%`, height: '100%', background: color, borderRadius: 2, transition: 'width .6s ease' }} />
+        </div>
+      )}
+      <span style={{ fontSize: 13, fontWeight: 800, color, fontFamily: 'JetBrains Mono, monospace', minWidth: 28, textAlign: 'right' }}>{value}</span>
+    </div>
+  )
 }
 
 export default function Overview() {
   const navigate = useNavigate()
 
-  const [inventory, setInventory]   = useState({ devices: [] })
-  const [alerts, setAlerts]         = useState([])
-  const [users, setUsers]           = useState([])
-  const [findings, setFindings]     = useState([])
-  const [netDevices, setNetDevices] = useState([])
-  const [dsars, setDsars]           = useState([])
-  const [aiSummary, setAiSummary]   = useState(null)
-  const [loading, setLoading]       = useState(true)
-  const [liveDevices, setLiveDevices]   = useState([])
-  const [chatgptDetected, setChatgpt]   = useState(false)
+  const [inventory, setInventory]     = useState({ devices: [] })
+  const [alerts, setAlerts]           = useState([])
+  const [users, setUsers]             = useState([])
+  const [findings, setFindings]       = useState([])
+  const [netDevices, setNetDevices]   = useState([])
+  const [dsars, setDsars]             = useState([])
+  const [aiSummary, setAiSummary]     = useState(null)
+  const [loading, setLoading]         = useState(true)
+  const [liveDevices, setLiveDevices] = useState([])
+  const [chatgptDetected, setChatgpt] = useState(false)
 
   useEffect(() => {
     Promise.all([
-      DeviceService.getInventory(),
-      MonitorService.getAlerts(),
-      IdentityService.getUsers(),
-      CloudService.getFindings(),
-      NetworkService.getDevices(),
-      PrivacyService.getDsars(),
+      DeviceService.getInventory(), MonitorService.getAlerts(),
+      IdentityService.getUsers(),   CloudService.getFindings(),
+      NetworkService.getDevices(),  PrivacyService.getDsars(),
       AISPMService.getSummary(),
     ]).then(([inv, al, us, fi, nd, ds, ai]) => {
       setInventory(inv); setAlerts(al); setUsers(us); setFindings(fi)
@@ -172,19 +176,18 @@ export default function Overview() {
 
   if (loading) return <div className="loading-state">Loading overview…</div>
 
-  // ── Computed ──────────────────────────────────────────────────
-  const devList        = liveDevices.length > 0 ? liveDevices : (inventory.devices ?? [])
-  const totalDevices   = devList.length
-  const compliant      = devList.filter(d => d.status === 'COMPLIANT').length
-  const nonCompliant   = devList.filter(d => d.status === 'NON-COMPLIANT').length
-  const atRisk         = devList.filter(d => d.status === 'AT RISK').length
-  const criticalAlerts = alerts.filter(a => a.sevCls === 'cr').length
-  const highAlerts     = alerts.filter(a => a.sevCls === 'hi').length
-  const recentAlerts   = alerts.slice(0, 6)
-  const highRiskUsers  = users.filter(u => u.riskCls === 'cr' || u.riskCls === 'hi').length
-  const mfaEnabled     = users.filter(u => u.mfa === true).length
-  const mfaPct         = users.length > 0 ? Math.round((mfaEnabled / users.length) * 100) : 0
-  const dormantUsers   = users.filter(u => u.status === 'DORMANT' || u.status === 'Inactive').length
+  const devList          = liveDevices.length > 0 ? liveDevices : (inventory.devices ?? [])
+  const totalDevices     = devList.length
+  const compliant        = devList.filter(d => d.status === 'COMPLIANT').length
+  const nonCompliant     = devList.filter(d => d.status === 'NON-COMPLIANT').length
+  const atRisk           = devList.filter(d => d.status === 'AT RISK').length
+  const criticalAlerts   = alerts.filter(a => a.sevCls === 'cr').length
+  const highAlerts       = alerts.filter(a => a.sevCls === 'hi').length
+  const recentAlerts     = alerts.slice(0, 6)
+  const highRiskUsers    = users.filter(u => u.riskCls === 'cr' || u.riskCls === 'hi').length
+  const mfaEnabled       = users.filter(u => u.mfa === true).length
+  const mfaPct           = users.length > 0 ? Math.round((mfaEnabled / users.length) * 100) : 0
+  const dormantUsers     = users.filter(u => u.status === 'DORMANT' || u.status === 'Inactive').length
   const criticalFindings = findings.filter(f => f.severity === 'CRITICAL').length
   const highFindings     = findings.filter(f => f.severity === 'HIGH').length
   const medFindings      = findings.filter(f => f.severity === 'MEDIUM').length
@@ -204,120 +207,151 @@ export default function Overview() {
     })),
   ].slice(0, 6)
 
-  const STATUS_CLR = { OPEN: 'var(--crit)', ACK: 'var(--high)', RESOLVED: 'var(--ok)', 'IN PROGRESS': 'var(--high)' }
-
   return (
     <>
       {/* ── KPI Strip ─────────────────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, marginBottom: 22 }}>
-        <KpiCard Icon={ShieldX}     label="Non-Compliant Devices"  value={nonCompliant}     sub={`of ${totalDevices} endpoints`}      accent="var(--crit)" onClick={() => navigate('/devices')}  />
-        <KpiCard Icon={Bell}        label="Critical Alerts"         value={criticalAlerts}   sub={`${highAlerts} high severity`}        accent="var(--crit)" onClick={() => navigate('/monitor')}  />
-        <KpiCard Icon={UserX}       label="High Risk Users"          value={highRiskUsers}    sub={`MFA coverage ${mfaPct}%`}           accent="var(--high)" onClick={() => navigate('/identity')} />
-        <KpiCard Icon={Cloud}       label="Critical Cloud Findings"  value={criticalFindings} sub={`${highFindings} high severity`}     accent="var(--high)" onClick={() => navigate('/cloud')}    />
-        <KpiCard Icon={Bot}         label="Shadow AI Detected"       value={shadowAiCount}    sub={chatgptDetected ? '⚠ Live session' : `${aiSummary?.complianceGap?.count ?? 0} gaps`} accent={chatgptDetected ? 'var(--crit)' : 'var(--purple)'} onClick={() => navigate('/aispm')} />
-        <KpiCard Icon={FileText}    label="Open DSARs"               value={openDsars}        sub={overdueDsars > 0 ? `${overdueDsars} overdue` : 'All within SLA'} accent={overdueDsars > 0 ? 'var(--crit)' : 'var(--ok)'} onClick={() => navigate('/privacy')} />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14, marginBottom: 20 }}>
+        <KpiCard Icon={ShieldX}  label="Non-Compliant Devices" value={nonCompliant}     sub={`of ${totalDevices} endpoints`}    grad="linear-gradient(135deg,#dc2626,#991b1b)" onClick={() => navigate('/devices')}  />
+        <KpiCard Icon={Bell}     label="Critical Alerts"        value={criticalAlerts}   sub={`+ ${highAlerts} high severity`}   grad="linear-gradient(135deg,#b91c1c,#7f1d1d)" onClick={() => navigate('/monitor')}  />
+        <KpiCard Icon={UserX}    label="High Risk Users"         value={highRiskUsers}    sub={`MFA ${mfaPct}% coverage`}        grad="linear-gradient(135deg,#d97706,#92400e)" onClick={() => navigate('/identity')} />
+        <KpiCard Icon={Cloud}    label="Critical Cloud"          value={criticalFindings} sub={`${highFindings} high severity`}  grad="linear-gradient(135deg,#7c3aed,#4c1d95)" onClick={() => navigate('/cloud')}    />
+        <KpiCard Icon={Bot}      label="Shadow AI"               value={shadowAiCount}    sub={chatgptDetected ? '⚠ Live session detected' : `${aiSummary?.complianceGap?.count ?? 0} compliance gaps`} grad={chatgptDetected ? 'linear-gradient(135deg,#dc2626,#7c3aed)' : 'linear-gradient(135deg,#6d28d9,#4c1d95)'} onClick={() => navigate('/aispm')} />
+        <KpiCard Icon={FileText} label="Open DSARs"              value={openDsars}        sub={overdueDsars > 0 ? `${overdueDsars} overdue` : 'All within SLA'} grad={overdueDsars > 0 ? 'linear-gradient(135deg,#dc2626,#991b1b)' : 'linear-gradient(135deg,#059669,#064e3b)'} onClick={() => navigate('/privacy')} />
       </div>
 
-      {/* ── Row A: Command Center + 4 stat panels ─────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr 1fr 1fr 1fr', gap: 14, marginBottom: 16 }}>
+      {/* ── Row A: Command Center + 4 posture panels ──────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '210px 1fr 1fr 1fr 1fr', gap: 14, marginBottom: 14 }}>
 
-        {/* 1. Security Command Center */}
-        <div className="card" style={{ padding: 14 }}>
-          <SectionTitle n="1" title="Command Center" />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7 }}>
-            <CmdTile label="Endpoints"      value={totalDevices}      Icon={Monitor}      bg="linear-gradient(135deg,#16a34a,#15803d)" onClick={() => navigate('/devices')}  />
-            <CmdTile label="Network"        value={netDevices.length} Icon={Wifi}         bg="linear-gradient(135deg,#2563eb,#1d4ed8)" onClick={() => navigate('/network')}  />
-            <CmdTile label="Cloud"          value={findings.length}   Icon={Cloud}        bg="linear-gradient(135deg,#d97706,#b45309)" onClick={() => navigate('/cloud')}    />
-            <CmdTile label="Identity"       value={users.length}      Icon={Users}        bg="linear-gradient(135deg,#7c3aed,#6d28d9)" onClick={() => navigate('/identity')} />
-            <CmdTile label="Alerts"         value={alerts.length}     Icon={ShieldAlert}  bg={criticalAlerts > 0 ? 'linear-gradient(135deg,#dc2626,#b91c1c)' : 'linear-gradient(135deg,#16a34a,#15803d)'} onClick={() => navigate('/monitor')}  />
-            <CmdTile label="DSARs"          value={dsars.length}      Icon={Lock}         bg="linear-gradient(135deg,#0891b2,#0e7490)" onClick={() => navigate('/privacy')}  />
+        {/* Command Center */}
+        <div style={{ background: 'var(--card)', borderRadius: 14, border: '1px solid var(--border)', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,.08)' }}>
+          <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', background: 'var(--bg3)' }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--txt)' }}>Security Command Center</span>
+          </div>
+          <div style={{ padding: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <CmdTile label="Endpoints" value={totalDevices}      Icon={Monitor}     color="#22c55e" onClick={() => navigate('/devices')}  />
+            <CmdTile label="Network"   value={netDevices.length} Icon={Wifi}        color="#3b82f6" onClick={() => navigate('/network')}  />
+            <CmdTile label="Cloud"     value={findings.length}   Icon={Cloud}       color="#f59e0b" onClick={() => navigate('/cloud')}    />
+            <CmdTile label="Identity"  value={users.length}      Icon={Users}       color="#a78bfa" onClick={() => navigate('/identity')} />
+            <CmdTile label="Alerts"    value={alerts.length}     Icon={ShieldAlert} color={criticalAlerts > 0 ? '#ef4444' : '#22c55e'} onClick={() => navigate('/monitor')}  />
+            <CmdTile label="DSARs"     value={dsars.length}      Icon={Lock}        color="#22d3ee" onClick={() => navigate('/privacy')}  />
           </div>
         </div>
 
-        {/* 2. Endpoint Coverage */}
-        <div className="card" style={{ padding: 14 }}>
-          <SectionTitle n="2" title="Endpoint Coverage" />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7, marginBottom: 12 }}>
-            <StatBox label="Protected"     value={compliant}    color="var(--ok)"   Icon={ShieldCheck}   />
-            <StatBox label="Non-Compliant" value={nonCompliant} color="var(--crit)" Icon={ShieldX}       />
-            <StatBox label="At Risk"       value={atRisk}       color="var(--high)" Icon={AlertTriangle} />
-            <StatBox label="Total Fleet"   value={totalDevices} color="var(--txt2)" Icon={Monitor}       />
+        {/* Endpoint Coverage */}
+        <Panel title="Endpoint Coverage" Icon={Monitor} iconColor="#22c55e" onClick={() => navigate('/devices')}>
+          <StatRow Icon={ShieldCheck}  label="Compliant"     value={compliant}    color="#22c55e" total={totalDevices} />
+          <StatRow Icon={ShieldX}      label="Non-Compliant" value={nonCompliant} color="#ef4444" total={totalDevices} />
+          <StatRow Icon={AlertTriangle}label="At Risk"       value={atRisk}       color="#f59e0b" total={totalDevices} />
+          <StatRow Icon={Monitor}      label="Total Fleet"   value={totalDevices} color="#94a3b8" />
+          {/* Visual donut-style ring summary */}
+          <div style={{ marginTop: 12, padding: '10px 14px', background: 'var(--bg3)', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ position: 'relative', width: 44, height: 44, flexShrink: 0 }}>
+              <svg width="44" height="44" viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="17" fill="none" stroke="var(--border)" strokeWidth="5" />
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#22c55e" strokeWidth="5"
+                  strokeDasharray={`${totalDevices > 0 ? (compliant / totalDevices) * 107 : 0} 107`}
+                  strokeLinecap="round" transform="rotate(-90 22 22)" />
+              </svg>
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 800, color: '#22c55e' }}>
+                {totalDevices > 0 ? Math.round((compliant / totalDevices) * 100) : 0}%
+              </div>
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--txt2)', lineHeight: 1.5 }}>
+              <b style={{ color: '#22c55e' }}>{compliant}</b> of {totalDevices} devices are compliant
+            </div>
           </div>
-          <SevBar label="Protected"  val={compliant}    total={totalDevices} color="var(--ok)"   />
-          <SevBar label="Non-Compl." val={nonCompliant} total={totalDevices} color="var(--crit)" />
-          <SevBar label="At Risk"    val={atRisk}       total={totalDevices} color="var(--high)" />
-        </div>
+        </Panel>
 
-        {/* 3. Identity Posture */}
-        <div className="card" style={{ padding: 14, cursor: 'pointer' }} onClick={() => navigate('/identity')}>
-          <SectionTitle n="3" title="Identity Posture" />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7, marginBottom: 12 }}>
-            <StatBox label="High Risk"    value={highRiskUsers} color="var(--crit)" Icon={ShieldAlert} />
-            <StatBox label="MFA Coverage" value={`${mfaPct}%`} color={mfaPct >= 90 ? 'var(--ok)' : 'var(--high)'} Icon={Lock} />
-            <StatBox label="Dormant"      value={dormantUsers}  color="var(--high)" Icon={Clock}       />
-            <StatBox label="Total Users"  value={users.length}  color="var(--txt2)" Icon={Users}       />
+        {/* Identity Posture */}
+        <Panel title="Identity Posture" Icon={Users} iconColor="#a78bfa" onClick={() => navigate('/identity')}>
+          <StatRow Icon={ShieldAlert}  label="High Risk Users" value={highRiskUsers} color="#ef4444" total={users.length} />
+          <StatRow Icon={Lock}         label="MFA Enabled"     value={mfaEnabled}    color="#22c55e" total={users.length} />
+          <StatRow Icon={Clock}        label="Dormant Users"   value={dormantUsers}  color="#f59e0b" total={users.length} />
+          <StatRow Icon={Users}        label="Total Users"     value={users.length}  color="#94a3b8" />
+          <div style={{ marginTop: 12, padding: '10px 14px', background: 'var(--bg3)', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ position: 'relative', width: 44, height: 44, flexShrink: 0 }}>
+              <svg width="44" height="44" viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="17" fill="none" stroke="var(--border)" strokeWidth="5" />
+                <circle cx="22" cy="22" r="17" fill="none" stroke={mfaPct >= 90 ? '#22c55e' : '#f59e0b'} strokeWidth="5"
+                  strokeDasharray={`${mfaPct * 1.07} 107`}
+                  strokeLinecap="round" transform="rotate(-90 22 22)" />
+              </svg>
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 800, color: mfaPct >= 90 ? '#22c55e' : '#f59e0b' }}>
+                {mfaPct}%
+              </div>
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--txt2)', lineHeight: 1.5 }}>
+              MFA coverage across <b style={{ color: 'var(--txt)' }}>{users.length}</b> users
+            </div>
           </div>
-          <SevBar label="MFA on"    val={mfaEnabled}   total={users.length} color="var(--ok)"   />
-          <SevBar label="High risk" val={highRiskUsers} total={users.length} color="var(--crit)" />
-          <SevBar label="Dormant"   val={dormantUsers}  total={users.length} color="var(--high)" />
-        </div>
+        </Panel>
 
-        {/* 4. Cloud Posture */}
-        <div className="card" style={{ padding: 14, cursor: 'pointer' }} onClick={() => navigate('/cloud')}>
-          <SectionTitle n="4" title="Cloud Posture" />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7, marginBottom: 12 }}>
-            <StatBox label="Critical" value={criticalFindings} color="var(--crit)" Icon={ShieldX}       />
-            <StatBox label="High"     value={highFindings}     color="var(--high)" Icon={ShieldAlert}   />
-            <StatBox label="Medium"   value={medFindings}      color="var(--med)"  Icon={AlertTriangle} />
-            <StatBox label="Low"      value={lowFindings}      color="var(--txt3)" Icon={Eye}           />
+        {/* Cloud Posture */}
+        <Panel title="Cloud Security Posture" Icon={Cloud} iconColor="#f59e0b" onClick={() => navigate('/cloud')}>
+          <StatRow Icon={ShieldX}      label="Critical"  value={criticalFindings} color="#ef4444" total={findings.length} />
+          <StatRow Icon={ShieldAlert}  label="High"      value={highFindings}     color="#f59e0b" total={findings.length} />
+          <StatRow Icon={AlertTriangle}label="Medium"    value={medFindings}      color="#eab308" total={findings.length} />
+          <StatRow Icon={Eye}          label="Low"       value={lowFindings}      color="#94a3b8" total={findings.length} />
+          <div style={{ marginTop: 12, borderRadius: 10, overflow: 'hidden', height: 6, background: 'var(--bg3)', display: 'flex' }}>
+            {[
+              { val: criticalFindings, color: '#ef4444' },
+              { val: highFindings,     color: '#f59e0b' },
+              { val: medFindings,      color: '#eab308' },
+              { val: lowFindings,      color: '#64748b' },
+            ].map((s, i) => (
+              <div key={i} style={{ flex: s.val, background: s.color, transition: 'flex .6s ease' }} />
+            ))}
           </div>
-          <SevBar label="Critical" val={criticalFindings} total={findings.length} color="var(--crit)" />
-          <SevBar label="High"     val={highFindings}     total={findings.length} color="var(--high)" />
-          <SevBar label="Medium"   val={medFindings}      total={findings.length} color="var(--med)"  />
-        </div>
+          <div style={{ marginTop: 6, fontSize: 10, color: 'var(--txt3)' }}>{findings.length} total findings across all cloud assets</div>
+        </Panel>
 
-        {/* 5. AI Shadow Monitor */}
-        <div className="card" style={{
-          padding: 14, cursor: 'pointer',
-          border: chatgptDetected ? '1px solid var(--high)' : '1px solid var(--border)',
-          transition: 'border-color .3s',
-        }} onClick={() => navigate('/aispm')}>
-          <SectionTitle n="5" title="AI Shadow Monitor" />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7, marginBottom: 12 }}>
-            <StatBox label="Shadow AI"   value={shadowAiCount}                        color="var(--high)"  Icon={Bot}         />
-            <StatBox label="Live Detect" value={chatgptDetected ? 1 : 0}              color={chatgptDetected ? 'var(--crit)' : 'var(--txt3)'} Icon={Activity} />
-            <StatBox label="Gaps"        value={aiSummary?.complianceGap?.count ?? 0} color="var(--high)"  Icon={Layers}      />
-            <StatBox label="Critical"    value={aiSummary?.criticalRisk?.count ?? 0}  color="var(--crit)"  Icon={ShieldAlert} />
-          </div>
+        {/* AI Shadow Monitor */}
+        <Panel title="AI Shadow Monitor" Icon={Bot} iconColor="#c084fc"
+          alert={chatgptDetected ? '#f59e0b' : null} onClick={() => navigate('/aispm')}>
+          <StatRow Icon={Bot}          label="Shadow AI Tools"  value={shadowAiCount}                        color="#c084fc" />
+          <StatRow Icon={Activity}     label="Live Detections"  value={chatgptDetected ? 1 : 0}              color={chatgptDetected ? '#ef4444' : '#94a3b8'} />
+          <StatRow Icon={Layers}       label="Compliance Gaps"  value={aiSummary?.complianceGap?.count ?? 0} color="#f59e0b" />
+          <StatRow Icon={ShieldAlert}  label="Critical Risk"    value={aiSummary?.criticalRisk?.count ?? 0}  color="#ef4444" />
           {chatgptDetected ? (
-            <div style={{ padding: '6px 10px', background: 'rgba(245,158,11,.1)', borderRadius: 6, border: '1px solid rgba(245,158,11,.3)', fontSize: 11, color: 'var(--high)', fontWeight: 600 }}>
-              ⚠ chatgpt.com session detected · LT-VyshnaviT-3941
+            <div style={{ marginTop: 12, padding: '9px 12px', borderRadius: 9, background: 'rgba(245,158,11,.08)', border: '1px solid rgba(245,158,11,.25)', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#f59e0b', flexShrink: 0, boxShadow: '0 0 6px #f59e0b' }} />
+              <span style={{ fontSize: 11, color: '#f59e0b', fontWeight: 600 }}>chatgpt.com · LT-VyshnaviT-3941</span>
             </div>
           ) : (
-            <div style={{ fontSize: 11, color: 'var(--txt3)', lineHeight: 1.6 }}>
-              Monitoring unauthorised AI tool usage across endpoints.
+            <div style={{ marginTop: 12, padding: '9px 12px', borderRadius: 9, background: 'var(--bg3)', fontSize: 11, color: 'var(--txt3)' }}>
+              Monitoring AI tool usage across all endpoints
             </div>
           )}
-        </div>
+        </Panel>
       </div>
 
-      {/* ── Row B: Threat Alert Timeline (full width) ─────────────── */}
-      <div className="card" style={{ padding: 16, marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-          <SectionTitle n="6" title="Threat Alert Timeline" />
-          <span style={{ fontSize: 11, color: 'var(--txt3)', marginTop: -12 }}>Last 24 hours</span>
+      {/* ── Row B: Threat Alert Timeline ──────────────────────────── */}
+      <div style={{ background: 'var(--card)', borderRadius: 14, border: '1px solid var(--border)', marginBottom: 14, overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,.08)' }}>
+        <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--border)', background: 'var(--bg3)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ background: '#ef444418', borderRadius: 7, padding: '5px 6px', display: 'flex' }}>
+              <Activity size={13} color="#ef4444" strokeWidth={2.2} />
+            </div>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--txt)' }}>Threat Alert Timeline</span>
+          </div>
+          <span style={{ fontSize: 11, color: 'var(--txt3)', background: 'var(--bg2)', padding: '3px 10px', borderRadius: 20, border: '1px solid var(--border)' }}>Last 24 hours</span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0 32px' }}>
+        <div style={{ padding: '8px 20px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0 28px' }}>
           {recentAlerts.map((a, i) => {
             const cfg = SEV_CFG[a.severity] ?? SEV_CFG.HIGH
             return (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0', borderBottom: '1px solid var(--border)' }}>
-                <span style={{ fontSize: 10.5, color: 'var(--txt3)', fontFamily: 'monospace', width: 36, flexShrink: 0 }}>{a.time}</span>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: cfg.bg, flexShrink: 0, boxShadow: `0 0 5px ${cfg.bg}` }} />
+              <div key={i} style={{ display: 'flex', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, flexShrink: 0, paddingTop: 2 }}>
+                  <div style={{ width: 9, height: 9, borderRadius: '50%', background: cfg.color, boxShadow: `0 0 8px ${cfg.color}80`, flexShrink: 0 }} />
+                  {i < recentAlerts.length - 3 && <div style={{ width: 1, flex: 1, background: 'var(--border)', minHeight: 20 }} />}
+                </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: cfg.bg }}>{cfg.lbl}</div>
-                  <div style={{ fontSize: 11, color: 'var(--txt2)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{a.description ?? a.event}</div>
-                  {a.device && <div style={{ fontSize: 10, color: 'var(--txt3)', marginTop: 1 }}>{a.device}</div>}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: cfg.color, background: `${cfg.color}15`, padding: '1px 7px', borderRadius: 20 }}>{cfg.label}</span>
+                    <span style={{ fontSize: 10, color: 'var(--txt3)', fontFamily: 'monospace' }}>{a.time}</span>
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--txt)', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{a.description ?? a.event}</div>
+                  {a.device && <div style={{ fontSize: 10.5, color: 'var(--txt3)', marginTop: 2 }}>{a.device}</div>}
                 </div>
               </div>
             )
@@ -326,41 +360,48 @@ export default function Overview() {
       </div>
 
       {/* ── Row C: Active Cybersecurity Actions ───────────────────── */}
-      <div className="card" style={{ padding: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-          <SectionTitle n="7" title="Active Cybersecurity Actions" />
-
-          <span style={{ fontSize: 11, color: 'var(--txt3)', marginTop: -12 }}>{activeActions.length} items requiring attention</span>
+      <div style={{ background: 'var(--card)', borderRadius: 14, border: '1px solid var(--border)', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,.08)' }}>
+        <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--border)', background: 'var(--bg3)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ background: '#f59e0b18', borderRadius: 7, padding: '5px 6px', display: 'flex' }}>
+              <ShieldAlert size={13} color="#f59e0b" strokeWidth={2.2} />
+            </div>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--txt)' }}>Active Cybersecurity Actions</span>
+          </div>
+          <span style={{ fontSize: 11, color: 'var(--txt3)', background: 'var(--bg2)', padding: '3px 10px', borderRadius: 20, border: '1px solid var(--border)' }}>{activeActions.length} items requiring attention</span>
         </div>
-        <table>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: 'var(--bg3)' }}>
               {['Time', 'Event', 'Asset', 'Module', 'Severity', 'Status'].map(h => (
-                <th key={h} style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: .6, padding: '8px 12px' }}>{h}</th>
+                <th key={h} style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: .7, padding: '8px 16px', textAlign: 'left', color: 'var(--txt3)', fontWeight: 700, borderBottom: '1px solid var(--border)' }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {activeActions.map((a, i) => (
-              <tr key={i} style={{ borderLeft: `3px solid ${a.sevCls === 'cr' ? 'var(--crit)' : a.sevCls === 'hi' ? 'var(--high)' : 'var(--med)'}` }}>
-                <td className="mono" style={{ fontSize: 11, color: 'var(--txt3)' }}>{a.time}</td>
-                <td style={{ fontSize: 12, fontWeight: 600 }}>{a.event}</td>
-                <td style={{ fontSize: 12, color: 'var(--txt2)' }}>{a.asset}</td>
-                <td><span className="ch">{a.module}</span></td>
-                <td><span className={`b ${a.sevCls}`}><i />{a.severity}</span></td>
-                <td>
-                  <span style={{
-                    display: 'inline-block', fontSize: 10, fontWeight: 700,
-                    padding: '2px 10px', borderRadius: 20,
-                    background: `${STATUS_CLR[a.status] ?? 'var(--txt3)'}18`,
-                    color: STATUS_CLR[a.status] ?? 'var(--txt3)',
-                    border: `1px solid ${STATUS_CLR[a.status] ?? 'var(--txt3)'}30`,
-                  }}>
-                    {a.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {activeActions.map((a, i) => {
+              const sevColor = a.sevCls === 'cr' ? '#ef4444' : a.sevCls === 'hi' ? '#f59e0b' : '#eab308'
+              const stColor  = STATUS_CLR[a.status] ?? '#94a3b8'
+              return (
+                <tr key={i} style={{ borderLeft: `3px solid ${sevColor}`, transition: 'background .15s' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--bg3)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <td style={{ padding: '11px 16px', fontSize: 11, color: 'var(--txt3)', fontFamily: 'monospace', borderBottom: '1px solid var(--border)' }}>{a.time}</td>
+                  <td style={{ padding: '11px 16px', fontSize: 12, fontWeight: 600, color: 'var(--txt)', borderBottom: '1px solid var(--border)' }}>{a.event}</td>
+                  <td style={{ padding: '11px 16px', fontSize: 11.5, color: 'var(--txt2)', borderBottom: '1px solid var(--border)' }}>{a.asset}</td>
+                  <td style={{ padding: '11px 16px', borderBottom: '1px solid var(--border)' }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, background: 'var(--bg3)', color: 'var(--txt2)', padding: '3px 9px', borderRadius: 6, border: '1px solid var(--border)' }}>{a.module}</span>
+                  </td>
+                  <td style={{ padding: '11px 16px', borderBottom: '1px solid var(--border)' }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: sevColor, background: `${sevColor}14`, padding: '3px 9px', borderRadius: 6, border: `1px solid ${sevColor}30` }}>{a.severity}</span>
+                  </td>
+                  <td style={{ padding: '11px 16px', borderBottom: '1px solid var(--border)' }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: stColor, background: `${stColor}14`, padding: '3px 10px', borderRadius: 20, border: `1px solid ${stColor}30` }}>{a.status}</span>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
