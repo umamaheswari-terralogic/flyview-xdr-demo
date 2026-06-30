@@ -5,28 +5,59 @@ import { AISPMService } from '../../../services/AISPMService.js'
 const API = 'http://localhost:3001'
 const FILTERS = ['All', 'Open', 'Blocked', 'Resolved']
 
+const SIM_CHATGPT_EVENT = {
+  id: 'SHADOW-001',
+  domain: 'chatgpt.com',
+  device: 'LT-VyshnaviT-3941',
+  user: 'vyshnavi.thatikonda@terralogic.com',
+  source: 'Browser Monitor',
+  detail: 'Active ChatGPT session — data exfil risk: INTERNAL content',
+  risk: 'HIGH',
+  riskCls: 'hi',
+  time: 'Just now',
+  status: 'OPEN',
+  statusCls: 'hi',
+  simType: 'chatgpt',
+}
+
+const SIM_EXT_EVENT = {
+  id: 'SHADOW-002',
+  domain: 'ChatGPT for Chrome',
+  device: 'LT-VyshnaviT-3941',
+  user: 'vyshnavi.thatikonda@terralogic.com',
+  source: 'MDM → AI-SPM',
+  detail: 'Blocked AI browser extension detected — reported by MDM as "Blocked app installed"',
+  risk: 'CRITICAL',
+  riskCls: 'cr',
+  time: 'Just now',
+  status: 'OPEN',
+  statusCls: 'cr',
+  simType: 'extension',
+}
+
 export default function Detect() {
   const [staticEvents, setStaticEvents] = useState([])
-  const [simEvent,     setSimEvent]     = useState(null)
-  const [filter,       setFilter]       = useState('All')
-  const [flash,        setFlash]        = useState(false)
-  const prevDetected = useRef(false)
+  const [chatgptDetected, setChatgptDetected] = useState(false)
+  const [extDetected, setExtDetected]         = useState(false)
+  const [filter, setFilter] = useState('All')
+  const [cgptFlash, setCgptFlash] = useState(false)
+  const [extFlash, setExtFlash]   = useState(false)
+  const prevCgpt = useRef(false)
+  const prevExt  = useRef(false)
 
-  // Load static events from JSON once
   useEffect(() => { AISPMService.getDetectionEvents().then(setStaticEvents) }, [])
 
-  // Poll sim state every 3s — same as Devices
   useEffect(() => {
     const poll = () =>
       fetch(`${API}/api/aispm/sim`)
         .then(r => r.json())
-        .then(({ chatgptDetected, event }) => {
-          if (chatgptDetected && !prevDetected.current) {
-            setFlash(true)
-            setTimeout(() => setFlash(false), 2500)
-          }
-          prevDetected.current = chatgptDetected
-          setSimEvent(event)
+        .then(({ chatgptDetected: cg, extensionDetected: ed }) => {
+          if (cg && !prevCgpt.current) { setCgptFlash(true); setTimeout(() => setCgptFlash(false), 2500) }
+          if (ed && !prevExt.current)  { setExtFlash(true);  setTimeout(() => setExtFlash(false),  2500) }
+          prevCgpt.current = cg
+          prevExt.current  = ed
+          setChatgptDetected(cg)
+          setExtDetected(ed)
         })
         .catch(() => {})
     poll()
@@ -34,10 +65,11 @@ export default function Detect() {
     return () => clearInterval(id)
   }, [])
 
-  const allEvents = [
-    ...(simEvent ? [simEvent] : []),
-    ...staticEvents,
+  const simRows = [
+    ...(extDetected     ? [SIM_EXT_EVENT]    : []),
+    ...(chatgptDetected ? [SIM_CHATGPT_EVENT] : []),
   ]
+  const allEvents = [...simRows, ...staticEvents]
 
   const filtered = allEvents.filter(e => {
     if (filter === 'Open')     return e.status === 'OPEN'
@@ -47,7 +79,7 @@ export default function Detect() {
   })
 
   const open     = allEvents.filter(e => e.status === 'OPEN').length
-  const critical = allEvents.filter(e => (e.sevCls ?? e.riskCls) === 'cr').length
+  const critical = allEvents.filter(e => (e.riskCls ?? e.sevCls) === 'cr').length
 
   return (
     <div className="card">
@@ -56,7 +88,7 @@ export default function Detect() {
           <span className="meta" style={{ fontWeight: 400, marginLeft: 8 }}>
             <span style={{ color: 'var(--crit)' }}>{critical} critical</span> · {open} open
           </span>
-          {simEvent && (
+          {(chatgptDetected || extDetected) && (
             <span style={{ marginLeft: 10, fontSize: 11, fontWeight: 600, color: 'var(--high)', background: 'rgba(245,158,11,.12)', padding: '2px 8px', borderRadius: 4, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
               <span className="dot" style={{ background: 'var(--high)', width: 6, height: 6 }} /> Shadow AI detected
             </span>
@@ -72,37 +104,41 @@ export default function Detect() {
       <table>
         <thead>
           <tr>
-            {['Event ID', 'Domain', 'Device', 'User', 'Source', 'Detail', 'Risk', 'Time', 'Status', ''].map(h => <th key={h}>{h}</th>)}
+            {['Event ID', 'Domain / Asset', 'Device', 'User', 'Source', 'Detail', 'Risk', 'Time', 'Status', ''].map(h => <th key={h}>{h}</th>)}
           </tr>
         </thead>
         <tbody>
           {filtered.map(e => {
-            const isLive = e.id === 'SHADOW-001'
+            const isSim     = !!e.simType
+            const isExt     = e.simType === 'extension'
+            const isCgpt    = e.simType === 'chatgpt'
+            const flash     = (isCgpt && cgptFlash) || (isExt && extFlash)
+            const accentColor = isExt ? 'var(--crit)' : isCgpt ? 'var(--high)' : undefined
             return (
-              <tr key={e.id} style={isLive && flash ? { animation: 'rowFlash 1.2s ease 2' } : {}}>
-                <td className="mono" style={{ fontSize: 11, color: isLive ? 'var(--high)' : 'var(--txt3)', fontWeight: isLive ? 700 : 400 }}>
+              <tr key={e.id} style={flash ? { animation: 'rowFlash 1.2s ease 2' } : {}}>
+                <td className="mono" style={{ fontSize: 11, color: accentColor ?? 'var(--txt3)', fontWeight: isSim ? 700 : 400 }}>
                   {e.id}
                 </td>
                 <td>
-                  {isLive
-                    ? <span style={{ fontWeight: 700, fontSize: 13, fontFamily: 'monospace', color: 'var(--high)' }}>{e.domain}</span>
+                  {isSim
+                    ? <span style={{ fontWeight: 700, fontSize: 13, fontFamily: 'monospace', color: accentColor }}>{e.domain}</span>
                     : <span style={{ fontWeight: 600, fontSize: 13 }}>{e.event ?? '—'}</span>
                   }
                 </td>
-                <td style={{ fontWeight: isLive ? 600 : 400, fontSize: 13 }}>
-                  {isLive ? e.device : (e.asset ?? '—')}
+                <td style={{ fontWeight: isSim ? 600 : 400, fontSize: 13 }}>
+                  {isSim ? e.device : (e.asset ?? '—')}
                 </td>
                 <td style={{ fontSize: 11, color: 'var(--txt2)' }}>
                   {e.user ?? '—'}
                 </td>
                 <td style={{ fontSize: 11, color: 'var(--txt3)' }}>
-                  {isLive ? e.source : (e.source ?? '—')}
+                  {e.source ?? '—'}
                 </td>
                 <td style={{ fontSize: 11, color: 'var(--txt3)', maxWidth: 240 }}>
                   {e.detail ?? '—'}
                 </td>
                 <td>
-                  {isLive
+                  {isSim
                     ? <span className={`b ${e.riskCls}`}><i />{e.risk}</span>
                     : <span className={`b ${e.sevCls}`}><i />{e.severity}</span>
                   }

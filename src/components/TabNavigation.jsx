@@ -1,4 +1,4 @@
-export default function TabNavigation({ tabs, activeTab, onTabChange }) {
+export default function TabNavigation({ tabs, activeTab, onTabChange, badgeOverrides = {} }) {
   if (!tabs || tabs.length === 0) return null
 
   const BADGE_MAP = {
@@ -9,7 +9,8 @@ export default function TabNavigation({ tabs, activeTab, onTabChange }) {
   return (
     <div className="subnav">
       {tabs.map(tab => {
-        const badge = BADGE_MAP[tab]
+        const base  = BADGE_MAP[tab]
+        const badge = base ? { ...base, count: badgeOverrides[tab] ?? base.count } : null
         return (
           <a
             key={tab}

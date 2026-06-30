@@ -23,7 +23,7 @@ export default function DevicesOverview() {
   const [failingChecks, setFailingChecks] = useState([])
   const [apnsCert, setApnsCert] = useState(null)
   const [selectedDevice, setSelectedDevice] = useState(null)
-  const [simCompliant, setSimCompliant] = useState(true)
+  const [simDevice, setSimDevice] = useState(null)
 
   // All data from JSON
   useEffect(() => {
@@ -34,18 +34,15 @@ export default function DevicesOverview() {
     DeviceService.getApnsCert().then(setApnsCert)
   }, [])
 
-  // Poll server only to detect sim trigger — does not affect other device data
+  // Poll server for live sim device — use server's actual failingChecks
   useEffect(() => {
     let cancelled = false
     async function poll() {
       if (cancelled) return
       try {
         const res = await fetch('http://localhost:3001/api/devices/LT-VyshnaviT-3941')
-        if (res.ok) {
-          const data = await res.json()
-          setSimCompliant(data.status === 'COMPLIANT')
-        }
-      } catch { /* server not running — sim stays in default state */ }
+        if (res.ok) setSimDevice(await res.json())
+      } catch { /* server not running */ }
       if (!cancelled) setTimeout(poll, 3000)
     }
     poll()
@@ -54,17 +51,19 @@ export default function DevicesOverview() {
 
   if (!metrics || !inventory || !apnsCert) return null
 
-  // Apply sim status on top of JSON data locally
+  const simIsNonCompliant = simDevice?.statusCls === 'cr'
+
+  // Replace the JSON sim placeholder with live server data
   const displayDevices = devices.map(d =>
-    d.sim
-      ? { ...d, status: simCompliant ? 'COMPLIANT' : 'NON-COMPLIANT', statusCls: simCompliant ? 'ok' : 'cr', failingChecks: simCompliant ? [] : ['Antivirus disabled'] }
-      : d
+    d.sim && simDevice ? simDevice : d
   )
 
-  const simIsNonCompliant = !simCompliant
   const nonCompliantNum = String(displayDevices.filter(d => d.statusCls === 'cr').length)
-  const displayFailingChecks = simIsNonCompliant
-    ? [...failingChecks, { label: 'Antivirus', pct: 8, color: 'var(--crit)', val: '1' }]
+
+  // Add the right failing check label based on what server reports
+  const simFailingLabel = simDevice?.failingChecks?.[0]
+  const displayFailingChecks = simIsNonCompliant && simFailingLabel
+    ? [...failingChecks, { label: simFailingLabel, pct: 8, color: 'var(--crit)', val: '1' }]
     : failingChecks
 
   return (

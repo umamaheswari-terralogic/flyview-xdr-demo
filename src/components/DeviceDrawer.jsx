@@ -16,6 +16,13 @@ const CHECK_DETAILS = {
     recommendation: 'Re-enable Windows Defender or the enrolled antivirus via MDM profile push. If the user disabled it manually, trigger the "Quarantine endpoint" remediation script from the Monitor page.',
     mitre: ['T1562.001 — Impair Defenses: Disable Security Tools'],
   },
+  'Blocked app installed': {
+    sevCls: 'cr',
+    severity: 'CRITICAL',
+    description: 'MDM policy has detected a blocked application installed on this device. The application category violates the endpoint security policy. AI-SPM will identify the specific tool and assess data exposure risk.',
+    recommendation: 'Remove the blocked application via MDM remote action. Review the AI-SPM module to identify the specific AI tool and any data already shared with it.',
+    mitre: ['T1204.002 — User Execution: Malicious File', 'T1567 — Exfiltration Over Web Service'],
+  },
 }
 
 const GENERIC_CHECK = {

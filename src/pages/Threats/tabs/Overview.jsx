@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import MetricCard from '../../../components/MetricCard.jsx'
 import DataTable from '../../../components/DataTable.jsx'
@@ -8,6 +8,8 @@ import ActionButtons from '../../../components/ActionButtons.jsx'
 import WidgetCard from '../../../components/WidgetCard.jsx'
 import { ThreatService } from '../../../services/ThreatService.js'
 import { Icons } from '../../../shared/icons.jsx'
+
+const API = 'http://localhost:3001'
 
 function RowBar({ label, pct, color, val }) {
   return (
@@ -66,6 +68,7 @@ export default function ThreatsOverview() {
   const [mitre, setMitre] = useState([])
   const [filter, setFilter] = useState('All')
   const [loading, setLoading] = useState(true)
+  const [simIncidents, setSimIncidents] = useState([])
 
   useEffect(() => {
     Promise.all([
@@ -84,17 +87,40 @@ export default function ThreatsOverview() {
     })
   }, [])
 
+  // Poll sim state for cross-module alerts
+  useEffect(() => {
+    const poll = () =>
+      fetch(`${API}/api/threats/sim`)
+        .then(r => r.json())
+        .then(({ incidents: sim = [] }) => setSimIncidents(sim))
+        .catch(() => {})
+    poll()
+    const id = setInterval(poll, 3000)
+    return () => clearInterval(id)
+  }, [])
+
   if (loading) return <div className="loading-state">Loading threat data…</div>
 
-  const filtered = filter === 'All' ? incidents
-    : filter === 'Open' ? incidents.filter(i => i.status === 'OPEN')
-    : incidents.filter(i => i.status === 'RESOLVED')
+  const allIncidents = [...simIncidents, ...incidents]
+  const filtered = filter === 'All' ? allIncidents
+    : filter === 'Open' ? allIncidents.filter(i => i.status === 'OPEN')
+    : allIncidents.filter(i => i.status === 'RESOLVED')
 
   return (
     <>
+      {/* ── Cross-Module Alert Banners ────────────────────────────── */}
+      {simIncidents.map(inc => (
+        <div key={inc.id} style={{ marginBottom: 12, padding: '12px 16px', background: 'rgba(239,68,68,.08)', borderRadius: 8, border: '1px solid rgba(239,68,68,.3)', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span className="dot" style={{ background: 'var(--crit)', width: 9, height: 9 }} />
+          <span style={{ fontSize: 12, color: 'var(--crit)', fontWeight: 600 }}>
+            CRITICAL — {inc.id} · {inc.title} · {inc.detail} · Check Incidents tab
+          </span>
+        </div>
+      ))}
+
       {/* KPI Cards */}
       <div className="kg k4">
-        <MetricCard cls="cr" num={summary.incidents.count} desc={summary.incidents.label} label="Incidents" foot={`<b>▲ ${summary.incidents.trend}</b> · ${summary.incidents.detail}`} icon={Icons.shield} />
+        <MetricCard cls="cr" num={simIncidents.length > 0 ? String(Number(summary.incidents.count) + simIncidents.length) : summary.incidents.count} desc={summary.incidents.label} label="Incidents" foot={`<b>▲ ${summary.incidents.trend}</b> · ${summary.incidents.detail}`} icon={Icons.shield} />
         <MetricCard cls="hi" num={summary.volume.count} desc={summary.volume.label} label="Volume" foot={summary.volume.trend} icon={Icons.activity} />
         <MetricCard cls="hi" num={summary.humanRisk.count} desc={summary.humanRisk.label} label="Human Risk" foot={`<b>▲ ${summary.humanRisk.trend}</b>`} icon={Icons.user} />
         <MetricCard cls="ok" num={summary.posture.count} desc={summary.posture.label} label="Posture" foot={summary.posture.trend} icon={Icons.shield} />
@@ -116,28 +142,38 @@ export default function ThreatsOverview() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map(inc => (
-              <tr key={inc.id} onClick={() => navigate(`/threats/${inc.id}`)}>
-                <td className="mo">{inc.id}</td>
-                <td><SeverityBadge severity={inc.severity} cls={inc.severityClass} /></td>
-                <td className="pr">{inc.title}</td>
-                <td>
-                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                    {inc.source.map(s => <span key={s} className="ch">{s}</span>)}
-                  </div>
-                </td>
-                <td className="mo">{inc.time}</td>
-                <td><StatusBadge status={inc.status} cls={inc.statusClass} /></td>
-                <td>
-                  <ActionButtons
-                    actions={inc.actions}
-                    onAction={action => {
-                      if (action === 'View') navigate(`/threats/${inc.id}`)
-                    }}
-                  />
-                </td>
-              </tr>
-            ))}
+            {filtered.map(inc => {
+              const isSim = inc.sim
+              return (
+                <tr key={inc.id} onClick={() => !isSim && navigate(`/threats/${inc.id}`)}>
+                  <td className="mo" style={{ color: isSim ? 'var(--crit)' : undefined, fontWeight: isSim ? 700 : 400 }}>{inc.id}</td>
+                  <td><SeverityBadge severity={inc.severity} cls={inc.severityClass} /></td>
+                  <td className="pr" style={{ fontWeight: isSim ? 600 : 400 }}>
+                    {inc.title}
+                    {isSim && (
+                      <div style={{ fontSize: 10, color: 'var(--txt3)', marginTop: 2, fontFamily: 'monospace' }}>
+                        MDM: Blocked app installed · AI-SPM: ChatGPT for Chrome · Device: LT-VyshnaviT-3941
+                      </div>
+                    )}
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                      {inc.source.map(s => <span key={s} className="ch">{s}</span>)}
+                    </div>
+                  </td>
+                  <td className="mo">{inc.time}</td>
+                  <td><StatusBadge status={inc.status} cls={inc.statusClass} /></td>
+                  <td>
+                    <ActionButtons
+                      actions={inc.actions}
+                      onAction={action => {
+                        if (action === 'View' && !isSim) navigate(`/threats/${inc.id}`)
+                      }}
+                    />
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

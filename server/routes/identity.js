@@ -1,6 +1,45 @@
 import { Router } from 'express'
+import { simState } from '../simState.js'
 
 const router = Router()
+
+// ── Scenario 3: Antivirus disabled → Adaptive Auth ─────────────────
+// Vyshnavi's device (LT-VyshnaviT-3941) has antivirus disabled.
+// When fired, her risk elevates and IAM triggers step-up MFA.
+
+const getVyshnaviUser = () =>
+  !simState.antivirusCompliant
+    ? {
+        name:    'LT-vyshnavi-3941',
+        email:   'thatikonda.vyshnavi@terralogic.com',
+        dept:    'Engineering',
+        risk:    95,
+        riskCls: 'cr',
+        mfa:     'STEP-UP',
+        login:   'Just now',
+        status:  'ADAPTIVE AUTH',
+        statusCls: 'cr',
+        sim:     true,
+        simId:   'vyshnavi-device',
+        alert: {
+          type:   'DEVICE_RISK',
+          detail: 'MDM: Antivirus disabled on LT-VyshnaviT-3941 · All sessions require re-authentication · Step-up MFA enforced',
+        },
+      }
+    : {
+        name:    'LT-vyshnavi-3941',
+        email:   'thatikonda.vyshnavi@terralogic.com',
+        dept:    'Engineering',
+        risk:    87,
+        riskCls: 'cr',
+        mfa:     'TOTP',
+        login:   '09:14',
+        status:  'ACTIVE',
+        statusCls: 'ok',
+        sim:     true,
+        simId:   'vyshnavi-device',
+        alert:   null,
+      }
 
 const USERS = [
   {
@@ -169,12 +208,42 @@ router.post(`/${encodeURIComponent(JOHN_EMAIL)}/resolve`, (_req, res) => {
 // Expose john's escalation state so cloud route can read it
 export { johnEscalated, getJohnUser }
 
-// GET /api/identity — full user list; escalated Shabbeer floats to top
+// GET /api/identity/sim — polled by frontend; returns adaptive auth signal when antivirus disabled
+router.get('/sim', (_req, res) => {
+  const antivirusNonCompliant = !simState.antivirusCompliant
+  res.json({
+    antivirusNonCompliant,
+    riskSignal: antivirusNonCompliant
+      ? {
+          user:    'vyshnavi.thatikonda@terralogic.com',
+          name:    'Vyshnavi T.',
+          device:  'LT-VyshnaviT-3941',
+          risk:    88,
+          riskCls: 'cr',
+          reason:  'Device antivirus disabled — adaptive MFA step-up required',
+          action:  'STEP_UP_MFA',
+          detail:  'MDM signal: antivirus protection disabled on enrolled Windows 11 device. All sessions from this device require re-authentication.',
+        }
+      : null,
+  })
+})
+
+// GET /api/identity — full user list; high-risk sim users float to top
 router.get('/', (_req, res) => {
-  const shabbeer = getJohnUser()
-  const all = johnEscalated
-    ? [shabbeer, ...USERS, getSimUser()]
-    : [...USERS, getSimUser(), shabbeer]
+  const shabbeer  = getJohnUser()
+  const vyshnavi  = getVyshnaviUser()
+  const isDeviceRisk = !simState.antivirusCompliant
+
+  let all
+  if (isDeviceRisk && johnEscalated) {
+    all = [vyshnavi, shabbeer, ...USERS, getSimUser()]
+  } else if (isDeviceRisk) {
+    all = [vyshnavi, ...USERS, getSimUser(), shabbeer]
+  } else if (johnEscalated) {
+    all = [shabbeer, vyshnavi, ...USERS, getSimUser()]
+  } else {
+    all = [vyshnavi, ...USERS, getSimUser(), shabbeer]
+  }
   res.json({ total: all.length, users: all })
 })
 
@@ -183,6 +252,7 @@ router.get('/:email', (req, res) => {
   const em = req.params.email.toLowerCase()
   if (em === SIM_EMAIL.toLowerCase()) return res.json(getSimUser())
   if (em === JOHN_EMAIL.toLowerCase()) return res.json(getJohnUser())
+  if (em === 'thatikonda.vyshnavi@terralogic.com') return res.json(getVyshnaviUser())
   const user = USERS.find(u => u.email.toLowerCase() === em)
   if (!user) return res.status(404).json({ error: 'User not found' })
   res.json(user)

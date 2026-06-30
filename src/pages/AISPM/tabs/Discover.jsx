@@ -38,6 +38,22 @@ const SIM_CHATGPT_ASSET = {
   device: 'LT-VyshnaviT-3941',
 }
 
+const SIM_EXT_ASSET = {
+  name: 'ChatGPT for Chrome',
+  vendor: 'OpenAI',
+  type: 'Browser Extension',
+  users: 1,
+  risk: 82,
+  riskCls: 'cr',
+  dataScope: 'INTERNAL',
+  scopeCls: 'hi',
+  sanction: 'SHADOW',
+  sanctionCls: 'cr',
+  sim: true,
+  simType: 'extension',
+  device: 'LT-VyshnaviT-3941',
+}
+
 function RowBar({ label, pct, color, val }) {
   return (
     <div className="row">
@@ -75,12 +91,15 @@ export default function AISPMDiscover() {
   const [filter, setFilter]     = useState('All')
   const [loading, setLoading]   = useState(true)
 
-  const [cliLlm, setCliLlm]   = useState(false)
-  const [chatgpt, setChatgpt] = useState(false)
+  const [cliLlm, setCliLlm]         = useState(false)
+  const [chatgpt, setChatgpt]       = useState(false)
+  const [extDetected, setExtDetected] = useState(false)
   const prevCli  = useRef(false)
   const prevCgpt = useRef(false)
-  const [cliFlash, setCliFlash]   = useState(false)
-  const [cgptFlash, setCgptFlash] = useState(false)
+  const prevExt  = useRef(false)
+  const [cliFlash, setCliFlash]     = useState(false)
+  const [cgptFlash, setCgptFlash]   = useState(false)
+  const [extFlash, setExtFlash]     = useState(false)
 
   useEffect(() => {
     Promise.all([
@@ -100,10 +119,13 @@ export default function AISPMDiscover() {
     const poll = () =>
       fetch(`${API}/api/aispm/sim`)
         .then(r => r.json())
-        .then(({ chatgptDetected }) => {
-          if (chatgptDetected && !prevCgpt.current) setCgptFlash(true)
+        .then(({ chatgptDetected, extensionDetected }) => {
+          if (chatgptDetected  && !prevCgpt.current) setCgptFlash(true)
+          if (extensionDetected && !prevExt.current)  setExtFlash(true)
           prevCgpt.current = chatgptDetected
+          prevExt.current  = extensionDetected
           setChatgpt(chatgptDetected)
+          setExtDetected(extensionDetected)
         })
         .catch(() => {})
     poll()
@@ -113,6 +135,7 @@ export default function AISPMDiscover() {
 
   useEffect(() => { if (cliFlash)  { const t = setTimeout(() => setCliFlash(false),  2500); return () => clearTimeout(t) } }, [cliFlash])
   useEffect(() => { if (cgptFlash) { const t = setTimeout(() => setCgptFlash(false), 2500); return () => clearTimeout(t) } }, [cgptFlash])
+  useEffect(() => { if (extFlash)  { const t = setTimeout(() => setExtFlash(false),  2500); return () => clearTimeout(t) } }, [extFlash])
 
   const triggerChatgpt = () =>
     fetch(`${API}/api/aispm/trigger/chatgpt`, { method: 'POST' })
@@ -133,23 +156,25 @@ export default function AISPMDiscover() {
     : assets.filter(a => a.sanction === 'REVIEW')
 
   const simAssets = [
-    ...(cliLlm  && (filter === 'All' || filter === 'Shadow') ? [SIM_CLI_ASSET]     : []),
-    ...(chatgpt && (filter === 'All' || filter === 'Shadow') ? [SIM_CHATGPT_ASSET] : []),
+    ...(extDetected && (filter === 'All' || filter === 'Shadow') ? [SIM_EXT_ASSET]     : []),
+    ...(chatgpt    && (filter === 'All' || filter === 'Shadow') ? [SIM_CHATGPT_ASSET] : []),
+    ...(cliLlm     && (filter === 'All' || filter === 'Shadow') ? [SIM_CLI_ASSET]     : []),
   ]
   const displayAssets = [...simAssets, ...filtered]
 
   const shadowCount = String(
-    Number(summary.shadowAI.count) + (cliLlm ? 1 : 0) + (chatgpt ? 1 : 0)
+    Number(summary.shadowAI.count) + (cliLlm ? 1 : 0) + (chatgpt ? 1 : 0) + (extDetected ? 1 : 0)
   )
 
   return (
     <>
       {/* ── Shadow AI Detection Banner ───────────────────────────── */}
-      {(chatgpt || cliLlm) && (
+      {(chatgpt || cliLlm || extDetected) && (
         <div style={{ marginBottom: 18, padding: '12px 16px', background: 'rgba(245,158,11,.08)', borderRadius: 8, border: '1px solid rgba(245,158,11,.3)', display: 'flex', alignItems: 'center', gap: 10 }}>
           <span className="dot" style={{ background: 'var(--high)', width: 9, height: 9 }} />
           <span style={{ fontSize: 12, color: 'var(--high)', fontWeight: 600 }}>
             Shadow AI detected on LT-VyshnaviT-3941
+            {extDetected && ' — ChatGPT for Chrome extension (MDM flagged)'}
             {chatgpt && ' — chatgpt.com opened in Chrome'}
             {cliLlm  && ' — ollama run llama3 via CLI'}
             {' · '}check the Detect tab for the full record
@@ -179,18 +204,20 @@ export default function AISPMDiscover() {
             {displayAssets.map(a => {
               const isSimCli    = a.sim && a.simType === 'cli'
               const isSimChatgpt = a.sim && a.simType === 'chatgpt'
-              const isSim       = isSimCli || isSimChatgpt
-              const rowStyle    = (isSimCli && cliFlash) || (isSimChatgpt && cgptFlash)
+              const isSimExt    = a.sim && a.simType === 'extension'
+              const isSim       = isSimCli || isSimChatgpt || isSimExt
+              const dotColor    = isSimCli ? 'var(--crit)' : 'var(--high)'
+              const rowStyle    = (isSimCli && cliFlash) || (isSimChatgpt && cgptFlash) || (isSimExt && extFlash)
                 ? { animation: 'rowFlash 1.2s ease 2' }
                 : {}
               return (
                 <tr key={a.name} style={rowStyle}>
                   <td className="pr">
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      {isSim && <span className="dot" style={{ background: isSimCli ? 'var(--crit)' : 'var(--high)', width: 8, height: 8 }} />}
+                      {isSim && <span className="dot" style={{ background: dotColor, width: 8, height: 8 }} />}
                       {a.name}
                       {isSim && (
-                        <span style={{ fontSize: 10, fontWeight: 700, background: isSimCli ? 'var(--crit)' : 'var(--high)', color: '#fff', borderRadius: 4, padding: '1px 6px' }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, background: dotColor, color: '#fff', borderRadius: 4, padding: '1px 6px' }}>
                           NEW DETECTION
                         </span>
                       )}
@@ -203,6 +230,11 @@ export default function AISPMDiscover() {
                     {isSimChatgpt && (
                       <div style={{ fontSize: 10, color: 'var(--txt3)', marginTop: 2, fontFamily: 'monospace' }}>
                         chatgpt.com · LT-VyshnaviT-3941 · Chrome
+                      </div>
+                    )}
+                    {isSimExt && (
+                      <div style={{ fontSize: 10, color: 'var(--txt3)', marginTop: 2, fontFamily: 'monospace' }}>
+                        MDM flagged · LT-VyshnaviT-3941 · Chrome extension
                       </div>
                     )}
                   </td>

@@ -3,7 +3,9 @@ import Sidebar from '../components/Sidebar.jsx'
 import TopBar from '../components/TopBar.jsx'
 import TabNavigation from '../components/TabNavigation.jsx'
 import { ToastProvider } from '../components/Toast.jsx'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+
+const API = 'http://localhost:3001'
 
 const MODULE_CONFIG = {
   '/': {
@@ -81,6 +83,26 @@ export default function AppLayout() {
   const moduleKey = getModuleKey(location.pathname)
   const cfg = MODULE_CONFIG[moduleKey] ?? MODULE_CONFIG['/']
   const [activeTab, setActiveTab] = useState(cfg.tabs[0] ?? '')
+  const [simIncidentCount, setSimIncidentCount] = useState(0)
+
+  // Poll threats sim so header count and tab badge stay live
+  useEffect(() => {
+    const poll = () =>
+      fetch(`${API}/api/threats/sim`)
+        .then(r => r.json())
+        .then(({ incidents: sim = [] }) => setSimIncidentCount(sim.length))
+        .catch(() => {})
+    poll()
+    const id = setInterval(poll, 3000)
+    return () => clearInterval(id)
+  }, [])
+
+  // Override threats title when sim incidents are active
+  const resolvedCfg = { ...cfg }
+  if (moduleKey === '/threats') {
+    const total = 3 + simIncidentCount
+    resolvedCfg.title = `Threats — <b>${total} critical</b> incidents open`
+  }
 
   useEffect(() => {
     setActiveTab(cfg.tabs[0] ?? '')
@@ -93,12 +115,13 @@ export default function AppLayout() {
     <div className="app">
       <Sidebar />
       <div className="main">
-        <TopBar title={cfg.title} subtitle={cfg.subtitle} />
+        <TopBar title={resolvedCfg.title} subtitle={resolvedCfg.subtitle} />
         {hasTabs && !isDetailPage && (
           <TabNavigation
-            tabs={cfg.tabs}
+            tabs={resolvedCfg.tabs}
             activeTab={activeTab}
             onTabChange={setActiveTab}
+            badgeOverrides={moduleKey === '/threats' ? { Incidents: 3 + simIncidentCount } : {}}
           />
         )}
         <div className="content">

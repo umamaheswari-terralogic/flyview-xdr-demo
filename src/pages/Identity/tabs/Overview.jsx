@@ -107,6 +107,34 @@ function buildDrawer(u) {
     }
   }
 
+  if (u.alert.type === 'DEVICE_RISK') {
+    return {
+      title: 'Adaptive Authentication Triggered',
+      subtitle: `${u.email} · ${u.dept}`,
+      severity: 'CRITICAL', sevCls: 'cr',
+      status: 'ADAPTIVE AUTH', statusCls: 'cr',
+      sections: [
+        {
+          label: 'What happened',
+          desc: `MDM reported that antivirus protection has been disabled on ${u.name} (LT-VyshnaviT-3941). FlyView IAM has automatically elevated the risk score for ${u.email} and enforced step-up MFA for all active and new sessions from this device.`,
+        },
+        {
+          label: 'Device details',
+          items: [
+            { key: 'Device',    value: 'LT-VyshnaviT-3941' },
+            { key: 'Platform',  value: 'Windows 11' },
+            { key: 'Signal',    value: 'MDM → IAM (cross-module)', color: 'var(--crit)' },
+            { key: 'Antivirus', value: 'DISABLED', color: 'var(--crit)' },
+            { key: 'MFA',       value: 'Step-up enforcement active', color: 'var(--high)', wide: true },
+          ],
+        },
+      ],
+      tags: ['T1562.001 — Impair Defenses: Disable Security Tools'],
+      analystNote: 'Re-enable antivirus via MDM profile push or Monitor remediation script. Until resolved, all sessions from this device require step-up MFA.',
+      actions: [{ label: 'Force re-auth', danger: true }],
+    }
+  }
+
   return null
 }
 
@@ -119,6 +147,7 @@ export default function IdentityOverview() {
   const [filter, setFilter]     = useState('All')
   const [loading, setLoading]   = useState(true)
   const [drawerUser, setDrawerUser] = useState(null)
+  const [antivirusSignal, setAntivirusSignal] = useState(null)
   const pollRef = useRef(null)
 
   async function fetchUsers() {
@@ -145,15 +174,27 @@ export default function IdentityOverview() {
     }).finally(() => setLoading(false))
 
     pollRef.current = setInterval(fetchUsers, POLL_MS)
-    return () => clearInterval(pollRef.current)
+
+    // Poll antivirus device risk signal from MDM
+    const pollSim = () =>
+      fetch(`${API}/sim`)
+        .then(r => r.json())
+        .then(({ riskSignal }) => setAntivirusSignal(riskSignal ?? null))
+        .catch(() => {})
+    pollSim()
+    const simId = setInterval(pollSim, 3000)
+
+    return () => { clearInterval(pollRef.current); clearInterval(simId) }
   }, [])
 
   if (loading) return <div className="loading-state">Loading identity data…</div>
 
-  const vyshnavi    = users.find(u => u.simId === 'vyshnavi')
-  const john        = users.find(u => u.simId === 'john')
-  const isEscalated = vyshnavi?.riskCls === 'cr' && vyshnavi?.alert
-  const johnAlert   = john?.alert
+  const vyshnavi       = users.find(u => u.simId === 'vyshnavi')
+  const john           = users.find(u => u.simId === 'john')
+  const vyshnaviDevice = users.find(u => u.simId === 'vyshnavi-device')
+  const isEscalated    = vyshnavi?.riskCls === 'cr' && vyshnavi?.alert
+  const johnAlert      = john?.alert
+  const deviceRiskAlert = vyshnaviDevice?.alert?.type === 'DEVICE_RISK' ? vyshnaviDevice : null
 
   const highRiskCount = users.filter(u => u.riskCls === 'cr' || u.riskCls === 'hi').length
   const offboardCount = users.filter(u => u.status === 'OFFBOARDING').length
@@ -166,6 +207,22 @@ export default function IdentityOverview() {
 
   return (
     <>
+      {/* ── MDM Device Risk → Adaptive Auth banner ───────────────── */}
+      {deviceRiskAlert && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          background: 'rgba(239,68,68,.07)', border: '1px solid rgba(239,68,68,.25)',
+          borderLeft: '4px solid var(--crit)', borderRadius: 8, padding: '10px 16px', marginBottom: 12,
+        }}>
+          <span style={{ fontSize: 16 }}>🛡️</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--crit)', flex: 1 }}>
+            Adaptive Auth Triggered — <b>{deviceRiskAlert.name}</b> ({deviceRiskAlert.email}): Antivirus disabled on LT-VyshnaviT-3941. Step-up MFA enforced for all sessions from this device.
+          </span>
+          <span className="b cr"><i />CRITICAL</span>
+          <button className="btn" style={{ marginLeft: 4 }} onClick={() => setDrawerUser(deviceRiskAlert)}>View</button>
+        </div>
+      )}
+
       {/* Single-line banners — detail is in the View drawer */}
       {isEscalated && (
         <div style={{
