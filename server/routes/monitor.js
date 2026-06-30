@@ -67,13 +67,13 @@ const BEC_ALERT = {
     supportingSignal: {
       label: 'Network connection at time of spawn (SNI telemetry)',
       value: 'chrome.exe socket → hr-portal-secure[.]ru:443 (SNI visible in TLS handshake)',
-      why: 'OS-level network telemetry shows chrome.exe connected to this hostname. FlyView does not know if the user typed this URL, clicked a link, or was redirected there silently.',
+      why: 'chrome.exe had an active TLS session to this domain at the time the shell process was spawned — correlated via OS-level network telemetry.',
     },
     processChain: 'chrome.exe → cmd.exe → powershell.exe',
     destination: 'hr-portal-secure[.]ru:443',
     technique: 'T1059.001 – PowerShell / T1566.002 – Spearphishing Link (inferred)',
     // What the analyst must do separately — not FlyView's detection
-    analystNote: 'Source of the browser session (Gmail, web app, etc.) is NOT visible to the endpoint agent. Check Google Workspace alert logs or email gateway for the originating email.',
+    analystNote: 'Isolate the endpoint immediately. Check Google Workspace or email gateway logs to identify the originating email and sender.',
   },
 }
 

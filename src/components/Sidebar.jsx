@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Icons } from '../shared/icons.jsx'
+import terrologicLogo from '../assets/terralogic-logo.svg'
 
 const NAV = [
   { group: 'Workspace', items: [
@@ -43,18 +44,18 @@ export default function Sidebar() {
       <div className="side-top">
         {/* Brand */}
         <div className="brand">
-          <div className="logo-box">
-            <svg viewBox="0 0 24 24"><path d="M12 3l9 4v5c0 5-3.5 9-9 11C6.5 21 3 17 3 12V7z"/><path d="M9 12l2 2 4-4"/></svg>
-          </div>
-          <div className="wm">Fly<span>View</span></div>
+          <img
+            src={terrologicLogo}
+            alt="Terralogic FlyView"
+            style={{ width: '100%', maxWidth: 160, height: 'auto', display: 'block' }}
+          />
         </div>
-        <div className="by-blazeup">by BlazeUp · v4.4</div>
 
         {/* Tenant Selector */}
         <div className="tenant">
-          <div className="t-av">AC</div>
+          <div className="t-av">TL</div>
           <div>
-            <div className="t-name">Acme Corp</div>
+            <div className="t-name">Terralogic</div>
             <div className="t-sub">MSSP · 12 clients ▾</div>
           </div>
         </div>
