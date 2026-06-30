@@ -19,31 +19,33 @@ function RowBar({ label, pct, color, val }) {
 export default function DevicesOverview() {
   const [metrics, setMetrics] = useState(null)
   const [inventory, setInventory] = useState(null)
-  const [devices, setDevices] = useState([])
+  const [displayDevices, setDisplayDevices] = useState([])
   const [platformSplit, setPlatformSplit] = useState([])
   const [failingChecks, setFailingChecks] = useState([])
   const [apnsCert, setApnsCert] = useState(null)
   const [selectedDevice, setSelectedDevice] = useState(null)
-  const [simDevice, setSimDevice] = useState(null)
 
-  // All data from JSON
+  // Static JSON data (metrics, charts, cert)
   useEffect(() => {
     DeviceService.getMetrics().then(setMetrics)
-    DeviceService.getInventory().then(inv => { setInventory(inv); setDevices(inv.devices) })
+    DeviceService.getInventory().then(setInventory)
     DeviceService.getPlatformSplit().then(setPlatformSplit)
     DeviceService.getFailingChecks().then(setFailingChecks)
     DeviceService.getApnsCert().then(setApnsCert)
   }, [])
 
-  // Poll server for live sim device — use server's actual failingChecks
+  // Poll server every 3s for the full device list (includes both sim records at top)
   useEffect(() => {
     let cancelled = false
     async function poll() {
       if (cancelled) return
       try {
-        const res = await fetch(`${API_BASE}/api/devices/LT-VyshnaviT-3941`)
-        if (res.ok) setSimDevice(await res.json())
-      } catch { /* server not running */ }
+        const res = await fetch(`${API_BASE}/api/devices`)
+        if (res.ok) {
+          const { devices } = await res.json()
+          setDisplayDevices(devices)
+        }
+      } catch { /* server not running — keep previous state */ }
       if (!cancelled) setTimeout(poll, 3000)
     }
     poll()
@@ -52,19 +54,14 @@ export default function DevicesOverview() {
 
   if (!metrics || !inventory || !apnsCert) return null
 
-  const simIsNonCompliant = simDevice?.statusCls === 'cr'
-
-  // Replace the JSON sim placeholder with live server data
-  const displayDevices = devices.map(d =>
-    d.sim && simDevice ? simDevice : d
-  )
-
   const nonCompliantNum = String(displayDevices.filter(d => d.statusCls === 'cr').length)
 
-  // Add the right failing check label based on what server reports
-  const simFailingLabel = simDevice?.failingChecks?.[0]
-  const displayFailingChecks = simIsNonCompliant && simFailingLabel
-    ? [...failingChecks, { label: simFailingLabel, pct: 8, color: 'var(--crit)', val: '1' }]
+  // Augment failing checks with any active sim scenarios
+  const simFailingLabels = displayDevices
+    .filter(d => d.sim && d.failingChecks?.length > 0)
+    .flatMap(d => d.failingChecks)
+  const displayFailingChecks = simFailingLabels.length > 0
+    ? [...failingChecks, ...simFailingLabels.map(label => ({ label, pct: 8, color: 'var(--crit)', val: '1' }))]
     : failingChecks
 
   return (
@@ -92,7 +89,7 @@ export default function DevicesOverview() {
           <thead><tr>{['Device', 'User', 'Platform', 'Status', 'Enrollment', 'Last Seen', ''].map(h => <th key={h}>{h}</th>)}</tr></thead>
           <tbody>
             {displayDevices.map(d => (
-              <tr key={d.name}>
+              <tr key={d.id ?? d.name}>
                 <td className="pr">{d.name}</td>
                 <td style={{ fontSize: 12, color: 'var(--txt2)' }}>{d.user}</td>
                 <td>{d.platform}</td>

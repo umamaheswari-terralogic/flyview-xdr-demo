@@ -77,7 +77,7 @@ export default function AllDevices() {
           <thead><tr>{['Device', 'User', 'Platform', 'Status', 'Enrollment', 'OS Version', 'Last Seen', ''].map(h => <th key={h}>{h}</th>)}</tr></thead>
           <tbody>
             {filtered.map(d => (
-              <tr key={d.name}>
+              <tr key={d.id ?? d.name}>
                 <td className="pr">{d.name}</td>
                 <td style={{ fontSize: 12, color: 'var(--txt2)' }}>{d.user}</td>
                 <td>{d.platform}</td>

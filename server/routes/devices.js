@@ -17,6 +17,7 @@ function getBaseDevices() {
 let antivirusCompliant = true
 
 const getAntivirusDevice = () => ({
+  id:            'sim-antivirus',
   name:          'LT-VyshnaviT-3941',
   user:          'vyshnavi.thatikonda@terralogic.com',
   platform:      '⊞ Windows 11',
@@ -48,6 +49,7 @@ router.post('/LT-VyshnaviT-3941/reset', (_req, res) => {
 let blockedAppCompliant = true
 
 const getBlockedAppDevice = () => ({
+  id:            'sim-blockedapp',
   name:          'LT-VyshnaviT-3941',
   user:          'vyshnavi.thatikonda@terralogic.com',
   platform:      '⊞ Windows 11',
@@ -91,17 +93,36 @@ router.post('/LT-VyshnaviT-3941/reset/blockedapp', (_req, res) => {
 
 // ── GET routes ──────────────────────────────────────────────────────
 
-// Both sim devices always appear at the top; non-compliant ones first
-router.get('/', (_req, res) => {
-  const av  = getAntivirusDevice()
-  const blk = getBlockedAppDevice()
+// Baseline record shown when both scenarios are compliant (single row, no confusion)
+const getBaselineSimDevice = () => ({
+  id:            'sim-baseline',
+  name:          'LT-VyshnaviT-3941',
+  user:          'vyshnavi.thatikonda@terralogic.com',
+  platform:      '⊞ Windows 11',
+  status:        'COMPLIANT',
+  statusCls:     'ok',
+  enrollment:    'DEP',
+  lastSeen:      'Just now',
+  sim:           true,
+  simScenario:   'baseline',
+  failingChecks: [],
+  extensions:    [],
+})
 
-  // Sort sim devices: non-compliant first, then compliant
-  const simDevices = [av, blk].sort((a, b) => {
-    if (a.statusCls === 'cr' && b.statusCls !== 'cr') return -1
-    if (b.statusCls === 'cr' && a.statusCls !== 'cr') return 1
-    return 0
-  })
+router.get('/', (_req, res) => {
+  const bothCompliant = antivirusCompliant && blockedAppCompliant
+
+  let simDevices
+  if (bothCompliant) {
+    // Single compliant row — no active incident
+    simDevices = [getBaselineSimDevice()]
+  } else {
+    // Show only the triggered (non-compliant) scenarios
+    const active = []
+    if (!antivirusCompliant) active.push(getAntivirusDevice())
+    if (!blockedAppCompliant) active.push(getBlockedAppDevice())
+    simDevices = active
+  }
 
   const all = [...simDevices, ...getBaseDevices()]
   res.json({ total: all.length, devices: all })

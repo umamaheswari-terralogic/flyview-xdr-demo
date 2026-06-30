@@ -13,52 +13,49 @@ const TEAM = [
   { initials: 'PV', name: 'Priya V.',  role: 'Security Analyst',  roleKey: 'analyst' },
 ]
 
-// ── Simulation triggers ───────────────────────────────────────────
+// ── Simulation scenarios ──────────────────────────────────────────
+// modules: array of { label, cls } — shown as stacked badges
+// triggerEndpoint / resetEndpoint: separate REST calls (not toggles)
 const SCENARIOS = [
   {
-    module:   'Monitor',
-    modulecls: 'cr',
     id:       'monitor-bec',
-    title:    'BEC / Phishing — Suspicious process spawn',
-    desc:     'Simulates a user clicking a spearphishing link in Gmail. chrome.exe spawns cmd.exe → powershell.exe. FlyView detects via process tree + SNI telemetry.',
-    endpoint: '/api/monitor/trigger',
-    effect:   'CRITICAL alert appears in Monitor → Overview. Red banner + flashing row. View drawer shows detection chain.',
+    title:    'Phishing Attack',
+    desc:     'An employee clicks a suspicious link in an email and a malicious script runs on their laptop.',
+    modules:  [{ label: 'Monitor', cls: 'cr' }],
+    triggerEndpoint: '/api/monitor/trigger',
+    resetEndpoint:   '/api/monitor/reset',
   },
   {
-    module:   'Identity',
-    modulecls: 'cr',
     id:       'identity-vyshnavi',
-    title:    'Impossible Travel — Vyshnavi T.',
-    desc:     'Simulates a login from Hyderabad (09:41) followed by Singapore (09:59) — 18 minutes apart. MFA challenge skipped on second login.',
-    endpoint: '/api/identity/vyshnavi.t%40terralogic.com/trigger',
-    effect:   'Risk jumps to CRITICAL (94). Status → UNDER REVIEW. MFA shows BYPASSED. Orange banner in Identity → Overview.',
+    title:    'Login from Two Countries at Once',
+    desc:     'Vyshnavi logs in from India, then from Singapore 18 minutes later — physically impossible. MFA was skipped.',
+    modules:  [{ label: 'Identity', cls: 'cr' }],
+    triggerEndpoint: '/api/identity/vyshnavi.t%40terralogic.com/trigger',
+    resetEndpoint:   '/api/identity/vyshnavi.t%40terralogic.com/reset',
   },
   {
-    module:   'Identity',
-    modulecls: 'hi',
     id:       'identity-shabbeer',
-    title:    'Insider Threat — Shabbeer (PIP employee)',
-    desc:     'Simulates a PIP employee bulk-downloading 4.2 GB from S3 (corp-data-prod) at 02:47 AM via 4,200 GetObject API calls.',
-    endpoint: '/api/identity/shabbeer%40terralogic.com/trigger',
-    effect:   'Risk jumps to HIGH (76). Status → MONITORING. Row floats to top of Identity table. Correlated finding appears in Cloud module automatically.',
+    title:    'PIP Employee Stealing Data Before Exit',
+    desc:     'Shabbeer (PIP employee) downloads gigabytes of company files from cloud storage at 2 AM.',
+    modules:  [{ label: 'Identity', cls: 'hi' }, { label: 'Cloud', cls: 'hi' }],
+    triggerEndpoint: '/api/identity/shabbeer%40terralogic.com/trigger',
+    resetEndpoint:   '/api/identity/shabbeer%40terralogic.com/reset',
   },
   {
-    module:   'Devices',
-    modulecls: 'hi',
-    id:       'devices-compliance',
-    title:    'Non-Compliance — LT-VyshnaviT-3941',
-    desc:     'Simulates Vyshnavi\'s device becoming non-compliant (policy violation detected by the endpoint agent).',
-    endpoint: '/api/devices/LT-VyshnaviT-3941/trigger',
-    effect:   'Device status toggles between COMPLIANT and NON-COMPLIANT in the Devices module.',
+    id:       'devices-antivirus',
+    title:    'Antivirus Turned Off',
+    desc:     'Antivirus is disabled on Vyshnavi\'s laptop, leaving it unprotected and out of company policy.',
+    modules:  [{ label: 'Devices', cls: 'cr' }, { label: 'Threats', cls: 'cr' }, { label: 'Identity', cls: 'cr' }],
+    triggerEndpoint: '/api/devices/LT-VyshnaviT-3941/trigger',
+    resetEndpoint:   '/api/devices/LT-VyshnaviT-3941/reset',
   },
   {
-    module:   'Devices',
-    modulecls: 'cr',
     id:       'devices-blockedapp',
-    title:    'Blocked Application — LT-VyshnaviT-3941',
-    desc:     'Simulates a blocked/unauthorised application execution attempt detected on Vyshnavi\'s device.',
-    endpoint: '/api/devices/LT-VyshnaviT-3941/trigger/blockedapp',
-    effect:   'Blocked app event surfaces on the device record in the Devices module.',
+    title:    'Unauthorised AI Tool Installed',
+    desc:     'An employee installs ChatGPT as a browser extension — a blocked app that could leak company data.',
+    modules:  [{ label: 'Devices', cls: 'hi' }, { label: 'AI-SPM', cls: 'hi' }, { label: 'Threats', cls: 'hi' }],
+    triggerEndpoint: '/api/devices/LT-VyshnaviT-3941/trigger/blockedapp',
+    resetEndpoint:   '/api/devices/LT-VyshnaviT-3941/reset/blockedapp',
   },
 ]
 
@@ -67,84 +64,90 @@ function Toggle({ defaultOn = false }) {
   return <button className={`tog ${on ? 'on' : ''}`} onClick={() => setOn(p => !p)} />
 }
 
-// Individual simulation trigger card
+// Individual simulation trigger card — compact, 2-column grid
 function SimCard({ scenario }) {
-  const [status, setStatus]   = useState('idle')   // idle | loading | triggered | error
-  const [triggered, setTriggered] = useState(false)
-
-  async function handleTrigger() {
-    setStatus('loading')
-    try {
-      const r = await fetch(`${API_BASE}${scenario.endpoint}`, { method: 'POST' })
-      if (!r.ok) throw new Error()
-      setTriggered(t => !t)
-      setStatus(triggered ? 'idle' : 'triggered')
-    } catch {
-      setStatus('error')
-      setTimeout(() => setStatus(triggered ? 'triggered' : 'idle'), 3000)
-    }
-  }
+  const [active, setActive]         = useState(false)
+  const [loading, setLoading]       = useState(null)  // 'trigger' | 'reset' | null
+  const [flash,   setFlash]         = useState(null)  // 'ok' | 'err'
 
   const clsMap = { cr: 'var(--crit)', hi: 'var(--high)', me: 'var(--med)', ok: 'var(--ok)' }
-  const moduleColor = clsMap[scenario.modulecls] ?? 'var(--txt2)'
+  // Use the first module's colour for the card accent
+  const accentColor = clsMap[scenario.modules[0]?.cls] ?? 'var(--txt2)'
+
+  async function call(endpoint, type) {
+    setLoading(type)
+    try {
+      const r = await fetch(`${API_BASE}${endpoint}`, { method: 'POST' })
+      if (!r.ok) throw new Error()
+      setActive(type === 'trigger')
+      setFlash('ok')
+    } catch {
+      setFlash('err')
+    } finally {
+      setLoading(null)
+      setTimeout(() => setFlash(null), 1800)
+    }
+  }
 
   return (
     <div style={{
       background: 'var(--card)',
-      border: `1px solid ${triggered ? moduleColor : 'var(--border)'}`,
-      borderLeft: `4px solid ${moduleColor}`,
-      borderRadius: 10, padding: '16px 18px',
+      border: `1px solid ${active ? accentColor + '60' : 'var(--border)'}`,
+      borderLeft: `4px solid ${accentColor}`,
+      borderRadius: 10, padding: '14px 16px',
       display: 'flex', flexDirection: 'column', gap: 10,
       transition: 'border-color .3s',
+      boxShadow: active ? `0 0 0 1px ${accentColor}20` : 'none',
     }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <span style={{
-              fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em',
-              color: moduleColor, background: `${moduleColor}18`, padding: '2px 7px', borderRadius: 4,
-            }}>{scenario.module}</span>
-            {triggered && (
-              <span className={`b ${scenario.moduleclass}`} style={{ fontSize: 10, background: `${moduleColor}18`, color: moduleColor, border: `1px solid ${moduleColor}40`, borderRadius: 4, padding: '2px 7px', fontWeight: 700 }}>
-                ACTIVE
-              </span>
-            )}
-          </div>
-          <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--txt)', marginBottom: 3 }}>{scenario.title}</div>
-          <div style={{ fontSize: 12, color: 'var(--txt2)', lineHeight: 1.55 }}>{scenario.desc}</div>
+      {/* Module badges */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+        {scenario.modules.map(m => (
+          <span key={m.label} style={{
+            fontSize: 9.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em',
+            color: clsMap[m.cls], background: clsMap[m.cls] + '18',
+            padding: '2px 7px', borderRadius: 4,
+          }}>{m.label}</span>
+        ))}
+        {active && (
+          <span style={{
+            fontSize: 9.5, fontWeight: 700, letterSpacing: '.07em',
+            color: accentColor, background: accentColor + '15',
+            border: `1px solid ${accentColor}40`,
+            padding: '2px 7px', borderRadius: 4,
+          }}>● ACTIVE</span>
+        )}
+        {flash === 'err' && (
+          <span style={{ fontSize: 9.5, fontWeight: 700, color: 'var(--crit)' }}>✕ Error</span>
+        )}
+      </div>
+
+      {/* Title + desc */}
+      <div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--txt)', marginBottom: 4 }}>
+          {scenario.title}
+        </div>
+        <div style={{ fontSize: 11.5, color: 'var(--txt2)', lineHeight: 1.55 }}>
+          {scenario.desc}
         </div>
       </div>
 
-      {/* Effect description */}
-      <div style={{
-        background: 'var(--bg)', borderRadius: 6, padding: '8px 12px',
-        fontSize: 11.5, color: 'var(--txt3)', lineHeight: 1.5,
-      }}>
-        <span style={{ fontWeight: 600, color: 'var(--txt2)' }}>GUI effect: </span>{scenario.effect}
-      </div>
-
-      {/* Endpoint + trigger button */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <code style={{
-          flex: 1, fontSize: 11, fontFamily: 'JetBrains Mono, monospace',
-          color: 'var(--txt3)', background: 'var(--bg)',
-          padding: '5px 10px', borderRadius: 5, overflow: 'hidden',
-          textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-        }}>POST {scenario.endpoint}</code>
+      {/* Trigger + Reset buttons */}
+      <div style={{ display: 'flex', gap: 8, marginTop: 2 }}>
         <button
-          className={`btn${triggered ? '' : ' p'}`}
-          style={{
-            minWidth: 90, flexShrink: 0,
-            ...(triggered ? { borderColor: moduleColor, color: moduleColor } : {}),
-          }}
-          onClick={handleTrigger}
-          disabled={status === 'loading'}
+          className="btn p"
+          style={{ flex: 1, fontSize: 12 }}
+          disabled={!!loading}
+          onClick={() => call(scenario.triggerEndpoint, 'trigger')}
         >
-          {status === 'loading' ? '⟳ …'
-            : status === 'error'   ? '✕ Error'
-            : triggered            ? 'Reset'
-            : 'Trigger'}
+          {loading === 'trigger' ? '⟳ …' : '▶ Trigger'}
+        </button>
+        <button
+          className="btn"
+          style={{ flex: 1, fontSize: 12 }}
+          disabled={!!loading}
+          onClick={() => call(scenario.resetEndpoint, 'reset')}
+        >
+          {loading === 'reset' ? '⟳ …' : '↺ Reset'}
         </button>
       </div>
     </div>
@@ -245,8 +248,10 @@ function SimulationTab() {
         </div>
       </div>
 
-      {/* Scenario cards */}
-      {SCENARIOS.map(s => <SimCard key={s.id} scenario={s} />)}
+      {/* Scenario cards — 2-column grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        {SCENARIOS.map(s => <SimCard key={s.id} scenario={s} />)}
+      </div>
     </div>
   )
 }
