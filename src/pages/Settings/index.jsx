@@ -230,6 +230,69 @@ function GeneralTab() {
   )
 }
 
+// ── Reset All card ────────────────────────────────────────────────
+function ResetAllCard() {
+  const [loading, setLoading] = useState(false)
+  const [flash,   setFlash]   = useState(null) // 'ok' | 'err'
+
+  async function handleResetAll() {
+    setLoading(true)
+    try {
+      const r = await fetch(`${API_BASE}/api/sim/reset-all`, { method: 'POST' })
+      if (!r.ok) throw new Error()
+      setFlash('ok')
+    } catch {
+      setFlash('err')
+    } finally {
+      setLoading(false)
+      setTimeout(() => setFlash(null), 2500)
+    }
+  }
+
+  return (
+    <div style={{
+      background: 'var(--card)',
+      border: '1px solid var(--border)',
+      borderLeft: '4px solid #64748b',
+      borderRadius: 10, padding: '14px 16px',
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+      boxShadow: '0 2px 10px rgba(0,0,0,.06)',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{
+          width: 36, height: 36, borderRadius: 9, flexShrink: 0,
+          background: '#64748b18', border: '1px solid #64748b30',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17,
+        }}>↺</div>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--txt)', marginBottom: 3 }}>
+            Reset All Simulations
+          </div>
+          <div style={{ fontSize: 11.5, color: 'var(--txt2)' }}>
+            Calls <code style={{ fontSize: 11, background: 'var(--bg3)', padding: '1px 5px', borderRadius: 4 }}>POST /api/sim/reset-all</code> — reverts every active scenario to baseline state instantly.
+          </div>
+        </div>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+        {flash === 'ok' && (
+          <span style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ok)' }}>✓ All reset</span>
+        )}
+        {flash === 'err' && (
+          <span style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--crit)' }}>✕ Error</span>
+        )}
+        <button
+          className="btn d"
+          style={{ fontSize: 12, padding: '6px 18px', opacity: loading ? .6 : 1 }}
+          disabled={loading}
+          onClick={handleResetAll}
+        >
+          {loading ? '⟳ Resetting…' : '↺ Reset All'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 // ── Simulation tab ────────────────────────────────────────────────
 function SimulationTab() {
   return (
@@ -247,6 +310,9 @@ function SimulationTab() {
           All state is in-memory — restarting the server resets everything to baseline.
         </div>
       </div>
+
+      {/* Reset All */}
+      <ResetAllCard />
 
       {/* Scenario cards — 2-column grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>

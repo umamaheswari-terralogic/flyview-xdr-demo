@@ -14,6 +14,7 @@ import monitorRouter  from './routes/monitor.js'
 import networkRouter  from './routes/network.js'
 import privacyRouter  from './routes/privacy.js'
 import aispmRouter    from './routes/aispm.js'
+import simRouter      from './routes/sim.js'
 
 const app  = express()
 const PORT = process.env.PORT ?? 3001
@@ -30,6 +31,7 @@ app.use('/api/monitor',  monitorRouter)
 app.use('/api/network',  networkRouter)
 app.use('/api/privacy',  privacyRouter)
 app.use('/api/aispm',    aispmRouter)
+app.use('/api/sim',      simRouter)
 
 // ── Health check ──────────────────────────────────────────────────
 app.get('/health', (_req, res) => {

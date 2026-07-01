@@ -24,7 +24,7 @@ const API = API_BASE
 
 const MODULE_CONFIG = {
   '/': {
-    title: 'Hello, Welcome Back',
+    title: 'Hello, Welcome Back!',
     subtitle: '',
     tabs: [],
   },

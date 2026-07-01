@@ -91,6 +91,8 @@ router.post('/reset', (_req, res) => {
   res.json({ reset: true, alert: null })
 })
 
+export function resetMonitorSim() { simTriggered = false }
+
 // GET /api/monitor — alerts list (BEC alert prepended when triggered)
 router.get('/', (_req, res) => {
   const alerts = simTriggered ? [BEC_ALERT, ...BASE_ALERTS] : BASE_ALERTS

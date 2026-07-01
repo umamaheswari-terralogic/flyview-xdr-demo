@@ -220,6 +220,8 @@ router.post(`/${encodeURIComponent(JOHN_EMAIL)}/resolve`, (_req, res) => {
 // Expose john's escalation state so cloud route can read it
 export { johnEscalated, getJohnUser }
 
+export function resetIdentitySim() { simEscalated = false; johnEscalated = false }
+
 // GET /api/identity/sim — polled by frontend; returns adaptive auth signal when antivirus disabled
 router.get('/sim', (_req, res) => {
   const antivirusNonCompliant = !simState.antivirusCompliant
