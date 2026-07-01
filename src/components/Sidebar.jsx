@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Icons } from '../shared/icons.jsx'
 import terrologicLogo from '../assets/terralogic-logo.svg'
@@ -33,6 +34,7 @@ const BOTTOM_NAV = [
 export default function Sidebar() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [collapsed, setCollapsed] = useState(false)
 
   const isActive = path => {
     if (path === '/') return location.pathname === '/'
@@ -40,49 +42,46 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="side">
+    <aside className={`side${collapsed ? ' side-collapsed' : ''}`}>
       <div className="side-top">
         {/* Brand */}
         <div className="brand">
-          <img
-            src={terrologicLogo}
-            alt="Terralogic FlyView"
-            style={{ width: '100%', maxWidth: 160, height: 'auto', display: 'block' }}
-          />
+          {collapsed
+            ? <div style={{ width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg,#7c3aed,#ec4899)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#fff', fontSize: 14 }}>F</div>
+            : <img src={terrologicLogo} alt="Terralogic FlyView" style={{ width: 136, height: 'auto', display: 'block' }} />
+          }
         </div>
 
         {/* Tenant Selector */}
         <div className="tenant">
           <div className="t-av">TL</div>
-          <div>
+          {!collapsed && <div>
             <div className="t-name">Terralogic</div>
             <div className="t-sub">▾</div>
-          </div>
+          </div>}
         </div>
 
         {/* Main Nav */}
         <nav>
           {NAV.map(group => (
             <div key={group.group}>
-              <div className="nl">{group.group}</div>
+              {!collapsed && <div className="nl">{group.group}</div>}
               {group.items.map(item => (
                 <a
                   key={item.key}
                   className={isActive(item.path) ? 'on' : ''}
                   onClick={() => navigate(item.path)}
+                  title={collapsed ? item.label : undefined}
                 >
                   {item.icon}
-                  {item.label}
-                  {item.badge && (
-                    <span
-                      className="nb"
-                      style={{
-                        background: `var(--${item.badgeCls}L)`,
-                        color: `var(--${item.badgeCls})`,
-                      }}
-                    >
+                  {!collapsed && item.label}
+                  {!collapsed && item.badge && (
+                    <span className="nb" style={{ background: `var(--${item.badgeCls}L)`, color: `var(--${item.badgeCls})` }}>
                       {item.badge}
                     </span>
+                  )}
+                  {collapsed && item.badge && (
+                    <span className="nb nb-dot" style={{ background: `var(--${item.badgeCls})` }} />
                   )}
                 </a>
               ))}
@@ -96,25 +95,36 @@ export default function Sidebar() {
               key={item.key}
               className={isActive(item.path) ? 'on' : ''}
               onClick={() => navigate(item.path)}
+              title={collapsed ? item.label : undefined}
             >
               {item.icon}
-              {item.label}
+              {!collapsed && item.label}
             </a>
           ))}
         </nav>
       </div>
 
-      {/* Footer */}
+      {/* Footer — profile + collapse toggle */}
       <div className="side-foot">
         <div className="av">AM</div>
-        <div>
-          <div className="un">Ahmed M.</div>
-          <div className="ur">Security Admin</div>
-        </div>
-        <div className="live">
-          <div className="dot" />
-          Live
-        </div>
+        {!collapsed && <>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="un">Ahmed M.</div>
+            <div className="ur">Security Admin</div>
+          </div>
+          <div className="live">
+            <div className="dot" />
+            Live
+          </div>
+        </>}
+        {/* Collapse / expand toggle */}
+        <button
+          className="side-toggle"
+          onClick={() => setCollapsed(c => !c)}
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {collapsed ? '›' : '‹'}
+        </button>
       </div>
     </aside>
   )

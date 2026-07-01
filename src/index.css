@@ -65,13 +65,48 @@ html, body, #root {
   overflow-y: auto;
   overflow-x: hidden;
   box-shadow: 2px 0 8px rgba(0,0,0,.04);
+  transition: width .25s ease, flex-basis .25s ease;
 }
+.side.side-collapsed {
+  width: 64px;
+  flex: 0 0 64px;
+}
+.side.side-collapsed .side-top { padding: 20px 10px 0; }
+.side.side-collapsed nav a { justify-content: center; padding: 9px 0; }
+.side.side-collapsed .brand { justify-content: center; padding: 0 0 4px; }
+.side.side-collapsed .tenant { justify-content: center; }
+.side.side-collapsed .side-foot { justify-content: center; padding: 12px 8px; }
+
+/* Toggle button — lives in the footer next to the avatar */
+.side-toggle {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  border: 1px solid #E8EEF6;
+  background: #f8fafc;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; color: #64748b;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: background .15s, color .15s;
+}
+.side-toggle:hover { background: #ede9fe; color: #7c3aed; }
+
+/* Collapsed badge dot */
+.nb-dot {
+  width: 7px !important; height: 7px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  min-width: unset !important;
+  position: absolute; top: 6px; right: 6px;
+}
+
 .side::-webkit-scrollbar { width: 3px; }
 .side::-webkit-scrollbar-thumb { background: #E2ECF4; border-radius: 2px; }
 .side-top { padding: 20px 14px 0; flex: 1; }
 
 /* Brand */
-.brand { display: flex; align-items: center; gap: 10px; padding: 0 4px 4px; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 0 12px 4px 4px; }
 .logo-box {
   width: 36px; height: 36px; border-radius: 10px;
   background: linear-gradient(135deg, var(--orange), var(--orangeD));
@@ -106,6 +141,7 @@ nav a {
   display: flex; align-items: center; gap: 9px; padding: 9px 10px;
   border-radius: 8px; color: #6B7C8E; text-decoration: none;
   font-size: 13px; font-weight: 500; cursor: pointer; transition: all .12s;
+  position: relative;
   margin-bottom: 1px; position: relative; user-select: none;
 }
 nav a svg { width: 16px; height: 16px; flex: 0 0 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
