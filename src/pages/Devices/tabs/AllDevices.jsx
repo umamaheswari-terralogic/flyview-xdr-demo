@@ -5,16 +5,16 @@ import { DeviceService } from '../../../services/DeviceService.js'
 import { API_BASE } from '../../../config.js'
 
 const EXTRA_DEVICES = [
-  { name: 'MAC-Sandeep-4102',  user: 'sandeep.m@terralogic.com',   platform: '🍎 macOS 14.5',  status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'MSI',         lastSeen: '3 min'  },
-  { name: 'MAC-Girish-4103',   user: 'girish.d@terralogic.com',    platform: '🍎 macOS 14.4',  status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'MSI',         lastSeen: '5 min'  },
+  { name: 'MAC-Sandeep-4102',  user: 'sandeep.m@terralogic.com',   platform: '🍎 macOS 14.5',  status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'DEP',         lastSeen: '3 min'  },
+  { name: 'MAC-Girish-4103',   user: 'girish.d@terralogic.com',    platform: '🍎 macOS 14.4',  status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'DEP',         lastSeen: '5 min'  },
   { name: 'LT-Laiju-4711',     user: 'laiju.g@terralogic.com',     platform: '⊞ Windows 11',   status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'MSI',         lastSeen: '7 min'  },
   { name: 'LT-Maqsood-4712',   user: 'maqsood.a@terralogic.com',   platform: '⊞ Windows 11',   status: 'NON-COMPLIANT', statusCls: 'cr', enrollment: 'MSI',         lastSeen: '22 min' },
-  { name: 'MOB-Sagarika-4905', user: 'sagarika.d@terralogic.com',  platform: '📱 iOS 17.5',     status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'MSI',         lastSeen: '1 min'  },
-  { name: 'MOB-Sugam-4906',    user: 'sugam.y@terralogic.com',     platform: '📱 iOS 17.4',     status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'MSI',         lastSeen: '4 min'  },
+  { name: 'MOB-Sagarika-4905', user: 'sagarika.d@terralogic.com',  platform: '📱 iOS 17.5',     status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'DEP',         lastSeen: '1 min'  },
+  { name: 'MOB-Sugam-4906',    user: 'sugam.y@terralogic.com',     platform: '📱 iOS 17.4',     status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'DEP',         lastSeen: '4 min'  },
   { name: 'MOB-Monika-4703',   user: 'monika.m@terralogic.com',    platform: '🤖 Android 14',   status: 'GRACE PERIOD',  statusCls: 'hi', enrollment: 'Work Profile', lastSeen: '11 min' },
   { name: 'LT-Praveen-4421',   user: 'praveen.s@terralogic.com',   platform: '⊞ Windows 10',   status: 'NON-COMPLIANT', statusCls: 'cr', enrollment: 'MSI',         lastSeen: '45 min' },
-  { name: 'MAC-Lavanya-4055',  user: 'lavanya.v@terralogic.com',   platform: '🍎 macOS 13.6',  status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'MSI',         lastSeen: '9 min'  },
-  { name: 'MOB-Praneetha-4923',user: 'praneetha.m@terralogic.com', platform: '📱 iPadOS 17.3', status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'MSI',         lastSeen: '2 min'  },
+  { name: 'MAC-Lavanya-4055',  user: 'lavanya.v@terralogic.com',   platform: '🍎 macOS 13.6',  status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'DEP',         lastSeen: '9 min'  },
+  { name: 'MOB-Praneetha-4923',user: 'praneetha.m@terralogic.com', platform: '📱 iPadOS 17.3', status: 'COMPLIANT',     statusCls: 'ok', enrollment: 'DEP',         lastSeen: '2 min'  },
 ]
 
 const PLATFORMS = ['All', 'macOS', 'Windows', 'iOS / iPadOS', 'Android']
