@@ -10,7 +10,7 @@ const BASE_ALERTS = [
     rule: 'Service health', time: '5m', status: 'firing', statusCls: 'cr', ackBy: null,
   },
   {
-    id: 'ALT-002', device: 'TL-DB-MASTER-01', type: 'Disk pressure',
+    id: 'ALT-002', device: 'LT-Deepak-4601', type: 'Disk pressure',
     severity: 'HIGH', sevCls: 'hi', metric: '87% (+1.2%/hr)',
     rule: 'Disk trend', time: '12m', status: 'firing', statusCls: 'cr', ackBy: null,
   },

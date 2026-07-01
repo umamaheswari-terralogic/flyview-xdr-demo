@@ -45,7 +45,7 @@
     },
     {
       "id": "ALT-002",
-      "device": "TL-DB-MASTER-01",
+      "device": "LT-Deepak-4601",
       "type": "Disk pressure",
       "severity": "HIGH",
       "sevCls": "hi",
@@ -114,16 +114,16 @@
     { "cve": "CVE-2025-9981", "epss": "0.44", "sev": "MEDIUM", "devices": 8  }
   ],
   "monitoredDevices": [
-    { "name": "TL-WEB-PROD-01",   "os": "Ubuntu 22.04",       "cpu": 42, "disk": 61, "mem": 58, "status": "ONLINE",  "statusCls": "ok", "lastSeen": "12s",  "agent": "v3.4.1", "alerts": 0 },
-    { "name": "TL-WEB-PROD-02",   "os": "Ubuntu 22.04",       "cpu": 94, "disk": 71, "mem": 82, "status": "ALERT",   "statusCls": "cr", "lastSeen": "5s",   "agent": "v3.4.1", "alerts": 1 },
-    { "name": "TL-DB-MASTER-01",  "os": "RHEL 9.3",           "cpu": 55, "disk": 87, "mem": 74, "status": "ALERT",   "statusCls": "hi", "lastSeen": "8s",   "agent": "v3.4.1", "alerts": 1 },
-    { "name": "TL-DB-REPLICA-01", "os": "RHEL 9.3",           "cpu": 31, "disk": 63, "mem": 52, "status": "ONLINE",  "statusCls": "ok", "lastSeen": "10s",  "agent": "v3.4.1", "alerts": 0 },
-    { "name": "LT-Harsha-4088",   "os": "Windows Server 2022","cpu": 94, "disk": 55, "mem": 71, "status": "ALERT",   "statusCls": "cr", "lastSeen": "19s",  "agent": "v3.4.1", "alerts": 1 },
-    { "name": "MAC-Nisha-4155",   "os": "macOS 14.5",         "cpu": 12, "disk": 44, "mem": 38, "status": "OFFLINE", "statusCls": "cr", "lastSeen": "32m",  "agent": "v3.4.0", "alerts": 1 },
-    { "name": "LT-Vijay-4307",    "os": "Windows 11",         "cpu": 22, "disk": 48, "mem": 45, "status": "ONLINE",  "statusCls": "ok", "lastSeen": "2m",   "agent": "v3.4.1", "alerts": 0 },
-    { "name": "TL-APP-SERVER-03", "os": "Ubuntu 22.04",       "cpu": 67, "disk": 72, "mem": 81, "status": "ONLINE",  "statusCls": "ok", "lastSeen": "4s",   "agent": "v3.4.1", "alerts": 0 },
-    { "name": "TL-MAIL-SRV-01",   "os": "Windows Server 2019","cpu": 28, "disk": 53, "mem": 61, "status": "ONLINE",  "statusCls": "ok", "lastSeen": "6s",   "agent": "v3.4.1", "alerts": 0 },
-    { "name": "TL-FILE-SRV-02",   "os": "Ubuntu 20.04",       "cpu": 18, "disk": 79, "mem": 44, "status": "ONLINE",  "statusCls": "ok", "lastSeen": "11s",  "agent": "v3.3.9", "alerts": 0 }
+    { "name": "LT-Ramu-4501",     "os": "Ubuntu 22.04",        "cpu": 42, "disk": 61, "mem": 58, "status": "ONLINE",  "statusCls": "ok", "lastSeen": "12s",  "agent": "v3.4.1", "alerts": 0 },
+    { "name": "LT-Kiran-4502",   "os": "Ubuntu 22.04",        "cpu": 94, "disk": 71, "mem": 82, "status": "ALERT",   "statusCls": "cr", "lastSeen": "5s",   "agent": "v3.4.1", "alerts": 1 },
+    { "name": "LT-Deepak-4601",  "os": "RHEL 9.3",            "cpu": 55, "disk": 87, "mem": 74, "status": "ALERT",   "statusCls": "hi", "lastSeen": "8s",   "agent": "v3.4.1", "alerts": 1 },
+    { "name": "LT-Suresh-4602",  "os": "RHEL 9.3",            "cpu": 31, "disk": 63, "mem": 52, "status": "ONLINE",  "statusCls": "ok", "lastSeen": "10s",  "agent": "v3.4.1", "alerts": 0 },
+    { "name": "LT-Harsha-4088",  "os": "Windows 11",          "cpu": 94, "disk": 55, "mem": 71, "status": "ALERT",   "statusCls": "cr", "lastSeen": "19s",  "agent": "v3.4.1", "alerts": 1 },
+    { "name": "MAC-Nisha-4155",  "os": "macOS 14.5",          "cpu": 12, "disk": 44, "mem": 38, "status": "OFFLINE", "statusCls": "cr", "lastSeen": "32m",  "agent": "v3.4.0", "alerts": 1 },
+    { "name": "LT-Vijay-4307",   "os": "Windows 11",          "cpu": 22, "disk": 48, "mem": 45, "status": "ONLINE",  "statusCls": "ok", "lastSeen": "2m",   "agent": "v3.4.1", "alerts": 0 },
+    { "name": "LT-Anand-4703",   "os": "Ubuntu 22.04",        "cpu": 67, "disk": 72, "mem": 81, "status": "ONLINE",  "statusCls": "ok", "lastSeen": "4s",   "agent": "v3.4.1", "alerts": 0 },
+    { "name": "LT-Ramesh-4801",  "os": "Windows 11",          "cpu": 28, "disk": 53, "mem": 61, "status": "ONLINE",  "statusCls": "ok", "lastSeen": "6s",   "agent": "v3.4.1", "alerts": 0 },
+    { "name": "LT-Sunil-4902",   "os": "Ubuntu 20.04",        "cpu": 18, "disk": 79, "mem": 44, "status": "ONLINE",  "statusCls": "ok", "lastSeen": "11s",  "agent": "v3.3.9", "alerts": 0 }
   ],
   "alertRules": [
     { "name": "CPU spike",        "condition": "CPU > 90% for 5 min",       "severity": "HIGH",   "sevCls": "hi", "targets": "All endpoints",      "notify": ["Slack", "Email"],  "status": "ACTIVE",    "statusCls": "ok", "triggered": 3, "lastFired": "19m ago" },
@@ -146,11 +146,11 @@
     { "id": "SCR-008", "name": "Update Defender sigs",  "platform": "Windows only",    "category": "Security", "categoryCls": "cr",  "runs": 291, "lastRun": "1h ago",  "status": "ACTIVE", "statusCls": "ok", "schedule": "Daily 06:00" }
   ],
   "remoteSessions": [
-    { "id": "RDP-00412", "analyst": "yaseerah.f@terralogic.com",    "device": "LT-Harsha-4088",   "type": "RDP",   "started": "14 min ago", "duration": "14m", "status": "ACTIVE",   "statusCls": "ok" },
-    { "id": "SSH-00408", "analyst": "bharath.v@terralogic.com",   "device": "TL-WEB-PROD-02",   "type": "SSH",   "started": "28 min ago", "duration": "28m", "status": "ACTIVE",   "statusCls": "ok" },
-    { "id": "SSH-00401", "analyst": "sanghamitra.g@terralogic.com","device": "TL-DB-MASTER-01",  "type": "SSH",   "started": "2h ago",     "duration": "11m", "status": "ENDED",    "statusCls": "in" },
-    { "id": "RDP-00398", "analyst": "umesh.t@terralogic.com",     "device": "TL-APP-SERVER-03", "type": "RDP",   "started": "3h ago",     "duration": "8m",  "status": "ENDED",    "statusCls": "in" },
-    { "id": "SSH-00395", "analyst": "yaseerah.f@terralogic.com",  "device": "TL-WEB-PROD-01",   "type": "SSH",   "started": "5h ago",     "duration": "22m", "status": "ENDED",    "statusCls": "in" }
+    { "id": "RDP-00412", "analyst": "yaseerah.f@terralogic.com",    "device": "LT-Harsha-4088",  "type": "RDP",   "started": "14 min ago", "duration": "14m", "status": "ACTIVE",   "statusCls": "ok" },
+    { "id": "SSH-00408", "analyst": "bharath.v@terralogic.com",   "device": "LT-Kiran-4502",   "type": "SSH",   "started": "28 min ago", "duration": "28m", "status": "ACTIVE",   "statusCls": "ok" },
+    { "id": "SSH-00401", "analyst": "sanghamitra.g@terralogic.com","device": "LT-Deepak-4601",  "type": "SSH",   "started": "2h ago",     "duration": "11m", "status": "ENDED",    "statusCls": "in" },
+    { "id": "RDP-00398", "analyst": "umesh.t@terralogic.com",     "device": "LT-Anand-4703",   "type": "RDP",   "started": "3h ago",     "duration": "8m",  "status": "ENDED",    "statusCls": "in" },
+    { "id": "SSH-00395", "analyst": "yaseerah.f@terralogic.com",  "device": "LT-Ramu-4501",    "type": "SSH",   "started": "5h ago",     "duration": "22m", "status": "ENDED",    "statusCls": "in" }
   ],
   "patches": [
     { "cve": "CVE-2026-1337", "product": "OpenSSL 3.1.x",     "epss": 0.81, "severity": "CRITICAL", "sevCls": "cr", "affected": 23, "patched": 0,  "status": "UNPATCHED",   "statusCls": "cr", "published": "2026-04-12" },
