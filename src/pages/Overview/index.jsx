@@ -254,9 +254,9 @@ export default function Overview() {
           </div>
           <div style={{ padding: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             <CmdTile label="Endpoints" value={totalDevices}      Icon={Monitor}     color="#22c55e" onClick={() => navigate('/devices')}  />
-            <CmdTile label="Network"   value={netDevices.length} Icon={Wifi}        color="#3b82f6" onClick={() => navigate('/network')}  />
-            <CmdTile label="Cloud"     value={totalFindings}     Icon={Cloud}       color="#f59e0b" onClick={() => navigate('/cloud')}    />
-            <CmdTile label="Identity"  value={totalUsers}        Icon={Users}       color="#a78bfa" onClick={() => navigate('/identity')} />
+            <CmdTile label="Network Devices" value={netDevices.length} Icon={Wifi}  color="#3b82f6" onClick={() => navigate('/network')}  />
+            <CmdTile label="Cloud Instances" value={totalFindings}     Icon={Cloud} color="#f59e0b" onClick={() => navigate('/cloud')}    />
+            <CmdTile label="Identities"      value={totalUsers}        Icon={Users} color="#a78bfa" onClick={() => navigate('/identity')} />
             <CmdTile label="Alerts"    value={alerts.length}     Icon={ShieldAlert} color={criticalAlerts > 0 ? '#ef4444' : '#22c55e'} onClick={() => navigate('/monitor')}  />
             <CmdTile label="DSARs"     value={openDsars}         Icon={Lock}        color="#22d3ee" onClick={() => navigate('/privacy')}  />
           </div>

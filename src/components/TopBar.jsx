@@ -5,8 +5,8 @@ export default function TopBar({ title, subtitle }) {
   return (
     <div className="topbar">
       <div className="tb-title">
-        <h1 dangerouslySetInnerHTML={{ __html: title }} />
-        <p>{subtitle}</p>
+        {title && <h1 dangerouslySetInnerHTML={{ __html: title }} />}
+        {subtitle && <p>{subtitle}</p>}
       </div>
       <SearchBar />
       <div className="tb-acts">
