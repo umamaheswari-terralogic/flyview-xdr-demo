@@ -12,7 +12,6 @@ import { CloudService }    from '../../services/CloudService.js'
 import { NetworkService }  from '../../services/NetworkService.js'
 import { PrivacyService }  from '../../services/PrivacyService.js'
 import { AISPMService }    from '../../services/AISPMService.js'
-import { ThreatService }   from '../../services/ThreatService.js'
 import { API_BASE } from '../../config.js'
 
 const API = API_BASE
@@ -148,12 +147,13 @@ export default function Overview() {
   const [users, setUsers]               = useState([])
   const [identitySummary, setIdSummary] = useState(null)
   const [findings, setFindings]         = useState([])
+  const [cloudSummary, setCloudSummary] = useState(null)
   const [netDevices, setNetDevices]     = useState([])
   const [dsars, setDsars]               = useState([])
   const [aiSummary, setAiSummary]       = useState(null)
-  const [threatIncidents, setThreats]   = useState([])
   const [loading, setLoading]           = useState(true)
   const [liveDevices, setLiveDevices]   = useState([])
+  const [liveCloudExtra, setLiveCloud]  = useState([])
   const [chatgptDetected, setChatgpt]   = useState(false)
 
   useEffect(() => {
@@ -161,14 +161,14 @@ export default function Overview() {
       DeviceService.getInventory(),   DeviceService.getMetrics(),
       MonitorService.getAlerts(),
       IdentityService.getUsers(),     IdentityService.getSummary(),
-      CloudService.getFindings(),
+      CloudService.getFindings(),     CloudService.getSummary(),
       NetworkService.getDevices(),    PrivacyService.getDsars(),
-      AISPMService.getSummary(),      ThreatService.getIncidents(),
-    ]).then(([inv, dm, al, us, idSum, fi, nd, ds, ai, th]) => {
+      AISPMService.getSummary(),
+    ]).then(([inv, dm, al, us, idSum, fi, cs, nd, ds, ai]) => {
       setInventory(inv); setDevMetrics(dm); setAlerts(al)
       setUsers(us); setIdSummary(idSum); setFindings(fi)
-      setNetDevices(nd); setDsars(ds); setAiSummary(ai)
-      setThreats(th ?? []); setLoading(false)
+      setCloudSummary(cs); setNetDevices(nd); setDsars(ds)
+      setAiSummary(ai); setLoading(false)
     })
   }, [])
 
@@ -182,19 +182,23 @@ export default function Overview() {
     poll(); const id = setInterval(poll, 3000); return () => clearInterval(id)
   }, [])
 
+  // Poll server cloud findings so Shabbeer's dynamic finding is reflected live
+  useEffect(() => {
+    const poll = () => fetch(`${API}/api/cloud`).then(r => r.json()).then(({ findings: f }) => setLiveCloud(f ?? [])).catch(() => {})
+    poll(); const id = setInterval(poll, 3000); return () => clearInterval(id)
+  }, [])
+
   if (loading) return <div className="loading-state">Loading overview…</div>
 
   const devList          = liveDevices.length > 0 ? liveDevices : (inventory.devices ?? [])
   // Use summary metrics from devices.json so numbers match the Devices module
   const totalDevices     = parseInt(deviceMetrics?.totalEnrolled?.num) || devList.length
   const nonCompliant     = parseInt(deviceMetrics?.nonCompliant?.num)  || devList.filter(d => d.status === 'NON-COMPLIANT').length
-  const compliant        = totalDevices - nonCompliant - (parseInt(deviceMetrics?.gracePeriod?.num) || 0)
   const atRisk           = parseInt(deviceMetrics?.gracePeriod?.num)   || devList.filter(d => d.status === 'AT RISK').length
+  const compliant        = totalDevices - nonCompliant   // grace period devices are not non-compliant
 
-  // Critical alerts = Monitor firing alerts + critical Threats incidents
-  const monitorCritical  = alerts.filter(a => a.sevCls === 'cr').length
-  const threatCritical   = threatIncidents.filter(i => i.severity === 'CRITICAL' && i.status !== 'RESOLVED').length
-  const criticalAlerts   = monitorCritical + threatCritical
+  // Critical alerts = all active Monitor alerts (matches Monitor module header count)
+  const criticalAlerts   = alerts.length
   const highAlerts       = alerts.filter(a => a.sevCls === 'hi').length
   const recentAlerts     = alerts.slice(0, 6)
 
@@ -205,11 +209,15 @@ export default function Overview() {
   const mfaPct           = parseInt(identitySummary?.mfa?.count)        || (users.length > 0 ? Math.round((mfaEnabled / users.length) * 100) : 0)
   const dormantUsers     = users.filter(u => u.status === 'DORMANT' || u.status === 'Inactive').length
 
-  const criticalFindings = findings.filter(f => f.severity === 'CRITICAL').length
-  const highFindings     = findings.filter(f => f.severity === 'HIGH').length
+  // Cloud: static findings from JSON + live server findings (Shabbeer sim finding)
+  const totalFindings    = findings.length + liveCloudExtra.length
+  const criticalFindings = parseInt(cloudSummary?.critical?.count) || findings.filter(f => f.severity === 'CRITICAL').length
+  const highFindings     = (parseInt(cloudSummary?.high?.count) || findings.filter(f => f.severity === 'HIGH').length) + liveCloudExtra.filter(f => f.severity === 'HIGH').length
   const medFindings      = findings.filter(f => f.severity === 'MEDIUM').length
   const lowFindings      = findings.filter(f => f.severity === 'LOW').length
-  const openDsars        = dsars.filter(d => d.status === 'OPEN' || d.status === 'IN PROGRESS').length
+
+  // DSARs: open = IN PROGRESS + SUBMITTED + OVERDUE (matches Privacy module "3 open")
+  const openDsars        = dsars.filter(d => ['OPEN','IN PROGRESS','SUBMITTED','OVERDUE'].includes(d.status)).length
   const overdueDsars     = dsars.filter(d => d.status === 'OVERDUE').length
   const shadowAiCount    = aiSummary ? Number(aiSummary.shadowAI.count) + (chatgptDetected ? 1 : 0) : 0
 
@@ -247,10 +255,10 @@ export default function Overview() {
           <div style={{ padding: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             <CmdTile label="Endpoints" value={totalDevices}      Icon={Monitor}     color="#22c55e" onClick={() => navigate('/devices')}  />
             <CmdTile label="Network"   value={netDevices.length} Icon={Wifi}        color="#3b82f6" onClick={() => navigate('/network')}  />
-            <CmdTile label="Cloud"     value={findings.length}   Icon={Cloud}       color="#f59e0b" onClick={() => navigate('/cloud')}    />
+            <CmdTile label="Cloud"     value={totalFindings}     Icon={Cloud}       color="#f59e0b" onClick={() => navigate('/cloud')}    />
             <CmdTile label="Identity"  value={totalUsers}        Icon={Users}       color="#a78bfa" onClick={() => navigate('/identity')} />
-            <CmdTile label="Alerts"    value={alerts.length + threatCritical} Icon={ShieldAlert} color={criticalAlerts > 0 ? '#ef4444' : '#22c55e'} onClick={() => navigate('/monitor')}  />
-            <CmdTile label="DSARs"     value={dsars.length}      Icon={Lock}        color="#22d3ee" onClick={() => navigate('/privacy')}  />
+            <CmdTile label="Alerts"    value={alerts.length}     Icon={ShieldAlert} color={criticalAlerts > 0 ? '#ef4444' : '#22c55e'} onClick={() => navigate('/monitor')}  />
+            <CmdTile label="DSARs"     value={openDsars}         Icon={Lock}        color="#22d3ee" onClick={() => navigate('/privacy')}  />
           </div>
         </div>
 

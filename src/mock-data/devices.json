@@ -9,7 +9,7 @@
     },
     "nonCompliant": {
       "cls": "cr",
-      "num": "12",
+      "num": "3",
       "desc": "Non-compliant devices",
       "label": "Non-Compliant",
       "foot": "<b>▼ −4</b> vs yesterday"
