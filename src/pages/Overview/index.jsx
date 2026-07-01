@@ -12,6 +12,7 @@ import { CloudService }    from '../../services/CloudService.js'
 import { NetworkService }  from '../../services/NetworkService.js'
 import { PrivacyService }  from '../../services/PrivacyService.js'
 import { AISPMService }    from '../../services/AISPMService.js'
+import { ThreatService }   from '../../services/ThreatService.js'
 import { API_BASE } from '../../config.js'
 
 const API = API_BASE
@@ -141,26 +142,33 @@ function StatRow({ Icon, label, value, color, pct, total }) {
 export default function Overview() {
   const navigate = useNavigate()
 
-  const [inventory, setInventory]     = useState({ devices: [] })
-  const [alerts, setAlerts]           = useState([])
-  const [users, setUsers]             = useState([])
-  const [findings, setFindings]       = useState([])
-  const [netDevices, setNetDevices]   = useState([])
-  const [dsars, setDsars]             = useState([])
-  const [aiSummary, setAiSummary]     = useState(null)
-  const [loading, setLoading]         = useState(true)
-  const [liveDevices, setLiveDevices] = useState([])
-  const [chatgptDetected, setChatgpt] = useState(false)
+  const [inventory, setInventory]       = useState({ devices: [] })
+  const [deviceMetrics, setDevMetrics]  = useState(null)
+  const [alerts, setAlerts]             = useState([])
+  const [users, setUsers]               = useState([])
+  const [identitySummary, setIdSummary] = useState(null)
+  const [findings, setFindings]         = useState([])
+  const [netDevices, setNetDevices]     = useState([])
+  const [dsars, setDsars]               = useState([])
+  const [aiSummary, setAiSummary]       = useState(null)
+  const [threatIncidents, setThreats]   = useState([])
+  const [loading, setLoading]           = useState(true)
+  const [liveDevices, setLiveDevices]   = useState([])
+  const [chatgptDetected, setChatgpt]   = useState(false)
 
   useEffect(() => {
     Promise.all([
-      DeviceService.getInventory(), MonitorService.getAlerts(),
-      IdentityService.getUsers(),   CloudService.getFindings(),
-      NetworkService.getDevices(),  PrivacyService.getDsars(),
-      AISPMService.getSummary(),
-    ]).then(([inv, al, us, fi, nd, ds, ai]) => {
-      setInventory(inv); setAlerts(al); setUsers(us); setFindings(fi)
-      setNetDevices(nd); setDsars(ds); setAiSummary(ai); setLoading(false)
+      DeviceService.getInventory(),   DeviceService.getMetrics(),
+      MonitorService.getAlerts(),
+      IdentityService.getUsers(),     IdentityService.getSummary(),
+      CloudService.getFindings(),
+      NetworkService.getDevices(),    PrivacyService.getDsars(),
+      AISPMService.getSummary(),      ThreatService.getIncidents(),
+    ]).then(([inv, dm, al, us, idSum, fi, nd, ds, ai, th]) => {
+      setInventory(inv); setDevMetrics(dm); setAlerts(al)
+      setUsers(us); setIdSummary(idSum); setFindings(fi)
+      setNetDevices(nd); setDsars(ds); setAiSummary(ai)
+      setThreats(th ?? []); setLoading(false)
     })
   }, [])
 
@@ -177,17 +185,26 @@ export default function Overview() {
   if (loading) return <div className="loading-state">Loading overview…</div>
 
   const devList          = liveDevices.length > 0 ? liveDevices : (inventory.devices ?? [])
-  const totalDevices     = devList.length
-  const compliant        = devList.filter(d => d.status === 'COMPLIANT').length
-  const nonCompliant     = devList.filter(d => d.status === 'NON-COMPLIANT').length
-  const atRisk           = devList.filter(d => d.status === 'AT RISK').length
-  const criticalAlerts   = alerts.filter(a => a.sevCls === 'cr').length
+  // Use summary metrics from devices.json so numbers match the Devices module
+  const totalDevices     = parseInt(deviceMetrics?.totalEnrolled?.num) || devList.length
+  const nonCompliant     = parseInt(deviceMetrics?.nonCompliant?.num)  || devList.filter(d => d.status === 'NON-COMPLIANT').length
+  const compliant        = totalDevices - nonCompliant - (parseInt(deviceMetrics?.gracePeriod?.num) || 0)
+  const atRisk           = parseInt(deviceMetrics?.gracePeriod?.num)   || devList.filter(d => d.status === 'AT RISK').length
+
+  // Critical alerts = Monitor firing alerts + critical Threats incidents
+  const monitorCritical  = alerts.filter(a => a.sevCls === 'cr').length
+  const threatCritical   = threatIncidents.filter(i => i.severity === 'CRITICAL' && i.status !== 'RESOLVED').length
+  const criticalAlerts   = monitorCritical + threatCritical
   const highAlerts       = alerts.filter(a => a.sevCls === 'hi').length
   const recentAlerts     = alerts.slice(0, 6)
-  const highRiskUsers    = users.filter(u => u.riskCls === 'cr' || u.riskCls === 'hi').length
-  const mfaEnabled       = users.filter(u => u.mfa === true).length
-  const mfaPct           = users.length > 0 ? Math.round((mfaEnabled / users.length) * 100) : 0
+
+  // Use identity summary so numbers match Identity module (930 users, 94% MFA)
+  const totalUsers       = parseInt(identitySummary?.directory?.count)  || users.length
+  const highRiskUsers    = parseInt(identitySummary?.highRisk?.count)   || users.filter(u => u.riskCls === 'cr' || u.riskCls === 'hi').length
+  const mfaEnabled       = users.filter(u => u.mfa != null).length  // mfa is a string ("TOTP","WebAuthn"…) or null
+  const mfaPct           = parseInt(identitySummary?.mfa?.count)        || (users.length > 0 ? Math.round((mfaEnabled / users.length) * 100) : 0)
   const dormantUsers     = users.filter(u => u.status === 'DORMANT' || u.status === 'Inactive').length
+
   const criticalFindings = findings.filter(f => f.severity === 'CRITICAL').length
   const highFindings     = findings.filter(f => f.severity === 'HIGH').length
   const medFindings      = findings.filter(f => f.severity === 'MEDIUM').length
@@ -231,8 +248,8 @@ export default function Overview() {
             <CmdTile label="Endpoints" value={totalDevices}      Icon={Monitor}     color="#22c55e" onClick={() => navigate('/devices')}  />
             <CmdTile label="Network"   value={netDevices.length} Icon={Wifi}        color="#3b82f6" onClick={() => navigate('/network')}  />
             <CmdTile label="Cloud"     value={findings.length}   Icon={Cloud}       color="#f59e0b" onClick={() => navigate('/cloud')}    />
-            <CmdTile label="Identity"  value={users.length}      Icon={Users}       color="#a78bfa" onClick={() => navigate('/identity')} />
-            <CmdTile label="Alerts"    value={alerts.length}     Icon={ShieldAlert} color={criticalAlerts > 0 ? '#ef4444' : '#22c55e'} onClick={() => navigate('/monitor')}  />
+            <CmdTile label="Identity"  value={totalUsers}        Icon={Users}       color="#a78bfa" onClick={() => navigate('/identity')} />
+            <CmdTile label="Alerts"    value={alerts.length + threatCritical} Icon={ShieldAlert} color={criticalAlerts > 0 ? '#ef4444' : '#22c55e'} onClick={() => navigate('/monitor')}  />
             <CmdTile label="DSARs"     value={dsars.length}      Icon={Lock}        color="#22d3ee" onClick={() => navigate('/privacy')}  />
           </div>
         </div>
@@ -264,10 +281,10 @@ export default function Overview() {
 
         {/* Identity Posture */}
         <Panel title="Identity Posture" Icon={Users} iconColor="#a78bfa" onClick={() => navigate('/identity')}>
-          <StatRow Icon={ShieldAlert}  label="High Risk Users" value={highRiskUsers} color="#ef4444" total={users.length} />
-          <StatRow Icon={Lock}         label="MFA Enabled"     value={mfaEnabled}    color="#22c55e" total={users.length} />
-          <StatRow Icon={Clock}        label="Dormant Users"   value={dormantUsers}  color="#f59e0b" total={users.length} />
-          <StatRow Icon={Users}        label="Total Users"     value={users.length}  color="#94a3b8" />
+          <StatRow Icon={ShieldAlert}  label="High Risk Users" value={highRiskUsers} color="#ef4444" total={totalUsers} />
+          <StatRow Icon={Lock}         label="MFA Enabled"     value={`${mfaPct}%`}  color="#22c55e" />
+          <StatRow Icon={Clock}        label="Dormant Users"   value={dormantUsers}  color="#f59e0b" total={totalUsers} />
+          <StatRow Icon={Users}        label="Total Users"     value={totalUsers}    color="#94a3b8" />
           <div style={{ marginTop: 12, padding: '10px 14px', background: 'var(--bg3)', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ position: 'relative', width: 44, height: 44, flexShrink: 0 }}>
               <svg width="44" height="44" viewBox="0 0 44 44">
@@ -281,7 +298,7 @@ export default function Overview() {
               </div>
             </div>
             <div style={{ fontSize: 11, color: 'var(--txt2)', lineHeight: 1.5 }}>
-              MFA coverage across <b style={{ color: 'var(--txt)' }}>{users.length}</b> users
+              MFA coverage across <b style={{ color: 'var(--txt)' }}>{totalUsers}</b> users
             </div>
           </div>
         </Panel>
