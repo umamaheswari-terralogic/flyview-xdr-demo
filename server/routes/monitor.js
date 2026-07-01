@@ -10,22 +10,22 @@ const BASE_ALERTS = [
     rule: 'Service health', time: '5m', status: 'firing', statusCls: 'cr', ackBy: null,
   },
   {
-    id: 'ALT-002', device: 'DB-MASTER-01', type: 'Disk pressure',
+    id: 'ALT-002', device: 'TL-DB-MASTER-01', type: 'Disk pressure',
     severity: 'HIGH', sevCls: 'hi', metric: '87% (+1.2%/hr)',
     rule: 'Disk trend', time: '12m', status: 'firing', statusCls: 'cr', ackBy: null,
   },
   {
-    id: 'ALT-003', device: 'CORP-WIN-088', type: 'CPU spike',
+    id: 'ALT-003', device: 'LT-Harsha-4088', type: 'CPU spike',
     severity: 'MEDIUM', sevCls: 'me', metric: 'CPU 94% for 8m',
-    rule: 'CPU threshold', time: '19m', status: 'acknowledged', statusCls: 'hi', ackBy: 'Sarah Chen',
+    rule: 'CPU threshold', time: '19m', status: 'acknowledged', statusCls: 'hi', ackBy: 'Yaseerah Fathima',
   },
   {
-    id: 'ALT-004', device: 'CORP-MAC-055', type: 'Agent offline',
+    id: 'ALT-004', device: 'MAC-Nisha-4155', type: 'Agent offline',
     severity: 'HIGH', sevCls: 'hi', metric: 'No check-in 32m',
     rule: 'Heartbeat', time: '32m', status: 'firing', statusCls: 'cr', ackBy: null,
   },
   {
-    id: 'ALT-005', device: 'CORP-LAPTOP-007', type: 'Patch missing',
+    id: 'ALT-005', device: 'LT-Vijay-4307', type: 'Patch missing',
     severity: 'MEDIUM', sevCls: 'me', metric: 'CVE-2026-1337',
     rule: 'Vuln policy', time: '1h', status: 'firing', statusCls: 'cr', ackBy: null,
   },
