@@ -221,13 +221,19 @@ export default function Overview() {
   const overdueDsars     = dsars.filter(d => d.status === 'OVERDUE').length
   const shadowAiCount    = aiSummary ? Number(aiSummary.shadowAI.count) + (chatgptDetected ? 1 : 0) : 0
 
+  const CLOUD_IDENTITY_MAP = {
+    'CF-0412': 'contractor-mjones',
+    'CF-0411': 'dev-admin',
+    'CF-0405': 'allAuthenticatedUsers',
+  }
+
   const activeActions = [
     ...recentAlerts.slice(0, 3).map(a => ({
-      time: a.time, event: a.description ?? a.event, asset: a.device,
+      time: a.time, event: a.type, asset: a.device,
       severity: a.severity ?? 'HIGH', sevCls: a.sevCls ?? 'hi', status: a.status ?? 'OPEN', module: 'Monitor',
     })),
     ...findings.filter(f => f.severity === 'CRITICAL').slice(0, 3).map(f => ({
-      time: f.discoveredAt ?? '—', event: f.title, asset: f.resource ?? f.asset,
+      time: f.discoveredAt ?? '—', event: f.issue, asset: CLOUD_IDENTITY_MAP[f.id] ?? f.resource,
       severity: 'CRITICAL', sevCls: 'cr', status: f.status ?? 'OPEN', module: 'Cloud',
     })),
   ].slice(0, 6)
