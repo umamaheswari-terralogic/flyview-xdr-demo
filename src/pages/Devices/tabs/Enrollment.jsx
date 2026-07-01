@@ -1,17 +1,17 @@
 import StatusBadge from '../../../components/StatusBadge.jsx'
 
 const METHODS = [
-  { method: 'DEP / ABM',    devices: 512, pct: 60, color: 'var(--info)',   desc: 'Apple Device Enrollment Program' },
+  { method: 'MSI',          devices: 512, pct: 60, color: 'var(--info)',   desc: 'MSI package deployment' },
   { method: 'MSI / GPO',    devices: 241, pct: 28, color: 'var(--orange)', desc: 'Windows Group Policy deployment' },
   { method: 'Work Profile', devices: 71,  pct:  9, color: 'var(--ok)',     desc: 'Android Enterprise Work Profile' },
   { method: 'Manual',       devices: 23,  pct:  3, color: 'var(--med)',    desc: 'User self-enrollment via portal' },
 ]
 
 const PENDING = [
-  { name: 'CORP-MAC-199',  user: 'new.hire1@terralogic.com', platform: '🍎 macOS 14.5',  method: 'DEP',          requested: '2h ago',  status: 'AWAITING DEVICE', cls: 'ne' },
+  { name: 'CORP-MAC-199',  user: 'new.hire1@terralogic.com', platform: '🍎 macOS 14.5',  method: 'MSI',          requested: '2h ago',  status: 'AWAITING DEVICE', cls: 'ne' },
   { name: 'WIN-SALES-031', user: 'new.hire2@terralogic.com', platform: '⊞ Windows 11',   method: 'MSI',          requested: '4h ago',  status: 'PENDING POLICY',  cls: 'hi' },
   { name: 'DROID-OPS-09',  user: 'new.hire3@terralogic.com', platform: '🤖 Android 14',  method: 'Work Profile', requested: '1d ago',  status: 'AWAITING DEVICE', cls: 'ne' },
-  { name: 'CORP-iPAD-31',  user: 'new.hire4@terralogic.com', platform: '📱 iPadOS 17.4', method: 'DEP',          requested: '1d ago',  status: 'ENROLLED',        cls: 'ok' },
+  { name: 'CORP-iPAD-31',  user: 'new.hire4@terralogic.com', platform: '📱 iPadOS 17.4', method: 'MSI',          requested: '1d ago',  status: 'ENROLLED',        cls: 'ok' },
   { name: 'WIN-DEV-055',   user: 'new.hire5@terralogic.com', platform: '⊞ Windows 11',   method: 'MSI',          requested: '2d ago',  status: 'ENROLLED',        cls: 'ok' },
 ]
 
@@ -58,7 +58,7 @@ export default function Enrollment() {
           <div className="card-b" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {[
               { label: 'User-initiated enrollment',   on: true },
-              { label: 'DEP auto-enroll on first boot', on: true },
+              { label: 'MSI auto-enroll on first boot', on: true },
               { label: 'Require supervised mode (iOS)', on: true },
               { label: 'Allow personal devices (BYOD)', on: false },
               { label: 'Block jailbroken devices',    on: true },
