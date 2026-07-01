@@ -7,17 +7,17 @@
   },
   "users": [
     { "name": "LT-vyshnavi-3941",       "email": "thatikonda.vyshnavi@terralogic.com",    "dept": "Finance",     "risk": 87, "riskCls": "cr", "mfa": "TOTP",    "login": "09:14",    "status": "ACTIVE",      "statusCls": "ok" },
-    { "name": "Robert Chen",    "email": "r.chen@terralogic.com",    "dept": "Finance",     "risk": 91, "riskCls": "cr", "mfa": null,       "login": "Yesterday","status": "OFFBOARDING", "statusCls": "hi" },
-    { "name": "Sarah Kim",      "email": "sarah.k@terralogic.com",   "dept": "Engineering", "risk": 72, "riskCls": "hi", "mfa": "WebAuthn","login": "09:02",    "status": "ACTIVE",      "statusCls": "ok" },
-    { "name": "Mike Ross",      "email": "mike.r@terralogic.com",    "dept": "Sales",       "risk": 44, "riskCls": "me", "mfa": "Push",    "login": "08:55",    "status": "ACTIVE",      "statusCls": "ok" },
-    { "name": "Emma Clark",     "email": "emma.c@terralogic.com",    "dept": "HR",          "risk": 21, "riskCls": "ok", "mfa": "WebAuthn","login": "08:30",    "status": "ACTIVE",      "statusCls": "ok" },
-    { "name": "Raj Patel",      "email": "raj.p@terralogic.com",     "dept": "Engineering", "risk": 18, "riskCls": "ok", "mfa": "WebAuthn","login": "08:22",    "status": "ACTIVE",      "statusCls": "ok" },
-    { "name": "Alice Nguyen",   "email": "alice.n@terralogic.com",   "dept": "Security",    "risk": 9,  "riskCls": "ok", "mfa": "FIDO2",   "login": "08:05",    "status": "ACTIVE",      "statusCls": "ok" },
-    { "name": "Carlos Ruiz",    "email": "c.ruiz@terralogic.com",    "dept": "IT Ops",      "risk": 33, "riskCls": "me", "mfa": "Push",    "login": "09:01",    "status": "ACTIVE",      "statusCls": "ok" },
-    { "name": "Mei Zhang",      "email": "mei.z@terralogic.com",     "dept": "Finance",     "risk": 61, "riskCls": "hi", "mfa": "TOTP",    "login": "2d ago",   "status": "ACTIVE",      "statusCls": "ok" },
-    { "name": "David Park",     "email": "d.park@terralogic.com",    "dept": "Sales",       "risk": 14, "riskCls": "ok", "mfa": "Push",    "login": "08:47",    "status": "ACTIVE",      "statusCls": "ok" },
-    { "name": "Priya Sharma",   "email": "p.sharma@terralogic.com",  "dept": "HR",          "risk": 27, "riskCls": "me", "mfa": "TOTP",    "login": "09:10",    "status": "ACTIVE",      "statusCls": "ok" },
-    { "name": "James White",    "email": "j.white@terralogic.com",   "dept": "Engineering", "risk": 5,  "riskCls": "ok", "mfa": "WebAuthn","login": "08:59",    "status": "ACTIVE",      "statusCls": "ok" }
+    { "name": "Venkatesh Babu",     "email": "venkatesh.b@terralogic.com",   "dept": "Finance",     "risk": 91, "riskCls": "cr", "mfa": null,       "login": "Yesterday","status": "OFFBOARDING", "statusCls": "hi" },
+    { "name": "Kamakshee M.",       "email": "kamakshee.m@terralogic.com",   "dept": "Engineering", "risk": 72, "riskCls": "hi", "mfa": "WebAuthn","login": "09:02",    "status": "ACTIVE",      "statusCls": "ok" },
+    { "name": "Anurag Pandey",      "email": "anurag.p@terralogic.com",      "dept": "Sales",       "risk": 44, "riskCls": "me", "mfa": "Push",    "login": "08:55",    "status": "ACTIVE",      "statusCls": "ok" },
+    { "name": "Soujanya Acharya",   "email": "soujanya.a@terralogic.com",    "dept": "HR",          "risk": 21, "riskCls": "ok", "mfa": "WebAuthn","login": "08:30",    "status": "ACTIVE",      "statusCls": "ok" },
+    { "name": "Bharath Vijay",      "email": "bharath.v@terralogic.com",     "dept": "Engineering", "risk": 18, "riskCls": "ok", "mfa": "WebAuthn","login": "08:22",    "status": "ACTIVE",      "statusCls": "ok" },
+    { "name": "Yaseerah Fathima",   "email": "yaseerah.f@terralogic.com",    "dept": "Security",    "risk": 9,  "riskCls": "ok", "mfa": "FIDO2",   "login": "08:05",    "status": "ACTIVE",      "statusCls": "ok" },
+    { "name": "Umesh Teli",         "email": "umesh.t@terralogic.com",       "dept": "IT Ops",      "risk": 33, "riskCls": "me", "mfa": "Push",    "login": "09:01",    "status": "ACTIVE",      "statusCls": "ok" },
+    { "name": "Sanghamitra Goswami","email": "sanghamitra.g@terralogic.com", "dept": "Finance",     "risk": 61, "riskCls": "hi", "mfa": "TOTP",    "login": "2d ago",   "status": "ACTIVE",      "statusCls": "ok" },
+    { "name": "Attili Kishore",     "email": "attili.k@terralogic.com",      "dept": "Sales",       "risk": 14, "riskCls": "ok", "mfa": "Push",    "login": "08:47",    "status": "ACTIVE",      "statusCls": "ok" },
+    { "name": "Safina Khanum",      "email": "safina.k@terralogic.com",      "dept": "HR",          "risk": 27, "riskCls": "me", "mfa": "TOTP",    "login": "09:10",    "status": "ACTIVE",      "statusCls": "ok" },
+    { "name": "Chethan Venkatesh",  "email": "chethan.v@terralogic.com",     "dept": "Engineering", "risk": 5,  "riskCls": "ok", "mfa": "WebAuthn","login": "08:59",    "status": "ACTIVE",      "statusCls": "ok" }
   ],
   "riskDistribution": [
     { "label": "CRITICAL", "pct": 11,  "color": "var(--crit)", "val": "1" },
@@ -26,14 +26,14 @@
     { "label": "LOW",      "pct": 100, "color": "var(--ok)",   "val": "878" }
   ],
   "pamSessions": [
-    { "id": "PAM-0041", "user": "alice@terralogic.com",  "host": "prod-db-01",   "reason": "Schema migration",      "timeLeft": "47m", "elevated": "sudo",    "status": "ACTIVE",  "statusCls": "ok" },
-    { "id": "PAM-0039", "user": "raj.p@terralogic.com",  "host": "gke-cluster",  "reason": "Incident response",     "timeLeft": "1h 12m", "elevated": "admin", "status": "ACTIVE",  "statusCls": "ok" },
-    { "id": "PAM-0035", "user": "c.ruiz@terralogic.com", "host": "mail-srv-01",  "reason": "Exchange maintenance",  "timeLeft": "Expired","elevated": "admin",  "status": "EXPIRED", "statusCls": "hi" }
+    { "id": "PAM-0041", "user": "yaseerah.f@terralogic.com",    "host": "prod-db-01",   "reason": "Schema migration",      "timeLeft": "47m",    "elevated": "sudo",  "status": "ACTIVE",  "statusCls": "ok" },
+    { "id": "PAM-0039", "user": "bharath.v@terralogic.com",    "host": "gke-cluster",  "reason": "Incident response",     "timeLeft": "1h 12m", "elevated": "admin", "status": "ACTIVE",  "statusCls": "ok" },
+    { "id": "PAM-0035", "user": "umesh.t@terralogic.com",      "host": "mail-srv-01",  "reason": "Exchange maintenance",  "timeLeft": "Expired","elevated": "admin",  "status": "EXPIRED", "statusCls": "hi" }
   ],
   "pamRequests": [
-    { "id": "REQ-0047", "user": "sarah.k@terralogic.com","host": "prod-api-gateway","reason": "Debug 502 errors",  "duration": "1h", "requestedAt": "2m ago",  "status": "PENDING",  "statusCls": "hi" },
-    { "id": "REQ-0045", "user": "mei.z@terralogic.com",  "host": "fin-reporting-db","reason": "Q2 audit pull",    "duration": "2h", "requestedAt": "14m ago", "status": "PENDING",  "statusCls": "hi" },
-    { "id": "REQ-0042", "user": "d.park@terralogic.com", "host": "crm-server-01",   "reason": "Salesforce sync",  "duration": "30m","requestedAt": "1h ago",  "status": "APPROVED", "statusCls": "ok" }
+    { "id": "REQ-0047", "user": "kamakshee.m@terralogic.com",   "host": "prod-api-gateway","reason": "Debug 502 errors",  "duration": "1h", "requestedAt": "2m ago",  "status": "PENDING",  "statusCls": "hi" },
+    { "id": "REQ-0045", "user": "sanghamitra.g@terralogic.com", "host": "fin-reporting-db","reason": "Q2 audit pull",    "duration": "2h", "requestedAt": "14m ago", "status": "PENDING",  "statusCls": "hi" },
+    { "id": "REQ-0042", "user": "attili.k@terralogic.com",      "host": "crm-server-01",   "reason": "Salesforce sync",  "duration": "30m","requestedAt": "1h ago",  "status": "APPROVED", "statusCls": "ok" }
   ],
   "ssoFederation": [
     { "name": "Google Workspace", "sessions": 847, "status": "ok", "note": null },
@@ -67,10 +67,10 @@
     { "name": "Contractors",       "type": "Group", "members": 38,  "scope": "Limited",   "roles": ["Dev Read-only"],               "created": "2024-04-12", "statusCls": "hi" }
   ],
   "accessReviews": [
-    { "id": "REV-2026-06", "name": "Q2 Finance access review",     "reviewer": "Emma Clark",    "target": "Finance",      "due": "2026-06-30", "total": 48, "approved": 31, "revoked": 3, "pending": 14, "status": "IN PROGRESS", "statusCls": "hi" },
-    { "id": "REV-2026-05", "name": "Prod DB admin certification",  "reviewer": "Alice Nguyen",  "target": "Prod DB Admins","due": "2026-07-05","total": 4,  "approved": 2,  "revoked": 0, "pending": 2,  "status": "IN PROGRESS", "statusCls": "hi" },
-    { "id": "REV-2026-04", "name": "Contractor access review",     "reviewer": "Carlos Ruiz",   "target": "Contractors",  "due": "2026-07-15", "total": 38, "approved": 0,  "revoked": 0, "pending": 38, "status": "NOT STARTED", "statusCls": "in" },
-    { "id": "REV-2026-03", "name": "Q1 Engineering access review", "reviewer": "Sarah Kim",     "target": "Engineering",  "due": "2026-03-31", "total": 214,"approved": 201,"revoked": 8, "pending": 0,  "status": "COMPLETE",    "statusCls": "ok" },
-    { "id": "REV-2026-02", "name": "Exec read-all certification",  "reviewer": "Alice Nguyen",  "target": "Exec Leadership","due": "2026-04-30","total": 7,"approved": 7,  "revoked": 0, "pending": 0,  "status": "COMPLETE",    "statusCls": "ok" }
+    { "id": "REV-2026-06", "name": "Q2 Finance access review",     "reviewer": "Soujanya Acharya",   "target": "Finance",       "due": "2026-06-30", "total": 48,  "approved": 31,  "revoked": 3, "pending": 14, "status": "IN PROGRESS", "statusCls": "hi" },
+    { "id": "REV-2026-05", "name": "Prod DB admin certification",  "reviewer": "Yaseerah Fathima",   "target": "Prod DB Admins", "due": "2026-07-05", "total": 4,   "approved": 2,   "revoked": 0, "pending": 2,  "status": "IN PROGRESS", "statusCls": "hi" },
+    { "id": "REV-2026-04", "name": "Contractor access review",     "reviewer": "Umesh Teli",          "target": "Contractors",   "due": "2026-07-15", "total": 38,  "approved": 0,   "revoked": 0, "pending": 38, "status": "NOT STARTED", "statusCls": "in" },
+    { "id": "REV-2026-03", "name": "Q1 Engineering access review", "reviewer": "Kamakshee M.",        "target": "Engineering",   "due": "2026-03-31", "total": 214, "approved": 201, "revoked": 8, "pending": 0,  "status": "COMPLETE",    "statusCls": "ok" },
+    { "id": "REV-2026-02", "name": "Exec read-all certification",  "reviewer": "Yaseerah Fathima",   "target": "Exec Leadership","due": "2026-04-30", "total": 7,   "approved": 7,   "revoked": 0, "pending": 0,  "status": "COMPLETE",    "statusCls": "ok" }
   ]
 }
