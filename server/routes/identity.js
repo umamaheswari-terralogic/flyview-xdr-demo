@@ -140,7 +140,7 @@ const getSimUser = () =>
         alert: null,
       }
 
-// ── Sim user 2: Shabbeer ─────────────────────────────────────────
+// ── Sim user 2: Santosh ─────────────────────────────────────────
 // Scenario: Employee on PIP silently logged into cloud storage and
 // started bulk-downloading corporate data — insider threat / data exfil.
 // Trigger:   POST /api/identity/shabbeer%40terralogic.com/trigger
@@ -148,12 +148,12 @@ const getSimUser = () =>
 //            (called automatically by the Cloud "Revoke IAM" button)
 
 let johnEscalated = false
-const JOHN_EMAIL = 'shabbeer@terralogic.com'
+const JOHN_EMAIL = 'santosh@terralogic.com'
 
 const getJohnUser = () =>
   johnEscalated
     ? {
-        name: 'Shabbeer',
+        name: 'Santosh',
         email: JOHN_EMAIL,
         dept: 'Engineering',
         risk: 76,
@@ -173,7 +173,7 @@ const getJohnUser = () =>
         },
       }
     : {
-        name: 'Shabbeer',
+        name: 'Santosh',
         email: JOHN_EMAIL,
         dept: 'Engineering',
         risk: 34,
@@ -199,19 +199,19 @@ router.post(`/${encodeURIComponent(SIM_EMAIL)}/reset`, (_req, res) => {
   res.json({ reset: true, user: getSimUser() })
 })
 
-// POST /api/identity/shabbeer@terralogic.com/trigger — escalate
+// POST /api/identity/santosh@terralogic.com/trigger — escalate
 router.post(`/${encodeURIComponent(JOHN_EMAIL)}/trigger`, (_req, res) => {
   johnEscalated = true
   res.json({ triggered: true, user: getJohnUser() })
 })
 
-// POST /api/identity/shabbeer@terralogic.com/reset — reset
+// POST /api/identity/santosh@terralogic.com/reset — reset
 router.post(`/${encodeURIComponent(JOHN_EMAIL)}/reset`, (_req, res) => {
   johnEscalated = false
   res.json({ reset: true, user: getJohnUser() })
 })
 
-// POST /api/identity/shabbeer@terralogic.com/resolve  — force-resolve (called by Cloud "Revoke IAM")
+// POST /api/identity/santosh@terralogic.com/resolve  — force-resolve (called by Cloud "Revoke IAM")
 router.post(`/${encodeURIComponent(JOHN_EMAIL)}/resolve`, (_req, res) => {
   johnEscalated = false
   res.json({ resolved: true, user: getJohnUser() })

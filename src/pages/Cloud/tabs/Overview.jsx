@@ -135,14 +135,14 @@ export default function CloudOverview() {
     }, delay)
   }
 
-  // "Revoke IAM" for Shabbeer's sim finding — resolves cloud finding AND
+  // "Revoke IAM" for Santosh's sim finding — resolves cloud finding AND
   // calls /resolve on the identity server so his row resets in Identity module too
   const [revoking, setRevoking] = useState(false)
 
   function handleRevokeIAM(findingId) {
     if (revoking) return
     setRevoking(true)
-    toast('Revoking IAM credentials…', 'shabbeer@terralogic.com access keys being invalidated', 'hi')
+    toast('Revoking IAM credentials…', 'santosh@terralogic.com access keys being invalidated', 'hi')
 
     const delay = 3000 + Math.random() * 2000
     setTimeout(async () => {
@@ -152,10 +152,10 @@ export default function CloudOverview() {
       ))
       // Call server to reset identity entry
       try {
-        await fetch(`${API_BASE}/api/cloud/shabbeer/revoke-iam`, { method: 'POST' })
+        await fetch(`${API_BASE}/api/cloud/santosh/revoke-iam`, { method: 'POST' })
       } catch { /* server may be down — local state is already updated */ }
       setRevoking(false)
-      toast('IAM revoked — both modules resolved', 'shabbeer@terralogic.com credentials invalidated · Identity risk reset', 'ok')
+      toast('IAM revoked — both modules resolved', 'santosh@terralogic.com credentials invalidated · Identity risk reset', 'ok')
     }, delay)
   }
 
@@ -172,7 +172,7 @@ export default function CloudOverview() {
 
   const critCount = allDisplayed.filter(f => f.sevCls === 'cr' && f.status !== 'RESOLVED').length
   const highCount = allDisplayed.filter(f => f.sevCls === 'hi' && f.status !== 'RESOLVED').length
-  const johnFinding = simFindings.find(f => f.id === 'CF-SHABBEER-001')
+  const johnFinding = simFindings.find(f => f.id === 'CF-SANTOSH-001')
 
   return (
     <>
@@ -191,7 +191,7 @@ export default function CloudOverview() {
               Correlated finding — insider threat activity detected in S3
             </div>
             <div style={{ fontSize: 12, color: 'var(--txt2)', lineHeight: 1.5 }}>
-              <b>shabbeer@terralogic.com</b> (PIP employee) made <b>4,200 GetObject calls</b> on{' '}
+              <b>santosh@terralogic.com</b> (PIP employee) made <b>4,200 GetObject calls</b> on{' '}
               <span className="mono">corp-data-prod</span> at 02:47 AM, transferring 4.2 GB.
               This finding is correlated with a <b>HIGH risk alert in the Identity module</b>.
               Click "Revoke IAM" on the finding row to invalidate credentials and resolve both modules.

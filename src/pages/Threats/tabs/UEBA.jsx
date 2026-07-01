@@ -3,8 +3,8 @@ import { useState } from 'react'
 const USERS = [
   { user: 'amy.wong',             dept: 'Finance',    risk: 94, riskLvl: 'CRITICAL', sevCls: 'cr', mfa: 'None',      signals: ['Brute-force then success', 'Off-hours login', 'Bulk data download'],         status: 'SUSPENDED' },
   { user: 'john.doe',             dept: 'IT Admin',   risk: 81, riskLvl: 'HIGH',     sevCls: 'hi', mfa: 'TOTP',      signals: ['Privileged access 02:00', 'New admin tool installed', '4 failed MFA'],         status: 'MONITORING'},
-  { user: 'vyshnavi.thatikonda',  dept: 'Engineering',risk: 76, riskLvl: 'HIGH',     sevCls: 'hi', mfa: 'Push',      signals: ['Impossible travel (IND→SG)', 'MFA skipped once', 'Antivirus disabled'],       status: 'MONITORING'},
-  { user: 'shabbeer',             dept: 'Engineering',risk: 68, riskLvl: 'HIGH',     sevCls: 'hi', mfa: 'TOTP',      signals: ['Bulk cloud download 02:30', 'PIP status', 'Unusual access hours'],             status: 'MONITORING'},
+  { user: 'vyshnavi.thatikonda',  dept: 'Engineering',risk: 76, riskLvl: 'HIGH',     sevCls: 'hi', mfa: 'Push',      signals: ['Impossible travel (Nellore→Texas)', 'MFA skipped once', 'Antivirus disabled'],       status: 'MONITORING'},
+  { user: 'santosh',             dept: 'Engineering',risk: 68, riskLvl: 'HIGH',     sevCls: 'hi', mfa: 'TOTP',      signals: ['Bulk cloud download 02:30', 'PIP status', 'Unusual access hours'],             status: 'MONITORING'},
   { user: 'contractor-mjones',    dept: 'External',   risk: 55, riskLvl: 'MEDIUM',   sevCls: 'me', mfa: 'SMS',       signals: ['Unmanaged IAM user', 'Access from personal device', 'No security training'],   status: 'REVIEW'    },
   { user: 'mike.chen',            dept: 'IT Admin',   risk: 42, riskLvl: 'MEDIUM',   sevCls: 'me', mfa: 'WebAuthn',  signals: ['Prod DB access after hours', 'Remote session 5h duration'],                    status: 'NORMAL'    },
   { user: 'sarah.kim',            dept: 'Security',   risk: 18, riskLvl: 'LOW',      sevCls: 'ok', mfa: 'WebAuthn',  signals: [],                                                                             status: 'NORMAL'    },
@@ -16,7 +16,7 @@ const BEHAVIOR_EVENTS = [
   { ts: '08:58', user: 'john.doe',            event: 'Admin tool installed at 08:56 on CORP-IT-01', sev: 'HIGH',    sevCls: 'hi' },
   { ts: '08:45', user: 'contractor-mjones',   event: 'Login from personal device (not enrolled)',   sev: 'MEDIUM',  sevCls: 'me' },
   { ts: '07:30', user: 'mike.chen',           event: 'SSH session to DB-PROD-01 — duration 1h 4m',  sev: 'MEDIUM',  sevCls: 'me' },
-  { ts: '02:31', user: 'shabbeer',            event: 'Downloaded 4.2 GB from SharePoint at 02:31', sev: 'HIGH',    sevCls: 'hi' },
+  { ts: '02:31', user: 'santosh',            event: 'Downloaded 4.2 GB from SharePoint at 02:31', sev: 'HIGH',    sevCls: 'hi' },
   { ts: '00:07', user: 'john.doe',            event: 'Privileged access at 00:07 — outside hours',  sev: 'HIGH',    sevCls: 'hi' },
 ]
 

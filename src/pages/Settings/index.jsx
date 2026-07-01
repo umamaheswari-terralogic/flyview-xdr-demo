@@ -28,18 +28,18 @@ const SCENARIOS = [
   {
     id:       'identity-vyshnavi',
     title:    'Login from Two Countries at Once',
-    desc:     'Vyshnavi logs in from India, then from Singapore 18 minutes later — physically impossible. MFA was skipped.',
+    desc:     'Vyshnavi logs in from Nellore, India, then from Texas, US 18 minutes later — physically impossible. MFA was skipped.',
     modules:  [{ label: 'Identity', cls: 'cr' }],
     triggerEndpoint: '/api/identity/vyshnavi.t%40terralogic.com/trigger',
     resetEndpoint:   '/api/identity/vyshnavi.t%40terralogic.com/reset',
   },
   {
-    id:       'identity-shabbeer',
+    id:       'identity-santosh',
     title:    'PIP Employee Stealing Data Before Exit',
-    desc:     'Shabbeer (PIP employee) downloads gigabytes of company files from cloud storage at 2 AM.',
+    desc:     'Santosh (PIP employee) downloads gigabytes of company files from cloud storage at 2 AM.',
     modules:  [{ label: 'Identity', cls: 'hi' }, { label: 'Cloud', cls: 'hi' }],
-    triggerEndpoint: '/api/identity/shabbeer%40terralogic.com/trigger',
-    resetEndpoint:   '/api/identity/shabbeer%40terralogic.com/reset',
+    triggerEndpoint: '/api/identity/santosh%40terralogic.com/trigger',
+    resetEndpoint:   '/api/identity/santosh%40terralogic.com/reset',
   },
   {
     id:       'devices-antivirus',

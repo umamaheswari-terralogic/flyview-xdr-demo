@@ -7,7 +7,7 @@ const CASES = [
   { id: 'CASE-2026-0038', title: 'Shadow AI data exposure — Cursor AI',          severity: 'HIGH',     sevCls: 'hi', status: 'ACKNOWLEDGED',statusCls: 'me', assignee: 'mike.chen', created: 'Yesterday',     alerts: 2, tags: ['AI-SPM', 'DLP']       },
   { id: 'CASE-2026-0037', title: 'Impossible travel — vyshnavi.t',               severity: 'HIGH',     sevCls: 'hi', status: 'RESOLVED',    statusCls: 'ok', assignee: 'sarah.kim',  created: '2 days ago',   alerts: 1, tags: ['IAM', 'UEBA']         },
   { id: 'CASE-2026-0036', title: 'Unauthorised ACL change — CAT2960-ACCESS-07',  severity: 'MEDIUM',   sevCls: 'me', status: 'RESOLVED',    statusCls: 'ok', assignee: 'r.lee',     created: '3 days ago',    alerts: 1, tags: ['Network', 'Config']   },
-  { id: 'CASE-2026-0035', title: 'PIP user downloading bulk files — shabbeer',   severity: 'HIGH',     sevCls: 'hi', status: 'RESOLVED',    statusCls: 'ok', assignee: 'sarah.kim',  created: '4 days ago',   alerts: 2, tags: ['Cloud', 'Insider']    },
+  { id: 'CASE-2026-0035', title: 'PIP user downloading bulk files — santosh',   severity: 'HIGH',     sevCls: 'hi', status: 'RESOLVED',    statusCls: 'ok', assignee: 'sarah.kim',  created: '4 days ago',   alerts: 2, tags: ['Cloud', 'Insider']    },
 ]
 
 const STATUSES = ['All', 'OPEN', 'IN_PROGRESS', 'ACKNOWLEDGED', 'RESOLVED']

@@ -57,15 +57,15 @@ function buildDrawer(u) {
       sections: [
         {
           label: 'What happened',
-          desc: `${u.name} authenticated from Hyderabad (IN) at 09:41, then from Singapore (SG) at 09:59 — only 18 minutes apart. The physical distance between these locations makes simultaneous or sequential access impossible, indicating either credential theft or account sharing. The MFA challenge was not completed during the second login.`,
+          desc: `${u.name} authenticated from Nellore (IN) at 09:41, then from Texas (US) at 09:59 — only 18 minutes apart. The physical distance between these locations makes simultaneous or sequential access impossible, indicating either credential theft or account sharing. The MFA challenge was not completed during the second login.`,
         },
         {
           label: 'Event details',
           items: [
             { key: 'User', value: u.email },
             { key: 'Department', value: u.dept },
-            { key: 'First login', value: 'Hyderabad, IN — 09:41' },
-            { key: 'Second login', value: 'Singapore, SG — 09:59', color: 'var(--crit)' },
+            { key: 'First login', value: 'Nellore, IN — 09:41' },
+            { key: 'Second login', value: 'Texas, US — 09:59', color: 'var(--crit)' },
             { key: 'Time between logins', value: '18 minutes', color: 'var(--crit)' },
             { key: 'MFA', value: 'BYPASSED — challenge skipped on second login', color: 'var(--crit)', wide: true },
           ],
@@ -247,7 +247,7 @@ export default function IdentityOverview() {
         }}>
           <span style={{ fontSize: 16 }}>🔍</span>
           <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--high)', flex: 1 }}>
-            Data Exfiltration — <b>Shabbeer</b> ({john.email}) bulk-downloaded 4.2 GB from S3 at 02:47 AM. PIP employee.
+            Data Exfiltration — <b>Santosh</b> ({john.email}) bulk-downloaded 4.2 GB from S3 at 02:47 AM. PIP employee.
           </span>
           <span className="b hi"><i />HIGH</span>
           <button className="btn" style={{ marginLeft: 4 }} onClick={() => setDrawerUser(john)}>View</button>
