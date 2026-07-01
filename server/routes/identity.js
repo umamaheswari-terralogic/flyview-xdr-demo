@@ -43,8 +43,8 @@ const getVyshnaviUser = () =>
 
 const USERS = [
   {
-    name: 'John Doe',
-    email: 'john.d@terralogic.com',
+    name: 'Harshavardhan S.',
+    email: 'harshavardhan.s@terralogic.com',
     dept: 'Finance',
     risk: 87,
     riskCls: 'cr',
@@ -54,8 +54,8 @@ const USERS = [
     statusCls: 'ok',
   },
   {
-    name: 'Robert Chen',
-    email: 'r.chen@terralogic.com',
+    name: 'Venkatesh Babu',
+    email: 'venkatesh.b@terralogic.com',
     dept: 'Finance',
     risk: 91,
     riskCls: 'cr',
@@ -65,8 +65,8 @@ const USERS = [
     statusCls: 'hi',
   },
   {
-    name: 'Sarah Kim',
-    email: 'sarah.k@terralogic.com',
+    name: 'Kamakshee M.',
+    email: 'kamakshee.m@terralogic.com',
     dept: 'Engineering',
     risk: 72,
     riskCls: 'hi',
@@ -76,8 +76,8 @@ const USERS = [
     statusCls: 'ok',
   },
   {
-    name: 'Mike Ross',
-    email: 'mike.r@terralogic.com',
+    name: 'Anurag Pandey',
+    email: 'anurag.p@terralogic.com',
     dept: 'Sales',
     risk: 44,
     riskCls: 'me',
@@ -87,8 +87,8 @@ const USERS = [
     statusCls: 'ok',
   },
   {
-    name: 'Emma Clark',
-    email: 'emma.c@terralogic.com',
+    name: 'Soujanya Acharya',
+    email: 'soujanya.a@terralogic.com',
     dept: 'HR',
     risk: 21,
     riskCls: 'ok',
