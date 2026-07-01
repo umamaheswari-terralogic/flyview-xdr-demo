@@ -3,21 +3,35 @@ import Sidebar from '../components/Sidebar.jsx'
 import TopBar from '../components/TopBar.jsx'
 import TabNavigation from '../components/TabNavigation.jsx'
 import { ToastProvider } from '../components/Toast.jsx'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+
+function useLiveClock() {
+  const fmt = () => {
+    const now = new Date()
+    return now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) +
+      ' · ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  }
+  const [clock, setClock] = useState(fmt)
+  useEffect(() => {
+    const id = setInterval(() => setClock(fmt()), 1000)
+    return () => clearInterval(id)
+  }, [])
+  return clock
+}
 import { API_BASE } from '../config.js'
 
 const API = API_BASE
 
 const MODULE_CONFIG = {
   '/': {
-    title: 'Good morning. <b>5 things</b> need your attention',
-    subtitle: 'Friday 29 May 2026 · last sync 14s ago · 1,284 assets across 8 surfaces',
+    title: 'Good morning',
+    subtitle: '',
     tabs: [],
   },
   '/threats': {
     title: 'Threats — <b>3 critical</b> incidents open',
-    subtitle: 'SIEM · v4.4 · 847 endpoints · 148,302 events today',
-    tabs: ['Overview', 'Incidents', 'Events', 'Posture', 'Human Risk', 'Intelligence', 'Rules'],
+    subtitle: 'SIEM · v4.4',
+    tabs: ['Overview', 'Incidents', 'Alerts', 'Cases', 'Pipeline', 'Detection Rules', 'UEBA', 'Threat Intel', 'SIEM Posture', 'Threat Hunt', 'Blazey AI'],
   },
   '/devices': {
     title: 'Devices — <b>12 non-compliant</b> of 847 enrolled',
@@ -42,7 +56,7 @@ const MODULE_CONFIG = {
   '/network': {
     title: 'Network — <b>1 offline</b>, 2 config drift events',
     subtitle: 'NMS · 64 devices · Palo Alto · Cisco · Fortinet',
-    tabs: ['Overview', 'Devices', 'Traffic (NetFlow)', 'Config Audit', 'Syslog'],
+    tabs: ['Overview', 'Devices', 'Traffic (NetFlow)', 'Config Audit', 'Topology', 'Syslog', 'Alerts'],
   },
   '/privacy': {
     title: 'Privacy — <b>1 overdue DSAR</b> · RoPA 96%',
@@ -85,6 +99,7 @@ export default function AppLayout() {
   const cfg = MODULE_CONFIG[moduleKey] ?? MODULE_CONFIG['/']
   const [activeTab, setActiveTab] = useState(cfg.tabs[0] ?? '')
   const [simIncidentCount, setSimIncidentCount] = useState(0)
+  const liveClock = useLiveClock()
 
   // Poll threats sim so header count and tab badge stay live
   useEffect(() => {
@@ -99,7 +114,7 @@ export default function AppLayout() {
   }, [])
 
   // Override threats title when sim incidents are active
-  const resolvedCfg = { ...cfg }
+  const resolvedCfg = { ...cfg, subtitle: moduleKey === '/' ? liveClock : cfg.subtitle }
   if (moduleKey === '/threats') {
     const total = 3 + simIncidentCount
     resolvedCfg.title = `Threats — <b>${total} critical</b> incidents open`

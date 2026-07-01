@@ -1,7 +1,6 @@
 import StatusBadge from '../../../components/StatusBadge.jsx'
 
 const APPS = [
-  { name: 'CrowdStrike Falcon',   version: '7.14.0',  platform: 'All',         required: true,  installed: 847, total: 847, cls: 'ok', status: 'COMPLIANT'  },
   { name: 'GlobalProtect VPN',    version: '6.2.4',   platform: 'macOS · Win', required: true,  installed: 651, total: 664, cls: 'hi', status: 'PARTIAL'    },
   { name: 'Microsoft 365',        version: '16.84',   platform: 'All',         required: true,  installed: 847, total: 847, cls: 'ok', status: 'COMPLIANT'  },
   { name: 'Slack',                version: '4.38.125',platform: 'All',         required: true,  installed: 844, total: 847, cls: 'ok', status: 'COMPLIANT'  },

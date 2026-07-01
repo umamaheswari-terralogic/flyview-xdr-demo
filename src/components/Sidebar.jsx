@@ -56,7 +56,7 @@ export default function Sidebar() {
           <div className="t-av">TL</div>
           <div>
             <div className="t-name">Terralogic</div>
-            <div className="t-sub">MSSP · 12 clients ▾</div>
+            <div className="t-sub">▾</div>
           </div>
         </div>
 
