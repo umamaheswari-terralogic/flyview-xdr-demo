@@ -39,7 +39,7 @@
         "platform": "🍎 macOS 14.5",
         "status": "COMPLIANT",
         "statusCls": "ok",
-        "enrollment": "DEP",
+        "enrollment": "MSI",
         "lastSeen": "2 min"
       },
       {
@@ -57,7 +57,7 @@
         "platform": "📱 iPadOS 17.4",
         "status": "COMPLIANT",
         "statusCls": "ok",
-        "enrollment": "DEP",
+        "enrollment": "MSI",
         "lastSeen": "1 min"
       },
       {
@@ -75,7 +75,7 @@
         "platform": "🍎 macOS 13.7",
         "status": "NON-COMPLIANT",
         "statusCls": "cr",
-        "enrollment": "DEP",
+        "enrollment": "MSI",
         "lastSeen": "32 min"
       },
       {
