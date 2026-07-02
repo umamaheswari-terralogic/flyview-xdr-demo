@@ -92,6 +92,26 @@ export default function CloudOverview() {
     return () => clearInterval(pollRef.current)
   }, [])
 
+  // Broadcast current displayed counts to server so Overview dashboard can sync
+  useEffect(() => {
+    if (loading) return
+    const allWithSimEff = [
+      ...simFindings,
+      ...allFindings.filter(f => !simFindings.some(s => s.id === f.id)),
+    ]
+    const displayedEff = [
+      ...simFindings,
+      ...findings.filter(f => !simFindings.some(s => s.id === f.id)),
+    ]
+    const critEff = allWithSimEff.filter(f => f.sevCls === 'cr' && f.status !== 'RESOLVED').length
+    const highEff = allWithSimEff.filter(f => f.sevCls === 'hi' && f.status !== 'RESOLVED').length
+    fetch(`${CLOUD_API}/display-state`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ count: displayedEff.length, critical: critEff, high: highEff }),
+    }).catch(() => {})
+  }, [findings, simFindings, loading, allFindings])
+
   function handleScan() {
     if (scanning) return
     setScanning(true)

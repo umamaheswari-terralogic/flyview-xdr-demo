@@ -153,9 +153,10 @@ export default function Overview() {
   const [dsars, setDsars]               = useState([])
   const [aiSummary, setAiSummary]       = useState(null)
   const [loading, setLoading]           = useState(true)
-  const [liveDevices, setLiveDevices]   = useState([])
-  const [liveCloudExtra, setLiveCloud]  = useState([])
-  const [chatgptDetected, setChatgpt]   = useState(false)
+  const [liveDevices, setLiveDevices]      = useState([])
+  const [liveCloudExtra, setLiveCloud]     = useState([])
+  const [liveCloudDisplay, setCloudDisplay] = useState(null)  // counts broadcast by Cloud Overview page
+  const [chatgptDetected, setChatgpt]      = useState(false)
 
   useEffect(() => {
     Promise.all([
@@ -183,9 +184,15 @@ export default function Overview() {
     poll(); const id = setInterval(poll, 3000); return () => clearInterval(id)
   }, [])
 
-  // Poll server cloud findings so Shabbeer's dynamic finding is reflected live
+  // Poll server cloud — picks up Santosh sim finding AND counts broadcast by Cloud Overview page
   useEffect(() => {
-    const poll = () => fetch(`${API}/api/cloud`).then(r => r.json()).then(({ findings: f }) => setLiveCloud(f ?? [])).catch(() => {})
+    const poll = () => fetch(`${API}/api/cloud`)
+      .then(r => r.json())
+      .then(({ findings: f, displayState: ds }) => {
+        setLiveCloud(f ?? [])
+        if (ds?.count != null) setCloudDisplay(ds)
+      })
+      .catch(() => {})
     poll(); const id = setInterval(poll, 3000); return () => clearInterval(id)
   }, [])
 
@@ -210,14 +217,16 @@ export default function Overview() {
   const mfaPct           = parseInt(identitySummary?.mfa?.count)        || (users.length > 0 ? Math.round((mfaEnabled / users.length) * 100) : 0)
   const dormantUsers     = users.filter(u => u.status === 'DORMANT' || u.status === 'Inactive').length
 
-  // Cloud: JSON findings are always the base; server sim findings (Santosh) added on top, deduped
+  // Cloud: JSON findings + server sim findings merged (for posture bars / active actions)
   const allCloudFindings = [
     ...liveCloudExtra,
     ...findings.filter(f => !liveCloudExtra.some(s => s.id === f.id)),
   ]
-  const totalFindings    = allCloudFindings.length
-  const criticalFindings = allCloudFindings.filter(f => f.severity === 'CRITICAL').length
-  const highFindings     = allCloudFindings.filter(f => f.severity === 'HIGH').length
+  // Cloud Instances + Critical Cloud KPI: use counts broadcast by Cloud Overview page (syncs with scan)
+  // Fall back to full JSON count if Cloud Overview hasn't been visited yet this session
+  const totalFindings    = liveCloudDisplay?.count    ?? allCloudFindings.length
+  const criticalFindings = liveCloudDisplay?.critical ?? allCloudFindings.filter(f => f.severity === 'CRITICAL').length
+  const highFindings     = liveCloudDisplay?.high     ?? allCloudFindings.filter(f => f.severity === 'HIGH').length
   const medFindings      = allCloudFindings.filter(f => f.severity === 'MEDIUM').length
   const lowFindings      = allCloudFindings.filter(f => f.severity === 'LOW').length
 

@@ -2,6 +2,9 @@ import { Router } from 'express'
 
 const router = Router()
 
+// Counts broadcast by Cloud Overview page — Overview dashboard reads these
+let displayState = { count: null, critical: null, high: null }
+
 const SANTOSH_FINDING = {
   id: 'CF-SANTOSH-001',
   provider: 'AWS',
@@ -45,11 +48,18 @@ async function getSantoshActive() {
   }
 }
 
-// GET /api/cloud — returns Santosh's finding when his identity trigger is active
+// POST /api/cloud/display-state — Cloud Overview page broadcasts its current shown counts
+router.post('/display-state', (req, res) => {
+  const { count, critical, high } = req.body ?? {}
+  if (count != null) displayState = { count, critical, high }
+  res.json({ ok: true })
+})
+
+// GET /api/cloud — returns Santosh's finding when his identity trigger is active + display state
 router.get('/', async (_req, res) => {
   const active = await getSantoshActive()
   const findings = active ? [SANTOSH_FINDING] : []
-  res.json({ findings, simActive: active })
+  res.json({ findings, simActive: active, displayState })
 })
 
 // POST /api/cloud/santosh/revoke-iam
