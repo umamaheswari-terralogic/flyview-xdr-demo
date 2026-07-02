@@ -1,6 +1,6 @@
 {
   "summary": {
-    "critical": { "count": "2", "label": "P0 findings – 4h SLA",    "trend": "Immediate action" },
+    "critical": { "count": "3", "label": "P0 findings – 4h SLA",    "trend": "Immediate action" },
     "high":     { "count": "5", "label": "P1 findings – 24h SLA",    "trend": "2 SLAs at risk" },
     "accounts": { "count": "3", "label": "Cloud accounts linked",     "trend": "AWS · GCP · Azure" },
     "posture":  { "count": "C+","label": "Overall cloud posture",     "trend": "↑ from D last month" }

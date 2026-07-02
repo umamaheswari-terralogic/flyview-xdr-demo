@@ -212,8 +212,8 @@ export default function Overview() {
 
   // Cloud: static findings from JSON + live server findings (Shabbeer sim finding)
   const totalFindings    = findings.length + liveCloudExtra.length
-  const criticalFindings = parseInt(cloudSummary?.critical?.count) || findings.filter(f => f.severity === 'CRITICAL').length
-  const highFindings     = (parseInt(cloudSummary?.high?.count) || findings.filter(f => f.severity === 'HIGH').length) + liveCloudExtra.filter(f => f.severity === 'HIGH').length
+  const criticalFindings = findings.filter(f => f.severity === 'CRITICAL').length + liveCloudExtra.filter(f => f.severity === 'CRITICAL').length
+  const highFindings     = findings.filter(f => f.severity === 'HIGH').length + liveCloudExtra.filter(f => f.severity === 'HIGH').length
   const medFindings      = findings.filter(f => f.severity === 'MEDIUM').length
   const lowFindings      = findings.filter(f => f.severity === 'LOW').length
 
