@@ -210,8 +210,11 @@ export default function Overview() {
   const mfaPct           = parseInt(identitySummary?.mfa?.count)        || (users.length > 0 ? Math.round((mfaEnabled / users.length) * 100) : 0)
   const dormantUsers     = users.filter(u => u.status === 'DORMANT' || u.status === 'Inactive').length
 
-  // Cloud: live server data is the truth (includes sim findings); fall back to static JSON until first poll arrives
-  const allCloudFindings = liveCloudExtra.length > 0 ? liveCloudExtra : findings
+  // Cloud: JSON findings are always the base; server sim findings (Santosh) added on top, deduped
+  const allCloudFindings = [
+    ...liveCloudExtra,
+    ...findings.filter(f => !liveCloudExtra.some(s => s.id === f.id)),
+  ]
   const totalFindings    = allCloudFindings.length
   const criticalFindings = allCloudFindings.filter(f => f.severity === 'CRITICAL').length
   const highFindings     = allCloudFindings.filter(f => f.severity === 'HIGH').length

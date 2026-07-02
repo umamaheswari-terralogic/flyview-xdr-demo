@@ -161,7 +161,15 @@ export default function CloudOverview() {
 
   if (loading) return <div className="loading-state">Loading cloud data…</div>
 
-  // Merge server-injected sim findings (prepended, deduped by id)
+  // Full set for counting: all JSON findings + server sim findings (deduped)
+  const allWithSim = [
+    ...simFindings,
+    ...allFindings.filter(f => !simFindings.some(s => s.id === f.id)),
+  ]
+  const critCount = allWithSim.filter(f => f.sevCls === 'cr' && f.status !== 'RESOLVED').length
+  const highCount = allWithSim.filter(f => f.sevCls === 'hi' && f.status !== 'RESOLVED').length
+
+  // Table display: random subset + sim findings (sim rows always visible)
   const allDisplayed = [
     ...simFindings,
     ...findings.filter(f => !simFindings.some(s => s.id === f.id)),
@@ -169,9 +177,6 @@ export default function CloudOverview() {
 
   const PROVIDERS = ['All', 'AWS', 'GCP', 'Azure']
   const filtered = filter === 'All' ? allDisplayed : allDisplayed.filter(f => f.provider === filter)
-
-  const critCount = allDisplayed.filter(f => f.sevCls === 'cr' && f.status !== 'RESOLVED').length
-  const highCount = allDisplayed.filter(f => f.sevCls === 'hi' && f.status !== 'RESOLVED').length
   const johnFinding = simFindings.find(f => f.id === 'CF-SANTOSH-001')
 
   return (
