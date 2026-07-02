@@ -210,12 +210,13 @@ export default function Overview() {
   const mfaPct           = parseInt(identitySummary?.mfa?.count)        || (users.length > 0 ? Math.round((mfaEnabled / users.length) * 100) : 0)
   const dormantUsers     = users.filter(u => u.status === 'DORMANT' || u.status === 'Inactive').length
 
-  // Cloud: static findings from JSON + live server findings (Shabbeer sim finding)
-  const totalFindings    = findings.length + liveCloudExtra.length
-  const criticalFindings = findings.filter(f => f.severity === 'CRITICAL').length + liveCloudExtra.filter(f => f.severity === 'CRITICAL').length
-  const highFindings     = findings.filter(f => f.severity === 'HIGH').length + liveCloudExtra.filter(f => f.severity === 'HIGH').length
-  const medFindings      = findings.filter(f => f.severity === 'MEDIUM').length
-  const lowFindings      = findings.filter(f => f.severity === 'LOW').length
+  // Cloud: live server data is the truth (includes sim findings); fall back to static JSON until first poll arrives
+  const allCloudFindings = liveCloudExtra.length > 0 ? liveCloudExtra : findings
+  const totalFindings    = allCloudFindings.length
+  const criticalFindings = allCloudFindings.filter(f => f.severity === 'CRITICAL').length
+  const highFindings     = allCloudFindings.filter(f => f.severity === 'HIGH').length
+  const medFindings      = allCloudFindings.filter(f => f.severity === 'MEDIUM').length
+  const lowFindings      = allCloudFindings.filter(f => f.severity === 'LOW').length
 
   // DSARs: open = IN PROGRESS + SUBMITTED + OVERDUE (matches Privacy module "3 open")
   const openDsars        = dsars.filter(d => ['OPEN','IN PROGRESS','SUBMITTED','OVERDUE'].includes(d.status)).length
@@ -233,7 +234,7 @@ export default function Overview() {
       time: a.time, event: a.type, asset: a.device,
       severity: a.severity ?? 'HIGH', sevCls: a.sevCls ?? 'hi', status: a.status ?? 'OPEN', module: 'Monitor',
     })),
-    ...findings.filter(f => f.severity === 'CRITICAL').slice(0, 3).map(f => ({
+    ...allCloudFindings.filter(f => f.severity === 'CRITICAL').slice(0, 3).map(f => ({
       time: f.discoveredAt ?? '—', event: f.issue, asset: CLOUD_IDENTITY_MAP[f.id] ?? f.resource,
       severity: 'CRITICAL', sevCls: 'cr', status: f.status ?? 'OPEN', module: 'Cloud',
     })),
@@ -408,10 +409,10 @@ export default function Overview() {
 
         {/* Cloud Posture */}
         <Panel title="Cloud Security Posture" Icon={Cloud} iconColor="#f59e0b" onClick={() => navigate('/cloud')}>
-          <StatRow Icon={ShieldX}      label="Critical"  value={criticalFindings} color="#ef4444" total={findings.length} />
-          <StatRow Icon={ShieldAlert}  label="High"      value={highFindings}     color="#f59e0b" total={findings.length} />
-          <StatRow Icon={AlertTriangle}label="Medium"    value={medFindings}      color="#eab308" total={findings.length} />
-          <StatRow Icon={Eye}          label="Low"       value={lowFindings}      color="#94a3b8" total={findings.length} />
+          <StatRow Icon={ShieldX}      label="Critical"  value={criticalFindings} color="#ef4444" total={totalFindings} />
+          <StatRow Icon={ShieldAlert}  label="High"      value={highFindings}     color="#f59e0b" total={totalFindings} />
+          <StatRow Icon={AlertTriangle}label="Medium"    value={medFindings}      color="#eab308" total={totalFindings} />
+          <StatRow Icon={Eye}          label="Low"       value={lowFindings}      color="#94a3b8" total={totalFindings} />
           <div style={{ marginTop: 12, borderRadius: 10, overflow: 'hidden', height: 6, background: 'var(--bg3)', display: 'flex' }}>
             {[
               { val: criticalFindings, color: '#ef4444' },
@@ -422,7 +423,7 @@ export default function Overview() {
               <div key={i} style={{ flex: s.val, background: s.color, transition: 'flex .6s ease' }} />
             ))}
           </div>
-          <div style={{ marginTop: 6, fontSize: 10, color: 'var(--txt3)' }}>{findings.length} total findings across all cloud assets</div>
+          <div style={{ marginTop: 6, fontSize: 10, color: 'var(--txt3)' }}>{totalFindings} total findings across all cloud assets</div>
         </Panel>
 
         {/* AI Shadow Monitor */}
