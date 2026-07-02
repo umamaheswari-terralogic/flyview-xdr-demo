@@ -9,7 +9,7 @@ const FILTERS = ['All', 'Open', 'Blocked', 'Resolved']
 const SIM_CHATGPT_EVENT = {
   id: 'SHADOW-001',
   domain: 'chatgpt.com',
-  device: 'LT-VyshnaviT-3941',
+  device: 'TVyshnavi-3941',
   user: 'vyshnavi.thatikonda@terralogic.com',
   source: 'Browser Monitor',
   detail: 'Active ChatGPT session — data exfil risk: INTERNAL content',
@@ -24,7 +24,7 @@ const SIM_CHATGPT_EVENT = {
 const SIM_EXT_EVENT = {
   id: 'SHADOW-002',
   domain: 'ChatGPT for Chrome',
-  device: 'LT-VyshnaviT-3941',
+  device: 'TVyshnavi-3941',
   user: 'vyshnavi.thatikonda@terralogic.com',
   source: 'MDM → AI-SPM',
   detail: 'Blocked AI browser extension detected — reported by MDM as "Blocked app installed"',

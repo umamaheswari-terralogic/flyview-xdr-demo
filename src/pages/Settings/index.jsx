@@ -46,16 +46,16 @@ const SCENARIOS = [
     title:    'Antivirus Turned Off',
     desc:     'Antivirus is disabled on Vyshnavi\'s laptop, leaving it unprotected and out of company policy.',
     modules:  [{ label: 'Devices', cls: 'cr' }, { label: 'Threats', cls: 'cr' }, { label: 'Identity', cls: 'cr' }],
-    triggerEndpoint: '/api/devices/LT-VyshnaviT-3941/trigger',
-    resetEndpoint:   '/api/devices/LT-VyshnaviT-3941/reset',
+    triggerEndpoint: '/api/devices/TVyshnavi-3941/trigger',
+    resetEndpoint:   '/api/devices/TVyshnavi-3941/reset',
   },
   {
     id:       'devices-blockedapp',
     title:    'Unauthorised AI Tool Installed',
     desc:     'An employee installs ChatGPT as a browser extension — a blocked app that could leak company data.',
     modules:  [{ label: 'Devices', cls: 'hi' }, { label: 'AI-SPM', cls: 'hi' }, { label: 'Threats', cls: 'hi' }],
-    triggerEndpoint: '/api/devices/LT-VyshnaviT-3941/trigger/blockedapp',
-    resetEndpoint:   '/api/devices/LT-VyshnaviT-3941/reset/blockedapp',
+    triggerEndpoint: '/api/devices/TVyshnavi-3941/trigger/blockedapp',
+    resetEndpoint:   '/api/devices/TVyshnavi-3941/reset/blockedapp',
   },
 ]
 

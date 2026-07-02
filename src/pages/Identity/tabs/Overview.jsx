@@ -116,12 +116,12 @@ function buildDrawer(u) {
       sections: [
         {
           label: 'What happened',
-          desc: `MDM reported that antivirus protection has been disabled on ${u.name} (LT-VyshnaviT-3941). FlyView IAM has automatically elevated the risk score for ${u.email} and enforced step-up MFA for all active and new sessions from this device.`,
+          desc: `MDM reported that antivirus protection has been disabled on ${u.name} (TVyshnavi-3941). FlyView IAM has automatically elevated the risk score for ${u.email} and enforced step-up MFA for all active and new sessions from this device.`,
         },
         {
           label: 'Device details',
           items: [
-            { key: 'Device',    value: 'LT-VyshnaviT-3941' },
+            { key: 'Device',    value: 'TVyshnavi-3941' },
             { key: 'Platform',  value: 'Windows 11' },
             { key: 'Signal',    value: 'MDM → IAM (cross-module)', color: 'var(--crit)' },
             { key: 'Antivirus', value: 'DISABLED', color: 'var(--crit)' },
@@ -216,7 +216,7 @@ export default function IdentityOverview() {
         }}>
           <span style={{ fontSize: 16 }}>🛡️</span>
           <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--crit)', flex: 1 }}>
-            Adaptive Auth Triggered — <b>{deviceRiskAlert.name}</b> ({deviceRiskAlert.email}): Antivirus disabled on LT-VyshnaviT-3941. Step-up MFA enforced for all sessions from this device.
+            Adaptive Auth Triggered — <b>{deviceRiskAlert.name}</b> ({deviceRiskAlert.email}): Antivirus disabled on TVyshnavi-3941. Step-up MFA enforced for all sessions from this device.
           </span>
           <span className="b cr"><i />CRITICAL</span>
           <button className="btn" style={{ marginLeft: 4 }} onClick={() => setDrawerUser(deviceRiskAlert)}>View</button>

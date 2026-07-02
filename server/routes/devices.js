@@ -13,12 +13,12 @@ function getBaseDevices() {
   return data.inventory.devices.filter(d => !d.sim)
 }
 
-// ── Scenario 1: Antivirus disabled — LT-VyshnaviT-3941 ─────────────
+// ── Scenario 1: Antivirus disabled — TVyshnavi-3941 ─────────────
 let antivirusCompliant = true
 
 const getAntivirusDevice = () => ({
   id:            'sim-antivirus',
-  name:          'LT-VyshnaviT-3941',
+  name:          'TVyshnavi-3941',
   user:          'vyshnavi.thatikonda@terralogic.com',
   platform:      '⊞ Windows 11',
   status:        antivirusCompliant ? 'COMPLIANT' : 'NON-COMPLIANT',
@@ -31,16 +31,16 @@ const getAntivirusDevice = () => ({
   extensions:    [],
 })
 
-// POST /api/devices/LT-VyshnaviT-3941/trigger — Scenario 1 trigger
-router.post('/LT-VyshnaviT-3941/trigger', (_req, res) => {
+// POST /api/devices/TVyshnavi-3941/trigger — Scenario 1 trigger
+router.post('/TVyshnavi-3941/trigger', (_req, res) => {
   antivirusCompliant = false
   simState.antivirusCompliant = false
   res.json({ triggered: true, scenario: 'antivirus', device: getAntivirusDevice() })
 })
 
 
-// POST /api/devices/LT-VyshnaviT-3941/reset — Scenario 1 reset
-router.post('/LT-VyshnaviT-3941/reset', (_req, res) => {
+// POST /api/devices/TVyshnavi-3941/reset — Scenario 1 reset
+router.post('/TVyshnavi-3941/reset', (_req, res) => {
   antivirusCompliant = true
   simState.antivirusCompliant = true
   res.json({ reset: true, scenario: 'antivirus', device: getAntivirusDevice() })
@@ -50,7 +50,7 @@ let blockedAppCompliant = true
 
 const getBlockedAppDevice = () => ({
   id:            'sim-blockedapp',
-  name:          'LT-VyshnaviT-3941',
+  name:          'TVyshnavi-3941',
   user:          'vyshnavi.thatikonda@terralogic.com',
   platform:      '⊞ Windows 11',
   status:        blockedAppCompliant ? 'COMPLIANT' : 'NON-COMPLIANT',
@@ -69,8 +69,8 @@ const getBlockedAppDevice = () => ({
   ],
 })
 
-// POST /api/devices/LT-VyshnaviT-3941/trigger/blockedapp — Scenario 2 trigger
-router.post('/LT-VyshnaviT-3941/trigger/blockedapp', (_req, res) => {
+// POST /api/devices/TVyshnavi-3941/trigger/blockedapp — Scenario 2 trigger
+router.post('/TVyshnavi-3941/trigger/blockedapp', (_req, res) => {
   blockedAppCompliant = false
   simState.deviceCompliant  = false
   simState.deviceExtensions = [
@@ -83,8 +83,8 @@ router.post('/LT-VyshnaviT-3941/trigger/blockedapp', (_req, res) => {
   res.json({ triggered: true, scenario: 'blockedapp', device: getBlockedAppDevice() })
 })
 
-// POST /api/devices/LT-VyshnaviT-3941/reset/blockedapp — Scenario 2 reset
-router.post('/LT-VyshnaviT-3941/reset/blockedapp', (_req, res) => {
+// POST /api/devices/TVyshnavi-3941/reset/blockedapp — Scenario 2 reset
+router.post('/TVyshnavi-3941/reset/blockedapp', (_req, res) => {
   blockedAppCompliant = true
   simState.deviceCompliant  = true
   simState.deviceExtensions = []
@@ -96,7 +96,7 @@ router.post('/LT-VyshnaviT-3941/reset/blockedapp', (_req, res) => {
 // Baseline record shown when both scenarios are compliant (single row, no confusion)
 const getBaselineSimDevice = () => ({
   id:            'sim-baseline',
-  name:          'LT-VyshnaviT-3941',
+  name:          'TVyshnavi-3941',
   user:          'vyshnavi.thatikonda@terralogic.com',
   platform:      '⊞ Windows 11',
   status:        'COMPLIANT',

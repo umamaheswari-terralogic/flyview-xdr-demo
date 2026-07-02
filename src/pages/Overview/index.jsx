@@ -435,7 +435,7 @@ export default function Overview() {
           {chatgptDetected ? (
             <div style={{ marginTop: 12, padding: '9px 12px', borderRadius: 9, background: 'rgba(245,158,11,.08)', border: '1px solid rgba(245,158,11,.25)', display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#f59e0b', flexShrink: 0, boxShadow: '0 0 6px #f59e0b' }} />
-              <span style={{ fontSize: 11, color: '#f59e0b', fontWeight: 600 }}>chatgpt.com · LT-VyshnaviT-3941</span>
+              <span style={{ fontSize: 11, color: '#f59e0b', fontWeight: 600 }}>chatgpt.com · TVyshnavi-3941</span>
             </div>
           ) : (
             <div style={{ marginTop: 12, padding: '9px 12px', borderRadius: 9, background: 'var(--bg3)', fontSize: 11, color: 'var(--txt3)' }}>

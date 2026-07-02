@@ -36,7 +36,7 @@ const SIM_CHATGPT_ASSET = {
   sanctionCls: 'cr',
   sim: true,
   simType: 'chatgpt',
-  device: 'LT-VyshnaviT-3941',
+  device: 'TVyshnavi-3941',
 }
 
 const SIM_EXT_ASSET = {
@@ -52,7 +52,7 @@ const SIM_EXT_ASSET = {
   sanctionCls: 'cr',
   sim: true,
   simType: 'extension',
-  device: 'LT-VyshnaviT-3941',
+  device: 'TVyshnavi-3941',
 }
 
 function RowBar({ label, pct, color, val }) {
@@ -174,7 +174,7 @@ export default function AISPMDiscover() {
         <div style={{ marginBottom: 18, padding: '12px 16px', background: 'rgba(245,158,11,.08)', borderRadius: 8, border: '1px solid rgba(245,158,11,.3)', display: 'flex', alignItems: 'center', gap: 10 }}>
           <span className="dot" style={{ background: 'var(--high)', width: 9, height: 9 }} />
           <span style={{ fontSize: 12, color: 'var(--high)', fontWeight: 600 }}>
-            Shadow AI detected on LT-VyshnaviT-3941
+            Shadow AI detected on TVyshnavi-3941
             {extDetected && ' — ChatGPT for Chrome extension (MDM flagged)'}
             {chatgpt && ' — chatgpt.com opened in Chrome'}
             {cliLlm  && ' — ollama run llama3 via CLI'}
@@ -225,17 +225,17 @@ export default function AISPMDiscover() {
                     </div>
                     {isSimCli && (
                       <div style={{ fontSize: 10, color: 'var(--txt3)', marginTop: 2, fontFamily: 'monospace' }}>
-                        ollama run llama3 · LT-VyshnaviT-3941
+                        ollama run llama3 · TVyshnavi-3941
                       </div>
                     )}
                     {isSimChatgpt && (
                       <div style={{ fontSize: 10, color: 'var(--txt3)', marginTop: 2, fontFamily: 'monospace' }}>
-                        chatgpt.com · LT-VyshnaviT-3941 · Chrome
+                        chatgpt.com · TVyshnavi-3941 · Chrome
                       </div>
                     )}
                     {isSimExt && (
                       <div style={{ fontSize: 10, color: 'var(--txt3)', marginTop: 2, fontFamily: 'monospace' }}>
-                        MDM flagged · LT-VyshnaviT-3941 · Chrome extension
+                        MDM flagged · TVyshnavi-3941 · Chrome extension
                       </div>
                     )}
                   </td>

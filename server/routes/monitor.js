@@ -5,7 +5,7 @@ const router = Router()
 // ── Baseline alerts (always present) ─────────────────────────────
 const BASE_ALERTS = [
   {
-    id: 'ALT-001', device: 'LT-VyshnaviT-3941', type: 'Service stopped',
+    id: 'ALT-001', device: 'TVyshnavi-3941', type: 'Service stopped',
     severity: 'HIGH', sevCls: 'hi', metric: 'nginx stopped 15m',
     rule: 'Service health', time: '5m', status: 'firing', statusCls: 'cr', ackBy: null,
   },
@@ -40,7 +40,7 @@ const BASE_ALERTS = [
 // whether it was Gmail or any other web app — that requires email gateway integration.
 const BEC_ALERT = {
   id: 'ALT-BEC-001',
-  device: 'LT-VyshnaviT-3941',
+  device: 'TVyshnavi-3941',
   user: 'vyshnavi.thatikonda@terralogic.com',
   type: 'Suspicious process spawn',
   severity: 'CRITICAL',

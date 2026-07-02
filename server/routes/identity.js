@@ -4,7 +4,7 @@ import { simState } from '../simState.js'
 const router = Router()
 
 // ── Scenario 3: Antivirus disabled → Adaptive Auth ─────────────────
-// Vyshnavi's device (LT-VyshnaviT-3941) has antivirus disabled.
+// Vyshnavi's device (TVyshnavi-3941) has antivirus disabled.
 // When fired, her risk elevates and IAM triggers step-up MFA.
 
 const getVyshnaviUser = () =>
@@ -23,7 +23,7 @@ const getVyshnaviUser = () =>
         simId:   'vyshnavi-device',
         alert: {
           type:   'DEVICE_RISK',
-          detail: 'MDM: Antivirus disabled on LT-VyshnaviT-3941 · All sessions require re-authentication · Step-up MFA enforced',
+          detail: 'MDM: Antivirus disabled on TVyshnavi-3941 · All sessions require re-authentication · Step-up MFA enforced',
         },
       }
     : {
@@ -104,41 +104,54 @@ const USERS = [
 // Trigger: POST /api/identity/vyshnavi.t%40terralogic.com/trigger
 
 let simEscalated = false
+let simTriggerTime = null
 const SIM_EMAIL = 'vyshnavi.t@terralogic.com'
 
-const getSimUser = () =>
-  simEscalated
-    ? {
-        name: 'Vyshnavi T.',
-        email: SIM_EMAIL,
-        dept: 'Engineering',
-        risk: 94,
-        riskCls: 'cr',
-        mfa: 'BYPASSED',
-        login: 'Just now',
-        status: 'UNDER REVIEW',
-        statusCls: 'cr',
-        sim: true,
-        simId: 'vyshnavi',
-        alert: {
-          type: 'IMPOSSIBLE_TRAVEL',
-          detail: 'Login from Hyderabad (IN) at 09:41, then Singapore (SG) at 09:59 — 18 min apart · MFA challenge skipped',
-        },
-      }
-    : {
-        name: 'Vyshnavi T.',
-        email: SIM_EMAIL,
-        dept: 'Engineering',
-        risk: 18,
-        riskCls: 'ok',
-        mfa: 'WebAuthn',
-        login: '09:41',
-        status: 'ACTIVE',
-        statusCls: 'ok',
-        sim: true,
-        simId: 'vyshnavi',
-        alert: null,
-      }
+function fmt24(date) {
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
+}
+
+function getSimUser() {
+  if (!simEscalated) {
+    return {
+      name: 'Vyshnavi T.',
+      email: SIM_EMAIL,
+      dept: 'Engineering',
+      risk: 18,
+      riskCls: 'ok',
+      mfa: 'WebAuthn',
+      login: fmt24(new Date()),
+      status: 'ACTIVE',
+      statusCls: 'ok',
+      sim: true,
+      simId: 'vyshnavi',
+      alert: null,
+    }
+  }
+  const t2Date = simTriggerTime || new Date()
+  const t1Date = new Date(t2Date.getTime() - 18 * 60 * 1000)
+  const t1 = fmt24(t1Date)
+  const t2 = fmt24(t2Date)
+  return {
+    name: 'Vyshnavi T.',
+    email: SIM_EMAIL,
+    dept: 'Engineering',
+    risk: 94,
+    riskCls: 'cr',
+    mfa: 'BYPASSED',
+    login: 'Just now',
+    status: 'UNDER REVIEW',
+    statusCls: 'cr',
+    sim: true,
+    simId: 'vyshnavi',
+    alert: {
+      type: 'IMPOSSIBLE_TRAVEL',
+      time1: t1,
+      time2: t2,
+      detail: `Login from Nellore (IN) at ${t1}, then Texas (US) at ${t2} — 18 min apart · MFA challenge skipped`,
+    },
+  }
+}
 
 // ── Sim user 2: Santosh ─────────────────────────────────────────
 // Scenario: Employee on PIP silently logged into cloud storage and
@@ -231,7 +244,7 @@ router.get('/sim', (_req, res) => {
       ? {
           user:    'vyshnavi.thatikonda@terralogic.com',
           name:    'Vyshnavi T.',
-          device:  'LT-VyshnaviT-3941',
+          device:  'TVyshnavi-3941',
           risk:    88,
           riskCls: 'cr',
           reason:  'Device antivirus disabled — adaptive MFA step-up required',
