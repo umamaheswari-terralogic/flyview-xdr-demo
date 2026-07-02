@@ -3,9 +3,24 @@ import { simState } from '../simState.js'
 
 const router = Router()
 
-// ── Single TVyshnavi-3941 record — state depends on active scenario ──
-// Impossible travel takes priority over antivirus scenario.
-function getTVyshnaviUser() {
+// ── TVyshnavi-3941 baseline — always present ──────────────────────
+const VYSHNAVI_BASELINE = {
+  name:      'TVyshnavi-3941',
+  email:     'thatikonda.vyshnavi@terralogic.com',
+  dept:      'Engineering',
+  risk:      87,
+  riskCls:   'cr',
+  mfa:       'TOTP',
+  login:     '09:14',
+  status:    'ACTIVE',
+  statusCls: 'ok',
+  sim:       true,
+  simId:     'vyshnavi-baseline',
+  alert:     null,
+}
+
+// ── Alert record — only added when a scenario is triggered ────────
+function getVyshnaviAlertRecord() {
   if (simEscalated) {
     const t2Date = simTriggerTime || new Date()
     const t1Date = new Date(t2Date.getTime() - 18 * 60 * 1000)
@@ -50,20 +65,7 @@ function getTVyshnaviUser() {
       },
     }
   }
-  return {
-    name: 'TVyshnavi-3941',
-    email: SIM_EMAIL,
-    dept: 'Engineering',
-    risk: 87,
-    riskCls: 'cr',
-    mfa: 'TOTP',
-    login: fmt24(new Date()),
-    status: 'ACTIVE',
-    statusCls: 'ok',
-    sim: true,
-    simId: 'vyshnavi',
-    alert: null,
-  }
+  return null
 }
 
 const USERS = [
@@ -124,58 +126,12 @@ const USERS = [
   },
 ]
 
-// ── Sim user 1: Vyshnavi T. ───────────────────────────────────────
-// Scenario: Impossible travel + MFA bypass → CRITICAL / UNDER REVIEW
-// Trigger: POST /api/identity/vyshnavi.t%40terralogic.com/trigger
-
 let simEscalated = false
 let simTriggerTime = null
 const SIM_EMAIL = 'thatikonda.vyshnavi@terralogic.com'
 
 function fmt24(date) {
   return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
-}
-
-function getSimUser() {
-  if (!simEscalated) {
-    return {
-      name: 'TVyshnavi-3941',
-      email: SIM_EMAIL,
-      dept: 'Engineering',
-      risk: 18,
-      riskCls: 'ok',
-      mfa: 'WebAuthn',
-      login: fmt24(new Date()),
-      status: 'ACTIVE',
-      statusCls: 'ok',
-      sim: true,
-      simId: 'vyshnavi',
-      alert: null,
-    }
-  }
-  const t2Date = simTriggerTime || new Date()
-  const t1Date = new Date(t2Date.getTime() - 18 * 60 * 1000)
-  const t1 = fmt24(t1Date)
-  const t2 = fmt24(t2Date)
-  return {
-    name: 'TVyshnavi-3941',
-    email: SIM_EMAIL,
-    dept: 'Engineering',
-    risk: 94,
-    riskCls: 'cr',
-    mfa: 'BYPASSED',
-    login: 'Just now',
-    status: 'UNDER REVIEW',
-    statusCls: 'cr',
-    sim: true,
-    simId: 'vyshnavi',
-    alert: {
-      type: 'IMPOSSIBLE_TRAVEL',
-      time1: t1,
-      time2: t2,
-      detail: `Login from Nellore (IN) at ${t1}, then Texas (US) at ${t2} — 18 min apart · MFA challenge skipped`,
-    },
-  }
 }
 
 // ── Sim user 2: Santosh ─────────────────────────────────────────
@@ -229,14 +185,14 @@ const getJohnUser = () =>
 router.post(`/${encodeURIComponent(SIM_EMAIL)}/trigger`, (_req, res) => {
   simEscalated = true
   simTriggerTime = new Date()
-  res.json({ triggered: true, user: getTVyshnaviUser() })
+  res.json({ triggered: true, baseline: VYSHNAVI_BASELINE, alert: getVyshnaviAlertRecord() })
 })
 
 // POST /api/identity/thatikonda.vyshnavi@terralogic.com/reset
 router.post(`/${encodeURIComponent(SIM_EMAIL)}/reset`, (_req, res) => {
   simEscalated = false
   simTriggerTime = null
-  res.json({ reset: true, user: getTVyshnaviUser() })
+  res.json({ reset: true, baseline: VYSHNAVI_BASELINE, alert: null })
 })
 
 // POST /api/identity/santosh@terralogic.com/trigger — escalate
@@ -283,20 +239,21 @@ router.get('/sim', (_req, res) => {
 })
 
 // GET /api/identity — full user list; high-risk users float to top
+// On trigger: baseline record stays + alert record appears at top as a separate row
 router.get('/', (_req, res) => {
-  const tvyshnavi   = getTVyshnaviUser()
+  const alertRecord = getVyshnaviAlertRecord()
   const shabbeer    = getJohnUser()
   const isHighRisk  = simEscalated || !simState.antivirusCompliant
 
   let all
-  if (isHighRisk && johnEscalated) {
-    all = [tvyshnavi, shabbeer, ...USERS]
-  } else if (isHighRisk) {
-    all = [tvyshnavi, ...USERS, shabbeer]
+  if (isHighRisk && alertRecord && johnEscalated) {
+    all = [alertRecord, VYSHNAVI_BASELINE, shabbeer, ...USERS]
+  } else if (isHighRisk && alertRecord) {
+    all = [alertRecord, VYSHNAVI_BASELINE, ...USERS, shabbeer]
   } else if (johnEscalated) {
-    all = [shabbeer, ...USERS, tvyshnavi]
+    all = [shabbeer, ...USERS, VYSHNAVI_BASELINE]
   } else {
-    all = [...USERS, tvyshnavi, shabbeer]
+    all = [...USERS, VYSHNAVI_BASELINE, shabbeer]
   }
   res.json({ total: all.length, users: all })
 })
@@ -304,9 +261,11 @@ router.get('/', (_req, res) => {
 // GET /api/identity/:email — single user by email
 router.get('/:email', (req, res) => {
   const em = req.params.email.toLowerCase()
-  if (em === SIM_EMAIL.toLowerCase()) return res.json(getSimUser())
+  if (em === SIM_EMAIL.toLowerCase()) {
+    const alert = getVyshnaviAlertRecord()
+    return res.json(alert ?? VYSHNAVI_BASELINE)
+  }
   if (em === JOHN_EMAIL.toLowerCase()) return res.json(getJohnUser())
-  if (em === 'thatikonda.vyshnavi@terralogic.com') return res.json(getVyshnaviUser())
   const user = USERS.find(u => u.email.toLowerCase() === em)
   if (!user) return res.status(404).json({ error: 'User not found' })
   res.json(user)
