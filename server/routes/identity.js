@@ -114,7 +114,7 @@ function fmt24(date) {
 function getSimUser() {
   if (!simEscalated) {
     return {
-      name: 'Vyshnavi T.',
+      name: 'TVyshnavi-3941',
       email: SIM_EMAIL,
       dept: 'Engineering',
       risk: 18,
@@ -133,7 +133,7 @@ function getSimUser() {
   const t1 = fmt24(t1Date)
   const t2 = fmt24(t2Date)
   return {
-    name: 'Vyshnavi T.',
+    name: 'TVyshnavi-3941',
     email: SIM_EMAIL,
     dept: 'Engineering',
     risk: 94,
