@@ -86,7 +86,7 @@ function buildDrawer(u) {
       sections: [
         {
           label: 'What happened',
-          desc: `${u.name} logged into AWS at 02:47 AM and made 4,200 S3 GetObject API calls on the corp-data-prod bucket within 12 minutes, downloading 4.2 GB of data. This user is currently on a Performance Improvement Plan (PIP). The access time is outside all normal business hours and the download volume significantly exceeds their historical baseline. A correlated finding has been raised in the Cloud module.`,
+          desc: `${u.name} logged into AWS at 02:47 AM and made 4,200 S3 GetObject API calls on the corp-data-prod bucket, downloading 4.2 GB of data. This user is currently on a Performance Improvement Plan (PIP). The access time is outside all normal business hours and the download volume significantly exceeds their historical baseline. A correlated finding has been raised in the Cloud module.`,
         },
         {
           label: 'Activity details',

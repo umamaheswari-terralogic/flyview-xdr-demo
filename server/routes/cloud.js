@@ -25,7 +25,7 @@ const SANTOSH_FINDING = {
     recommendation: 'Immediately revoke santosh@terralogic.com IAM credentials. Review S3 access logs to identify which objects were downloaded. Coordinate with HR given active PIP status. Consider enabling S3 Object Lock on sensitive buckets.',
     affectedRegion: 'ap-south-1 (Mumbai)',
     firstSeen: '02:47 AM today',
-    lastSeen: '02:59 AM today',
+    lastSeen: 'Just now',
     apiCallCount: 4200,
     dataVolume: '4.2 GB',
     owner: {
