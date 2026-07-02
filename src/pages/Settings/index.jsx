@@ -30,8 +30,8 @@ const SCENARIOS = [
     title:    'Login from Two Countries at Once',
     desc:     'Vyshnavi logs in from Nellore, India, then from Texas, US 18 minutes later — physically impossible. MFA was skipped.',
     modules:  [{ label: 'Identity', cls: 'cr' }],
-    triggerEndpoint: '/api/identity/vyshnavi.t%40terralogic.com/trigger',
-    resetEndpoint:   '/api/identity/vyshnavi.t%40terralogic.com/reset',
+    triggerEndpoint: '/api/identity/thatikonda.vyshnavi%40terralogic.com/trigger',
+    resetEndpoint:   '/api/identity/thatikonda.vyshnavi%40terralogic.com/reset',
   },
   {
     id:       'identity-santosh',

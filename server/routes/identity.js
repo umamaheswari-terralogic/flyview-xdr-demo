@@ -105,7 +105,7 @@ const USERS = [
 
 let simEscalated = false
 let simTriggerTime = null
-const SIM_EMAIL = 'vyshnavi.t@terralogic.com'
+const SIM_EMAIL = 'thatikonda.vyshnavi@terralogic.com'
 
 function fmt24(date) {
   return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
