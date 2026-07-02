@@ -16,7 +16,7 @@
         "recommendation": "Remove the public-access bucket policy, enable S3 Block Public Access at bucket level, and audit CloudTrail for any prior unauthorised reads.",
         "affectedRegion": "us-east-1",
         "firstSeen": "2026-06-18 14:22",
-        "lastSeen": "2026-06-25 09:01",
+        "lastSeen": "Just now",
         "owner": { "name": "John Doe", "email": "john.d@terralogic.com", "dept": "Finance", "riskScore": 87 },
         "mitre": ["T1530 – Data from Cloud Storage Object"]
       }
@@ -31,7 +31,7 @@
         "recommendation": "Disable public IP, configure a private IP within the VPC, enable requireSSL, and restrict authorised networks to known CIDR ranges only.",
         "affectedRegion": "asia-south1",
         "firstSeen": "2026-06-20 08:44",
-        "lastSeen": "2026-06-25 09:01",
+        "lastSeen": "Just now",
         "owner": { "name": "Sarah Kim", "email": "sarah.k@terralogic.com", "dept": "Engineering", "riskScore": 72 },
         "mitre": ["T1190 – Exploit Public-Facing Application"]
       }
@@ -46,7 +46,7 @@
         "recommendation": "Audit actual permissions used via Policy Analyzer, downscope to a custom role with only required permissions, and rotate the service account key.",
         "affectedRegion": "global",
         "firstSeen": "2026-05-10 11:00",
-        "lastSeen": "2026-06-25 09:01",
+        "lastSeen": "Just now",
         "owner": { "name": "Sarah Kim", "email": "sarah.k@terralogic.com", "dept": "Engineering", "riskScore": 72 },
         "mitre": ["T1078 – Valid Accounts", "T1548 – Abuse Elevation Control Mechanism"]
       }
@@ -61,7 +61,7 @@
         "recommendation": "Set AllowBlobPublicAccess to false at the storage account level and review individual container ACLs to remove any anonymous-read configurations.",
         "affectedRegion": "East US",
         "firstSeen": "2026-06-22 16:15",
-        "lastSeen": "2026-06-25 09:01",
+        "lastSeen": "Just now",
         "owner": { "name": "Mike Ross", "email": "mike.r@terralogic.com", "dept": "Sales", "riskScore": 44 },
         "mitre": ["T1530 – Data from Cloud Storage Object"]
       }
@@ -76,7 +76,7 @@
         "recommendation": "Restrict inbound SSH to the corporate VPN CIDR only, or replace direct SSH with AWS Systems Manager Session Manager and remove port 22 entirely.",
         "affectedRegion": "us-east-1",
         "firstSeen": "2026-06-01 09:30",
-        "lastSeen": "2026-06-25 09:01",
+        "lastSeen": "Just now",
         "owner": { "name": "Robert Chen", "email": "r.chen@terralogic.com", "dept": "Finance", "riskScore": 91 },
         "mitre": ["T1110 – Brute Force", "T1021.004 – Remote Services: SSH"]
       }
@@ -91,7 +91,7 @@
         "recommendation": "Enable a multi-region CloudTrail trail with S3 log file validation, and configure CloudWatch Logs integration for real-time alerting on suspicious API calls.",
         "affectedRegion": "us-east-1",
         "firstSeen": "2026-06-23 07:00",
-        "lastSeen": "2026-06-25 09:01",
+        "lastSeen": "Just now",
         "owner": { "name": "Emma Clark", "email": "emma.c@terralogic.com", "dept": "HR", "riskScore": 21 },
         "mitre": ["T1562.008 – Disable Cloud Logs"]
       }
@@ -106,7 +106,7 @@
         "recommendation": "Create a least-privilege IAM role granting only s3:PutObject on the target bucket and replace the current wildcard role.",
         "affectedRegion": "us-west-2",
         "firstSeen": "2026-06-19 13:11",
-        "lastSeen": "2026-06-25 09:01",
+        "lastSeen": "Just now",
         "owner": { "name": "Sarah Kim", "email": "sarah.k@terralogic.com", "dept": "Engineering", "riskScore": 72 },
         "mitre": ["T1098 – Account Manipulation"]
       }
@@ -121,7 +121,7 @@
         "recommendation": "Delete the Dashboard service or change service type to ClusterIP. Access the dashboard only via kubectl proxy over an authenticated session.",
         "affectedRegion": "asia-south1",
         "firstSeen": "2026-06-24 06:00",
-        "lastSeen": "2026-06-25 09:01",
+        "lastSeen": "Just now",
         "owner": { "name": "Sarah Kim", "email": "sarah.k@terralogic.com", "dept": "Engineering", "riskScore": 72 },
         "mitre": ["T1613 – Container and Resource Discovery", "T1190 – Exploit Public-Facing Application"]
       }
@@ -136,7 +136,7 @@
         "recommendation": "Enable soft-delete (90-day retention) and purge protection on the Key Vault. These settings cannot be disabled once enabled — plan before applying.",
         "affectedRegion": "East US",
         "firstSeen": "2026-06-15 10:30",
-        "lastSeen": "2026-06-25 09:01",
+        "lastSeen": "Just now",
         "owner": { "name": "Mike Ross", "email": "mike.r@terralogic.com", "dept": "Sales", "riskScore": 44 },
         "mitre": ["T1485 – Data Destruction"]
       }
@@ -151,7 +151,7 @@
         "recommendation": "Enable automated backups with at least 7-day retention, enable Multi-AZ for high availability, and test restoration procedures quarterly.",
         "affectedRegion": "us-east-1",
         "firstSeen": "2026-06-21 14:00",
-        "lastSeen": "2026-06-25 09:01",
+        "lastSeen": "Just now",
         "owner": { "name": "John Doe", "email": "john.d@terralogic.com", "dept": "Finance", "riskScore": 87 },
         "mitre": ["T1485 – Data Destruction", "T1486 – Data Encrypted for Impact"]
       }
