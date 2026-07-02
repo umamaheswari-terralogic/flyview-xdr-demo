@@ -10,7 +10,7 @@ const router = Router()
 const getVyshnaviUser = () =>
   !simState.antivirusCompliant
     ? {
-        name:    'LT-vyshnavi-3941',
+        name:    'TVyshnavi-3941',
         email:   'thatikonda.vyshnavi@terralogic.com',
         dept:    'Engineering',
         risk:    95,
@@ -27,7 +27,7 @@ const getVyshnaviUser = () =>
         },
       }
     : {
-        name:    'LT-vyshnavi-3941',
+        name:    'TVyshnavi-3941',
         email:   'thatikonda.vyshnavi@terralogic.com',
         dept:    'Engineering',
         risk:    87,
