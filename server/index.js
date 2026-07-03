@@ -3,6 +3,8 @@ import cors from 'cors'
 import { fileURLToPath } from 'url'
 import { join, dirname } from 'path'
 import { existsSync } from 'fs'
+import http from 'http'
+import fs from 'fs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -47,6 +49,19 @@ if (existsSync(distDir)) {
 } else {
   app.use((_req, res) => res.status(404).json({ error: 'Route not found' }))
 }
+
+// ── Phishing-demo server on port 4000 ────────────────────────────
+const PHISH_PORT = 4000
+const phishFile  = join(__dirname, 'phishing_demo.html')
+http.createServer((_req, res) => {
+  fs.readFile(phishFile, (err, data) => {
+    if (err) { res.writeHead(404); res.end('Not found'); return }
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
+    res.end(data)
+  })
+}).listen(PHISH_PORT, '0.0.0.0', () => {
+  console.log(`Phishing demo running on http://0.0.0.0:${PHISH_PORT}`)
+})
 
 app.listen(PORT, () => {
   console.log(`FlyView API server running on http://localhost:${PORT}`)

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Security Awareness Demo — Silent Auto-Download</title>
+<style>
+  body { font-family: -apple-system, Arial, sans-serif; max-width: 700px; margin: 60px auto; padding: 0 20px; color: #222; line-height: 1.6; }
+  h1 { color: #c0392b; }
+  .banner { background: #fff3cd; border: 1px solid #ffe08a; padding: 14px 18px; border-radius: 6px; margin-bottom: 24px; }
+  .card { background: #f7f7f9; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; }
+  code { background: #eee; padding: 2px 6px; border-radius: 4px; }
+  #status { font-weight: bold; margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <strong>⚠ Training Material Only.</strong> This page is a controlled demonstration for internal security-awareness training.
+  It downloads a harmless PNG image file automatically, disguised with a <code>.exe</code> extension to illustrate a common
+  phishing trick. The file contains only image data — nothing on this page executes code on your machine.
+</div>
+
+<h1>Innocent-looking page...</h1>
+<p>Imagine this is a link a colleague received in an email, disguised as an invoice, shipping notice, or "shared document."
+The moment the page loads, it silently triggers a file download — without the visitor clicking a "Download" button.</p>
+
+<div class="card">
+  <p id="status">Preparing content...</p>
+</div>
+
+<h2>Why this matters</h2>
+<p>Real phishing pages use this exact technique to get a file onto your system with zero interaction beyond opening a link.
+The file itself is often disguised — a misleading name, an icon that mimics a PDF or Word doc, or, as in this demo, an
+extension like <code>.exe</code> that makes it look like a program — to trick you into opening it afterward.
+In this demo the file is really a plain PNG image renamed to look like an executable — it cannot run any code — but the
+delivery mechanism and disguise are identical to what attackers use for genuinely malicious payloads.</p>
+
+<h2>What to watch for</h2>
+<ul>
+  <li>A download starts immediately after opening a link, with no click required.</li>
+  <li>Unexpected files appearing in your Downloads folder from a page you just visited.</li>
+  <li>Filenames that don't match what you were expecting (e.g. "invoice.pdf.exe").</li>
+  <li>Urgency or pressure in the email/message that got you to click in the first place.</li>
+</ul>
+
+<script>
+// This base64 string is a plain PNG image — no executable content.
+const base64Png = "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";
+
+function silentlyDownload() {
+  const link = document.createElement('a');
+  link.href = "data:image/png;base64," + base64Png;
+  link.download = "invoice_2026.exe"; // extension changed for visual effect only — content is still plain PNG bytes
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  document.getElementById('status').textContent =
+    "✅ A file named 'invoice_2026.exe' was just downloaded to your Downloads folder — automatically, without you clicking a download button. Note: despite the .exe extension, this file only contains image data and cannot run any code.";
+}
+
+// Simulate the "silent" trigger as soon as the page finishes loading
+window.addEventListener('load', () => {
+  setTimeout(silentlyDownload, 800);
+});
+</script>
+
+</body>
+</html>
