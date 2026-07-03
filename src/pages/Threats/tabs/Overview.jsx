@@ -153,7 +153,7 @@ export default function ThreatsOverview() {
                     {inc.title}
                     {isSim && (
                       <div style={{ fontSize: 10, color: 'var(--txt3)', marginTop: 2, fontFamily: 'monospace' }}>
-                        MDM: Blocked app installed · AI-SPM: ChatGPT for Chrome · Device: TVyshnavi-3941
+                        {inc.detail}
                       </div>
                     )}
                   </td>
