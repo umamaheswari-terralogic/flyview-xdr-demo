@@ -5,14 +5,16 @@ import CloudIdentities   from './tabs/CloudIdentities.jsx'
 import AuditLog          from './tabs/AuditLog.jsx'
 import Accounts          from './tabs/Accounts.jsx'
 import Reports           from './tabs/Reports.jsx'
+import DataRepositories  from './tabs/DataRepositories.jsx'
 
 const TAB_MAP = {
-  'Overview':          CloudOverview,
-  'Findings':          Findings,
-  'Cloud Identities':  CloudIdentities,
-  'Audit Log':         AuditLog,
-  'Accounts':          Accounts,
-  'Reports':           Reports,
+  'Overview':              CloudOverview,
+  'Findings':              Findings,
+  'Cloud Identities':      CloudIdentities,
+  'Data Repositories':     DataRepositories,
+  'Audit Log':             AuditLog,
+  'Accounts':              Accounts,
+  'Reports':               Reports,
 }
 
 export default function Cloud() {

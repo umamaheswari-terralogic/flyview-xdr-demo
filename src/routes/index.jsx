@@ -6,6 +6,7 @@ import ThreatDetail from '../pages/Threats/ThreatDetail.jsx'
 import Devices from '../pages/Devices/index.jsx'
 import Monitor from '../pages/Monitor/index.jsx'
 import Identity from '../pages/Identity/index.jsx'
+import EntityDetail from '../pages/Identity/EntityDetail.jsx'
 import Cloud from '../pages/Cloud/index.jsx'
 import Network from '../pages/Network/index.jsx'
 import Privacy from '../pages/Privacy/index.jsx'
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
       { path: '/devices', element: <Devices /> },
       { path: '/monitor', element: <Monitor /> },
       { path: '/identity', element: <Identity /> },
+      { path: '/identity/:type/:id', element: <EntityDetail /> },
       { path: '/cloud', element: <Cloud /> },
       { path: '/network', element: <Network /> },
       { path: '/privacy', element: <Privacy /> },

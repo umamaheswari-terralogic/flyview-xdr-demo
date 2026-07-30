@@ -10,4 +10,5 @@ export const CloudService = {
   async getAuditLog()          { const d = await fetchJson('cloud'); return d.auditLog },
   async getAccounts()          { const d = await fetchJson('cloud'); return d.accounts },
   async getComplianceReports() { const d = await fetchJson('cloud'); return d.complianceReports },
+  async getDataRepositories() { const d = await fetchJson('cloud'); return d.dataRepositories },
 }

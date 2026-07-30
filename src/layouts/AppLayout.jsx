@@ -46,12 +46,12 @@ const MODULE_CONFIG = {
   '/identity': {
     title: 'Identity — <b>4 high-risk</b> users of 930',
     subtitle: 'IAM · SSO · MFA · PAM · SCIM provisioning',
-    tabs: ['Overview', 'Users', 'Groups & Roles', 'SSO & Federation', 'Privileged Access', 'Access Reviews'],
+    tabs: ['Overview', 'Users', 'Groups', 'Roles', 'Applications', 'Identity Mapping'],
   },
   '/cloud': {
     title: 'Cloud — <b>7 critical</b> misconfigurations',
-    subtitle: 'CSPM + CIEM · AWS · GCP · Azure',
-    tabs: ['Overview', 'Findings', 'Cloud Identities', 'Audit Log', 'Accounts', 'Reports'],
+    subtitle: 'CSPM + CIEM · AWS · GCP · <span style="opacity:.45">Azure</span>',
+    tabs: ['Overview', 'Findings', 'Cloud Identities', 'Data Repositories', 'Audit Log', 'Accounts', 'Reports'],
   },
   '/network': {
     title: 'Network — <b>1 offline</b>, 2 config drift events',

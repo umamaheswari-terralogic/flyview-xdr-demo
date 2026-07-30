@@ -21,12 +21,23 @@ function RowBar({ label, pct, color, val }) {
   )
 }
 
-function SegControl({ options, active, onSelect }) {
+function SegControl({ options, active, onSelect, disabledOptions = [] }) {
   return (
     <div className="seg">
-      {options.map(o => (
-        <button key={o} className={active === o ? 'on' : ''} onClick={() => onSelect(o)}>{o}</button>
-      ))}
+      {options.map(o => {
+        const isDisabled = disabledOptions.includes(o)
+        return (
+          <button
+            key={o}
+            className={active === o ? 'on' : ''}
+            onClick={() => !isDisabled && onSelect(o)}
+            disabled={isDisabled}
+            style={isDisabled ? { opacity: 0.4, cursor: 'not-allowed' } : undefined}
+          >
+            {o}
+          </button>
+        )
+      })}
     </div>
   )
 }
@@ -191,6 +202,10 @@ export default function CloudOverview() {
   const filtered = filter === 'All' ? allDisplayed : allDisplayed.filter(f => f.provider === filter)
   const johnFinding = simFindings.find(f => f.id === 'CF-SANTOSH-001')
 
+  // Grey out 3 of the 5 base (non-sim) findings shown, and 2 of the 3 CIEM risk rows
+  const dimmedFindingIds = new Set(findings.slice(2).map(f => f.id))
+  const dimmedCiemIds    = new Set(ciem.slice(1).map(r => r.id))
+
   return (
     <>
       {/* Insider threat correlation banner */}
@@ -223,7 +238,9 @@ export default function CloudOverview() {
         <MetricCard cls="cr" num={String(critCount)} desc={summary.critical.label} label="P0 Critical"   foot={summary.critical.trend}  icon={Icons.alert} />
         <MetricCard cls="hi" num={String(highCount)} desc={summary.high.label}     label="P1 High"       foot={summary.high.trend}      icon={Icons.cloud} />
         <MetricCard cls="in" num={summary.accounts.count} desc={summary.accounts.label} label="Accounts" foot={summary.accounts.trend}  icon={Icons.cloud} />
-        <MetricCard cls="ok" num={summary.posture.count}  desc={summary.posture.label}  label="Posture Grade" foot={summary.posture.trend} icon={Icons.shield} />
+        <div style={{ opacity: 0.45, pointerEvents: 'none' }}>
+          <MetricCard cls="ok" num={summary.posture.count}  desc={summary.posture.label}  label="Posture Grade" foot={summary.posture.trend} icon={Icons.shield} />
+        </div>
       </div>
 
       {/* CSPM Findings Table */}
@@ -236,7 +253,7 @@ export default function CloudOverview() {
             </span>
           </h3>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <SegControl options={PROVIDERS} active={filter} onSelect={setFilter} />
+            <SegControl options={PROVIDERS} active={filter} onSelect={setFilter} disabledOptions={['Azure']} />
             <button
               className="btn p"
               onClick={handleScan}
@@ -257,11 +274,12 @@ export default function CloudOverview() {
             {filtered.map(f => {
               const isRemediating = remediating.has(f.id)
               const isResolved = f.status === 'RESOLVED'
+              const isDimmed = !f.sim && dimmedFindingIds.has(f.id)
               return (
                 <tr
                   key={f.id}
                   style={{
-                    opacity: isRemediating ? 0.6 : 1,
+                    opacity: isDimmed ? 0.45 : isRemediating ? 0.6 : 1,
                     transition: 'opacity .3s',
                     ...(f.sim && simActive ? { animation: 'rowFlash 1.2s ease', background: 'rgba(249,115,22,.04)' } : {}),
                   }}
@@ -300,14 +318,15 @@ export default function CloudOverview() {
                               {revoking ? '…' : 'Revoke IAM'}
                             </button>
                           )
-                        : /* regular finding: Remediate */
+                        : /* regular finding: Remediate — greyed out, not in scope for phase-1 */
                           !isResolved && (
                             <button
                               className="btn p"
-                              disabled={isRemediating}
-                              onClick={() => handleRemediate(f.id)}
+                              disabled
+                              title="Not available in Phase-1"
+                              style={{ opacity: 0.45, cursor: 'not-allowed' }}
                             >
-                              {isRemediating ? '…' : 'Remediate'}
+                              Remediate
                             </button>
                           )
                       }
@@ -323,15 +342,17 @@ export default function CloudOverview() {
 
       {/* Bottom Widgets */}
       <div className="g3">
-        <WidgetCard title="Compliance posture">
-          {compliance.map(c => (
-            <RowBar key={c.label} label={c.label} pct={c.pct} color={c.color} val={c.val} />
-          ))}
-        </WidgetCard>
+        <div style={{ opacity: 0.45, pointerEvents: 'none' }}>
+          <WidgetCard title="Compliance posture">
+            {compliance.map(c => (
+              <RowBar key={c.label} label={c.label} pct={c.pct} color={c.color} val={c.val} />
+            ))}
+          </WidgetCard>
+        </div>
 
         <WidgetCard title="CIEM top risks">
           {ciem.map(r => (
-            <div key={r.id} className="row">
+            <div key={r.id} className="row" style={dimmedCiemIds.has(r.id) ? { opacity: 0.45 } : undefined}>
               <div style={{ flex: 1 }}>
                 <div className="mono" style={{ fontSize: 12 }}>{r.id}</div>
                 <div style={{ fontSize: 11, color: 'var(--txt3)' }}>{r.desc}</div>
@@ -342,15 +363,18 @@ export default function CloudOverview() {
         </WidgetCard>
 
         <WidgetCard title="Linked accounts">
-          {accounts.map(a => (
-            <div key={a.name} className="row">
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 500 }}>{a.name}</div>
-                <div style={{ fontSize: 11, color: a.cls === 'cr' ? 'var(--crit)' : 'var(--high)' }}>{a.findings}</div>
+          {accounts.map(a => {
+            const isAzure = a.name.startsWith('Azure')
+            return (
+              <div key={a.name} className="row" style={isAzure ? { opacity: 0.45 } : undefined}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13, fontWeight: 500 }}>{a.name}</div>
+                  <div style={{ fontSize: 11, color: a.cls === 'cr' ? 'var(--crit)' : 'var(--high)' }}>{a.findings}</div>
+                </div>
+                <button className="btn" disabled={isAzure} style={isAzure ? { cursor: 'not-allowed' } : undefined}>Scan</button>
               </div>
-              <button className="btn">Scan</button>
-            </div>
-          ))}
+            )
+          })}
         </WidgetCard>
       </div>
 
@@ -359,7 +383,6 @@ export default function CloudOverview() {
         <FindingDrawer
           finding={selectedFinding}
           onClose={() => setSelectedFinding(null)}
-          onRemediate={handleRemediate}
         />
       )}
     </>

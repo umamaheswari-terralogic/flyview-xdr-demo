@@ -6,7 +6,7 @@ export default function TopBar({ title, subtitle }) {
     <div className="topbar">
       <div className="tb-title">
         {title && <h1 dangerouslySetInnerHTML={{ __html: title }} />}
-        {subtitle && <p>{subtitle}</p>}
+        {subtitle && <p dangerouslySetInnerHTML={{ __html: subtitle }} />}
       </div>
       <SearchBar />
       <div className="tb-acts">
