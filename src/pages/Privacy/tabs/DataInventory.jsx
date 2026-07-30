@@ -27,7 +27,7 @@ export default function DataInventory() {
         </h3>
         <div style={{ display: 'flex', gap: 8 }}>
           <input className="srch" placeholder="Search assets…" value={search} onChange={e => setSearch(e.target.value)} />
-          <button className="btn p">Run scan</button>
+          {/* <button className="btn p">Run scan</button> */}
         </div>
       </div>
       <table>
@@ -64,7 +64,7 @@ export default function DataInventory() {
               <td className="mono" style={{ fontSize: 11, color: 'var(--txt3)' }}>{a.lastScan}</td>
               <td>
                 <div className="brow">
-                  {a.riskCls === 'cr' && <button className="btn d">Remediate</button>}
+                  {/* {a.riskCls === 'cr' && <button className="btn d">Remediate</button>} */}
                   <button className="btn">View</button>
                 </div>
               </td>

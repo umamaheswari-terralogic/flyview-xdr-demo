@@ -1,3 +1,8 @@
+import { useState } from 'react'
+import { Ico, KpiCard, devicesSeed } from './_prototypeShared.jsx'
+
+/* --- original implementation (kept for reference) ---
+
 import { useState, useEffect } from 'react'
 import MetricCard from '../../../components/MetricCard.jsx'
 import StatusBadge from '../../../components/StatusBadge.jsx'
@@ -25,7 +30,6 @@ export default function DevicesOverview() {
   const [apnsCert, setApnsCert] = useState(null)
   const [selectedDevice, setSelectedDevice] = useState(null)
 
-  // Static JSON data (metrics, charts, cert)
   useEffect(() => {
     DeviceService.getMetrics().then(setMetrics)
     DeviceService.getInventory().then(setInventory)
@@ -34,7 +38,6 @@ export default function DevicesOverview() {
     DeviceService.getApnsCert().then(setApnsCert)
   }, [])
 
-  // Poll server every 3s for the full device list (includes both sim records at top)
   useEffect(() => {
     let cancelled = false
     async function poll() {
@@ -45,7 +48,7 @@ export default function DevicesOverview() {
           const { devices } = await res.json()
           setDisplayDevices(devices)
         }
-      } catch { /* server not running — keep previous state */ }
+      } catch { }
       if (!cancelled) setTimeout(poll, 3000)
     }
     poll()
@@ -56,7 +59,6 @@ export default function DevicesOverview() {
 
   const nonCompliantNum = String(displayDevices.filter(d => d.statusCls === 'cr').length)
 
-  // Augment failing checks with any active sim scenarios
   const simFailingLabels = displayDevices
     .filter(d => d.sim && d.failingChecks?.length > 0)
     .flatMap(d => d.failingChecks)
@@ -129,5 +131,89 @@ export default function DevicesOverview() {
         </div></div>
       </div>
     </>
+  )
+}
+
+--- end original implementation --- */
+
+// Ported from OverviewTab in src/assets/flyview-windows-prototype_15.html
+export default function DevicesOverview() {
+  const devices = devicesSeed
+  const [, setViewingId] = useState(null)
+  const onView = (id) => setViewingId(id)
+
+  const encrypted = devices.filter((d) => d.checks.some((c) => (c.name === 'BitLocker encryption' || c.name === 'FileVault encryption') && c.pass)).length
+  const win = devices.filter((d) => d.os.startsWith('Windows')).length
+  const mac = devices.filter((d) => d.os.startsWith('macOS')).length
+
+  return (
+    <div className="p-8">
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <KpiCard color="emerald" icon="monitor" label="FLEET" value={devices.length} sub="Total enrolled devices" trend="+2 this week" />
+        <KpiCard color="emerald" icon="lock" label="ENCRYPTED" value={encrypted} sub="Disk encryption enabled" trend={`${Math.round((encrypted / devices.length) * 100)}% of fleet`} />
+      </div>
+
+      <div className="bg-white border border-gray-100 rounded-xl overflow-hidden mb-6">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+          <div className="font-medium text-gray-800">Device Inventory</div>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-gray-400">{devices.length} devices · 2 platforms</span>
+            <button className="text-xs px-3 py-1.5 rounded bg-orange-500 text-white font-medium flex items-center gap-1">{Ico('plus', { size: 12 })} Enroll</button>
+          </div>
+        </div>
+        <table className="w-full">
+          <thead>
+            <tr className="text-left text-[10px] tracking-wider text-gray-400 border-b border-gray-100">
+              <th className="py-2.5 px-4 font-medium">DEVICE</th>
+              <th className="py-2.5 px-4 font-medium">USER</th>
+              <th className="py-2.5 px-4 font-medium">PLATFORM</th>
+              <th className="py-2.5 px-4 font-medium">ENROLLMENT</th>
+              <th className="py-2.5 px-4 font-medium">OS VERSION</th>
+              <th className="py-2.5 px-4 font-medium">LAST SEEN</th>
+            </tr>
+          </thead>
+          <tbody>
+            {devices.map((d) => (
+              <tr key={d.id} className="border-b border-gray-50 hover:bg-gray-50/50">
+                <td className="py-3 px-4 text-sm">
+                  <button onClick={() => onView(d.id)} className="font-medium text-gray-800 hover:text-orange-600 hover:underline text-left">{d.name}</button>
+                </td>
+                <td className="py-3 px-4 text-sm text-gray-500">{d.user}</td>
+                <td className="py-3 px-4 text-sm text-gray-700">{d.os.startsWith('Windows') ? '🪟' : '🍎'} {d.os}</td>
+                <td className="py-3 px-4"><span className="text-xs px-2 py-1 rounded border border-gray-200 text-gray-600">{d.enrollment}</span></td>
+                <td className="py-3 px-4 text-sm text-gray-400 font-mono">{d.osVersion}</td>
+                <td className="py-3 px-4 text-sm text-gray-500">{d.lastSeen}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-white border border-gray-100 rounded-xl p-5">
+          <div className="font-medium text-gray-800 mb-3">Platform split</div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm"><span className="text-gray-600">🪟 Windows</span><span className="text-gray-800 font-medium">{win}</span></div>
+            <div className="w-full h-1.5 bg-gray-100 rounded-full"><div className="h-1.5 bg-orange-400 rounded-full" style={{ width: `${(win / devices.length) * 100}%` }}></div></div>
+            <div className="flex items-center justify-between text-sm mt-3"><span className="text-gray-600">🍎 macOS</span><span className="text-gray-800 font-medium">{mac}</span></div>
+            <div className="w-full h-1.5 bg-gray-100 rounded-full"><div className="h-1.5 bg-gray-400 rounded-full" style={{ width: `${(mac / devices.length) * 100}%` }}></div></div>
+          </div>
+        </div>
+
+        <div className="bg-white border border-gray-100 rounded-xl p-5">
+          <div className="font-medium text-gray-800 mb-3">APNs certificate</div>
+          <div className="flex items-center justify-between text-sm mb-1">
+            <span className="text-gray-600">Expires</span>
+            <span className="text-gray-800 font-medium">Sep 14, 2026</span>
+          </div>
+          <div className="flex items-center justify-between text-sm mb-2">
+            <span className="text-gray-600">Days remaining</span>
+            <span className="text-emerald-600 font-medium">55 days</span>
+          </div>
+          <div className="w-full h-1.5 bg-gray-100 rounded-full"><div className="h-1.5 bg-emerald-500 rounded-full" style={{ width: '70%' }}></div></div>
+          <div className="text-xs text-gray-400 mt-2">Without a valid APNs cert, macOS/iOS devices stop checking in — no MDM commands or inventory updates.</div>
+        </div>
+      </div>
+    </div>
   )
 }

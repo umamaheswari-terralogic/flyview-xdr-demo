@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import AppLayout from '../layouts/AppLayout.jsx'
-import Overview from '../pages/Overview/index.jsx'
+// import Overview from '../pages/Overview/index.jsx'
 import Threats from '../pages/Threats/index.jsx'
 import ThreatDetail from '../pages/Threats/ThreatDetail.jsx'
 import Devices from '../pages/Devices/index.jsx'
@@ -18,7 +18,7 @@ export const router = createBrowserRouter([
   {
     element: <AppLayout />,
     children: [
-      { path: '/', element: <Overview /> },
+      { path: '/', element: <Identity /> },
       { path: '/threats', element: <Threats /> },
       { path: '/threats/:id', element: <ThreatDetail /> },
       { path: '/devices', element: <Devices /> },

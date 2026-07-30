@@ -8,17 +8,17 @@ import Reports           from './tabs/Reports.jsx'
 import DataRepositories  from './tabs/DataRepositories.jsx'
 
 const TAB_MAP = {
-  'Overview':              CloudOverview,
+  // 'Overview':              CloudOverview,
   'Findings':              Findings,
   'Cloud Identities':      CloudIdentities,
   'Data Repositories':     DataRepositories,
-  'Audit Log':             AuditLog,
+  // 'Audit Log':             AuditLog,
   'Accounts':              Accounts,
-  'Reports':               Reports,
+  // 'Reports':               Reports,
 }
 
 export default function Cloud() {
   const { activeTab } = useOutletContext()
-  const Tab = TAB_MAP[activeTab] ?? CloudOverview
+  const Tab = TAB_MAP[activeTab] ?? Findings
   return <Tab />
 }

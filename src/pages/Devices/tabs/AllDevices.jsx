@@ -1,3 +1,8 @@
+import { useState } from 'react'
+import { Ico, DeviceRow, devicesSeed } from './_prototypeShared.jsx'
+
+/* --- original implementation (kept for reference) ---
+
 import { useState, useEffect } from 'react'
 import StatusBadge from '../../../components/StatusBadge.jsx'
 import DeviceDrawer from '../../../components/DeviceDrawer.jsx'
@@ -97,5 +102,47 @@ export default function AllDevices() {
         </table>
       </div>
     </>
+  )
+}
+
+--- end original implementation --- */
+
+// Ported from AllDevicesTab in src/assets/flyview-windows-prototype_15.html
+export default function AllDevices() {
+  const devices = devicesSeed
+  const [platformFilter, setPlatformFilter] = useState('All')
+  const [, setViewingId] = useState(null)
+  const onView = (id) => setViewingId(id)
+
+  const filtered = devices.filter((d) => {
+    if (platformFilter === 'Windows') return d.os.startsWith('Windows')
+    if (platformFilter === 'macOS') return d.os.startsWith('macOS')
+    return true
+  })
+
+  return (
+    <div className="p-8">
+      <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-wrap gap-3">
+          <div className="font-medium text-gray-800">All devices <span className="text-gray-400 font-normal text-sm">{filtered.length} shown</span></div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">{Ico('search', { size: 13, className: 'text-gray-400' })}<span className="text-xs text-gray-400">Search device or user...</span></div>
+            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+              {['All', 'Windows', 'macOS'].map((p) => <button key={p} onClick={() => setPlatformFilter(p)} className={`px-3 py-1.5 text-xs ${platformFilter === p ? 'bg-gray-900 text-white' : 'text-gray-500'}`}>{p}</button>)}
+            </div>
+            <button className="text-xs px-3 py-1.5 rounded bg-orange-500 text-white font-medium flex items-center gap-1">{Ico('plus', { size: 12 })} Enroll</button>
+          </div>
+        </div>
+        <table className="w-full">
+          <thead>
+            <tr className="text-left text-[10px] tracking-wider text-gray-400 border-b border-gray-100">
+              <th className="py-2.5 px-4 font-medium">DEVICE</th><th className="py-2.5 px-4 font-medium">USER</th><th className="py-2.5 px-4 font-medium">PLATFORM</th>
+              <th className="py-2.5 px-4 font-medium">ENROLLMENT</th><th className="py-2.5 px-4 font-medium">OS VERSION</th><th className="py-2.5 px-4 font-medium">LAST SEEN</th>
+            </tr>
+          </thead>
+          <tbody>{filtered.map((d) => <DeviceRow key={d.id} d={d} onView={onView} />)}</tbody>
+        </table>
+      </div>
+    </div>
   )
 }

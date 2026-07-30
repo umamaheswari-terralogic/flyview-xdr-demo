@@ -1,3 +1,8 @@
+import { useState } from 'react'
+import { devicesSeed } from './_prototypeShared.jsx'
+
+/* --- original implementation (kept for reference) ---
+
 import StatusBadge from '../../../components/StatusBadge.jsx'
 
 const METHODS = [
@@ -96,5 +101,78 @@ export default function Enrollment() {
         </table>
       </div>
     </>
+  )
+}
+
+--- end original implementation --- */
+
+// Ported from EnrollmentTab in src/assets/flyview-windows-prototype_15.html
+export default function Enrollment() {
+  const devices = devicesSeed
+  const winCount = devices.filter((d) => d.os.startsWith('Windows')).length
+  const macManualCount = devices.filter((d) => d.os.startsWith('macOS') && d.enrollment === 'Manual').length
+  const macDepCount = devices.filter((d) => d.os.startsWith('macOS') && d.enrollment === 'DEP').length
+  const [winGenerated, setWinGenerated] = useState(null)
+  const [macGenerated, setMacGenerated] = useState(null)
+
+  function generateWinToken() {
+    const token = Math.random().toString(36).slice(2, 10)
+    setWinGenerated(`https://enroll.flyview.io/terralogic/msi/${token}`)
+  }
+  function generateMacLink() {
+    const token = Math.random().toString(36).slice(2, 10)
+    setMacGenerated(`https://enroll.flyview.io/terralogic/mac/${token}`)
+  }
+
+  return (
+    <div className="p-8">
+      <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 mb-6 text-sm text-gray-600">
+        Two enrollment methods are supported: <strong>Windows MSI installer</strong> and <strong>macOS Manual (non-DEP)</strong>. The {macDepCount} DEP-enrolled Macs shown elsewhere were enrolled separately and aren't managed from this page.
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-white border border-gray-100 rounded-xl p-5">
+          <div className="flex items-center gap-2 mb-1"><span className="text-lg">🪟</span><span className="font-medium text-gray-800">Windows — MSI Installer</span></div>
+          <p className="text-xs text-gray-500 mb-4">Per MDM PRD §6.5. No zero-touch path exists for Windows — a signed installer is deployed to each device.</p>
+          <div className="flex items-center justify-between text-sm mb-3">
+            <span className="text-gray-600">Devices enrolled this way</span>
+            <span className="text-gray-800 font-semibold">{winCount}</span>
+          </div>
+          <button onClick={generateWinToken} className="w-full py-2 rounded bg-orange-500 text-white text-sm font-medium hover:bg-orange-600">Generate MSI installer</button>
+          {winGenerated && (
+            <div className="mt-3 bg-gray-50 border border-gray-200 rounded-lg p-3">
+              <div className="text-xs text-gray-400 mb-1">Signed installer ready — deploy via GPO, SCCM, Intune, or share this link:</div>
+              <div className="font-mono text-xs text-gray-700 break-all bg-white border border-gray-200 rounded px-2 py-1.5">{winGenerated}</div>
+              <div className="flex items-center gap-2 mt-2">
+                <button className="text-xs px-2.5 py-1 rounded border border-gray-200 text-gray-600 hover:bg-gray-100">Copy link</button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white border border-gray-100 rounded-xl p-5">
+          <div className="flex items-center gap-2 mb-1"><span className="text-lg">🍎</span><span className="font-medium text-gray-800">macOS — Manual (non-DEP)</span></div>
+          <p className="text-xs text-gray-500 mb-4">Per MDM PRD §6.6. For Macs not purchased through Apple Business Manager — enrolled directly, without ABM.</p>
+          <div className="flex items-center justify-between text-sm mb-3">
+            <span className="text-gray-600">Devices enrolled this way</span>
+            <span className="text-gray-800 font-semibold">{macManualCount}</span>
+          </div>
+          <div className="bg-amber-50 border border-amber-100 rounded p-2 mb-3 text-xs text-amber-700">
+            Unsupervised Macs can't have passcode cleared, restart, shutdown, or location remotely — per PRD §10.
+          </div>
+          <button onClick={generateMacLink} className="w-full py-2 rounded bg-orange-500 text-white text-sm font-medium hover:bg-orange-600">Generate enrollment link / QR</button>
+          {macGenerated && (
+            <div className="mt-3 bg-gray-50 border border-gray-200 rounded-lg p-3">
+              <div className="text-xs text-gray-400 mb-1">Open this on the Mac, or scan the QR — installs the .mobileconfig directly, no ABM:</div>
+              <div className="font-mono text-xs text-gray-700 break-all bg-white border border-gray-200 rounded px-2 py-1.5">{macGenerated}</div>
+              <div className="flex items-center gap-3 mt-2">
+                <div className="w-16 h-16 bg-white border border-gray-200 rounded flex items-center justify-center">🔳</div>
+                <button className="text-xs px-2.5 py-1 rounded border border-gray-200 text-gray-600 hover:bg-gray-100">Copy link</button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }

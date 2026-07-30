@@ -24,9 +24,9 @@ const API = API_BASE
 
 const MODULE_CONFIG = {
   '/': {
-    title: 'Hello, Welcome Back!',
-    subtitle: '',
-    tabs: [],
+    title: 'Identity — <b>4 high-risk</b> users of 930',
+    subtitle: 'IAM · SSO · MFA · PAM · SCIM provisioning',
+    tabs: ['Overview', 'Users', 'Groups', 'Roles', 'Applications', 'Identity Mapping'],
   },
   '/threats': {
     title: 'Threats — <b>3 critical</b> incidents open',
@@ -36,7 +36,7 @@ const MODULE_CONFIG = {
   '/devices': {
     title: 'Devices — <b>12 non-compliant</b> of 847 enrolled',
     subtitle: 'MDM · macOS · iOS · Android · Windows',
-    tabs: ['Overview', 'All Devices', 'Enrollment', 'Profiles', 'Applications', 'Compliance Policies'],
+    tabs: ['Overview', 'All Devices', 'Enrollment' /*, 'Profiles', 'Applications', 'Compliance Policies' */],
   },
   '/monitor': {
     title: 'Monitor — <b>5 active alerts</b> · 98.2% uptime',
@@ -51,7 +51,7 @@ const MODULE_CONFIG = {
   '/cloud': {
     title: 'Cloud — <b>7 critical</b> misconfigurations',
     subtitle: 'CSPM + CIEM · AWS · GCP · <span style="opacity:.45">Azure</span>',
-    tabs: ['Overview', 'Findings', 'Cloud Identities', 'Data Repositories', 'Audit Log', 'Accounts', 'Reports'],
+    tabs: [/* 'Overview', */ 'Findings', 'Cloud Identities', 'Data Repositories', /* 'Audit Log', */ 'Accounts' /*, 'Reports' */],
   },
   '/network': {
     title: 'Network — <b>1 offline</b>, 2 config drift events',
@@ -61,7 +61,7 @@ const MODULE_CONFIG = {
   '/privacy': {
     title: 'Privacy — <b>1 overdue DSAR</b> · RoPA 96%',
     subtitle: 'DSPM · GDPR · CCPA · PIPL · DPDP',
-    tabs: ['Overview', 'DSARs', 'Data Map', 'Data Inventory', 'RoPA', 'Legal Holds'],
+    tabs: [/* 'Overview', 'DSARs', 'Data Map', */ 'Data Inventory' /*, 'RoPA', 'Legal Holds' */],
   },
   '/aispm': {
     title: 'AI-SPM — <b>3 shadow AI</b> detected · 10 assets',

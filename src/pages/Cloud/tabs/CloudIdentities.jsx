@@ -177,7 +177,7 @@ export default function CloudIdentities() {
         </div>
         <table>
           <thead>
-            <tr>{['Identity', 'Type', 'Provider', 'Roles', 'Flags', 'Risk', 'Finding', ''].map(h => <th key={h}>{h}</th>)}</tr>
+            <tr>{['Identity', 'Type', 'Provider', 'Flags', 'Risk', 'Finding', ''].map(h => <th key={h}>{h}</th>)}</tr>
           </thead>
           <tbody>
             {filtered.map(i => {
@@ -189,11 +189,11 @@ export default function CloudIdentities() {
                   </td>
                   <td><span className="ch">{i.type}</span></td>
                   <td><span style={{ fontSize: 11, fontWeight: 700, color: i.providerColor }}>{i.provider}</span></td>
-                  <td>
+                  {/* <td>
                     <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', maxWidth: 200 }}>
                       {(i.roles ?? []).map(r => <span key={r} className="ch mono" style={{ fontSize: 10 }}>{r}</span>)}
                     </div>
-                  </td>
+                  </td> */}
                   <td>
                     <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                       {i.stale     && <span className="b hi" style={{ fontSize: 10 }}><i />STALE</span>}

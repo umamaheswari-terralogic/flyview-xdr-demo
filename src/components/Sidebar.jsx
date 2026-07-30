@@ -5,19 +5,19 @@ import terrologicLogo from '../assets/terralogic-logo.svg'
 
 const NAV = [
   { group: 'Workspace', items: [
-    { key: 'overview', label: 'Overview', icon: Icons.home, path: '/' },
+    // { key: 'overview', label: 'Overview', icon: Icons.home, path: '/' },
   ]},
   { group: 'Security', items: [
-    { key: 'threats', label: 'Threats', icon: Icons.shield, path: '/threats', badge: 3, badgeCls: 'cr' },
+    // { key: 'threats', label: 'Threats', icon: Icons.shield, path: '/threats', badge: 3, badgeCls: 'cr' },
     { key: 'devices', label: 'Devices', icon: Icons.laptop, path: '/devices', badge: 12, badgeCls: 'hi' },
-    { key: 'monitor', label: 'Monitor', icon: Icons.activity, path: '/monitor', badge: 5, badgeCls: 'hi' },
+    // { key: 'monitor', label: 'Monitor', icon: Icons.activity, path: '/monitor', badge: 5, badgeCls: 'hi' },
   ]},
   { group: 'Identity & Access', items: [
     { key: 'identity', label: 'Identity', icon: Icons.user, path: '/identity', badge: 4, badgeCls: 'cr' },
   ]},
   { group: 'Infrastructure', items: [
     { key: 'cloud', label: 'Cloud', icon: Icons.cloud, path: '/cloud', badge: 7, badgeCls: 'hi' },
-    { key: 'network', label: 'Network', icon: Icons.network, path: '/network' },
+    // { key: 'network', label: 'Network', icon: Icons.network, path: '/network' },
   ]},
   { group: 'Compliance', items: [
     { key: 'privacy', label: 'Privacy', icon: Icons.lock, path: '/privacy', badge: 1, badgeCls: 'me' },
@@ -26,8 +26,8 @@ const NAV = [
 ]
 
 const BOTTOM_NAV = [
-  { key: 'clients', label: 'Clients', icon: Icons.building, path: '/clients' },
-  { key: 'reports', label: 'Reports', icon: Icons.file, path: '/reports' },
+  // { key: 'clients', label: 'Clients', icon: Icons.building, path: '/clients' },
+  // { key: 'reports', label: 'Reports', icon: Icons.file, path: '/reports' },
   { key: 'settings', label: 'Settings', icon: Icons.settings, path: '/settings' },
 ]
 
@@ -37,7 +37,7 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
 
   const isActive = path => {
-    if (path === '/') return location.pathname === '/'
+    if (path === '/identity') return location.pathname === '/' || location.pathname.startsWith(path)
     return location.pathname.startsWith(path)
   }
 

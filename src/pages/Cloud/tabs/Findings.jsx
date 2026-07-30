@@ -50,8 +50,26 @@ export default function Findings() {
           <tbody>
             {filtered.map(f => {
               const isActive = f.issue === 'Public read access'
+              if (!isActive) return null
+              /* grayed-out rows commented out — keep for reference:
               return (
                 <tr key={f.id} style={!isActive ? { opacity: 0.45 } : undefined}>
+                  <td className="mono">{f.id}</td>
+                  <td><SeverityBadge severity={f.severity} cls={f.sevCls} /></td>
+                  <td className="mono pr">{f.resource}</td>
+                  <td><span style={{ fontSize: 11, fontWeight: 700, color: f.providerColor }}>{f.provider}</span></td>
+                  <td>{f.issue}</td>
+                  <td><StatusBadge status={f.status} cls={f.statusCls} /></td>
+                  <td>
+                    <div className="brow">
+                      <button className="btn" onClick={() => setSelected(f)}>View</button>
+                    </div>
+                  </td>
+                </tr>
+              )
+              */
+              return (
+                <tr key={f.id}>
                   <td className="mono">{f.id}</td>
                   <td><SeverityBadge severity={f.severity} cls={f.sevCls} /></td>
                   <td className="mono pr">{f.resource}</td>
