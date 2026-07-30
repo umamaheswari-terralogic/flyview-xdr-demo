@@ -5,11 +5,11 @@ import StatusBadge from "../../../components/StatusBadge";
 import { Icons } from "../../../shared/icons";
 
 const USERS = [
-  { name: 'John Doe', email: 'john.d@acme.com', dept: 'Finance', risk: 87, riskCls: 'cr', mfa: 'TOTP', login: '09:14', status: 'ACTIVE', statusCls: 'ok', "identityProvider": "okta" },
-  { name: 'Robert Chen', email: 'r.chen@acme.com', dept: 'Finance', risk: 91, riskCls: 'cr', mfa: null, login: 'Yesterday', status: 'OFFBOARDING', statusCls: 'hi', "identityProvider": "okta", },
-  { name: 'Sarah Kim', email: 'sarah.k@acme.com', dept: 'Engineering', risk: 72, riskCls: 'hi', mfa: 'WebAuthn', login: '09:02', status: 'ACTIVE', statusCls: 'ok', "identityProvider": "okta" },
-  { name: 'Mike Ross', email: 'mike.r@acme.com', dept: 'Sales', risk: 44, riskCls: 'me', mfa: 'Push', login: '08:55', status: 'ACTIVE', statusCls: 'ok', "identityProvider": "okta" },
-  { name: 'Emma Clark', email: 'emma.c@acme.com', dept: 'HR', risk: 21, riskCls: 'ok', mfa: 'WebAuthn', login: '08:30', status: 'ACTIVE', statusCls: 'ok', "identityProvider": "okta" },
+  { name: 'John Doe', email: 'john.d@acme.com', dept: 'Finance', risk: 87, riskCls: 'cr', mfa: 'TOTP', login: '09:14', status: 'ACTIVE', statusCls: 'ok', "identityProvider": "okta", "externalId": "00u1venkateshBAB01" },
+  { name: 'Robert Chen', email: 'r.chen@acme.com', dept: 'Finance', risk: 91, riskCls: 'cr', mfa: null, login: 'Yesterday', status: 'OFFBOARDING', statusCls: 'hi', "identityProvider": "okta", "externalId": "00u1kamaksheeM02"},
+  { name: 'Sarah Kim', email: 'sarah.k@acme.com', dept: 'Engineering', risk: 72, riskCls: 'hi', mfa: 'WebAuthn', login: '09:02', status: 'ACTIVE', statusCls: 'ok', "identityProvider": "okta", "externalId": "00u1anuragP03" },
+  { name: 'Mike Ross', email: 'mike.r@acme.com', dept: 'Sales', risk: 44, riskCls: 'me', mfa: 'Push', login: '08:55', status: 'ACTIVE', statusCls: 'ok', "identityProvider": "okta", "externalId": "00u1soujanyaA04" },
+  { name: 'Emma Clark', email: 'emma.c@acme.com', dept: 'HR', risk: 21, riskCls: 'ok', mfa: 'WebAuthn', login: '08:30', status: 'ACTIVE', statusCls: 'ok', "identityProvider": "okta", "externalId": "00u1bharathiV05" },
 ]
 
 function RowBar({ label, pct, color, val }) {
@@ -23,6 +23,7 @@ function RowBar({ label, pct, color, val }) {
 }
 
 export default function IdentityOverview() {
+  const navigate = useNavigate()
   return (
     <>
       <div className="kg k2">
@@ -61,7 +62,7 @@ export default function IdentityOverview() {
                 <td><StatusBadge status={u.status} cls={u.statusCls} /></td>
                 <td>
                   <div className="brow">
-                    <button className="btn">View</button>
+                    <button className="btn" onClick={() => navigate(`/identity/users/${u.externalId}`)}>View</button>
                     {/* {u.risk > 80 && <button className="btn d">Suspend</button>}
                     {u.status === 'OFFBOARDING' && <button className="btn d">Revoke all</button>} */}
                   </div>
