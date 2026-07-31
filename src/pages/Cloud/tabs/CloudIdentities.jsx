@@ -109,19 +109,6 @@ function IdentityDrawer({ identity, onClose }) {
             <div className="drawer-desc">{identity.finding}</div>
           </div>
 
-          {identity.cloudProvider === 'GCP' && identity.privEscalationPath && (
-            <div>
-              <div className="drawer-section-title">Privilege escalation path</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {identity.privEscalationPath.map((step, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span className="mono" style={{ fontSize: 11, color: 'var(--txt3)', width: 14 }}>{i + 1}</span>
-                    <span style={{ fontSize: 12, color: 'var(--txt2)' }}>{step}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="drawer-actions">

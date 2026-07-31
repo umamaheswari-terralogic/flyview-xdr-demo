@@ -257,7 +257,7 @@ nav a:not(.on):hover { background: #F8FAFC; color: #0D1B2A; }
 .kg { display: grid; gap: 14px; margin-bottom: 20px; }
 .k4 { grid-template-columns: repeat(4, 1fr); }
 .k3 { grid-template-columns: repeat(3, 1fr); }
-
+.k2 { grid-template-columns: repeat(2, 1fr); }
 .kc {
   background: var(--white); border: 1px solid var(--border); border-radius: 12px;
   padding: 16px 18px; box-shadow: var(--sh); position: relative; overflow: hidden;
