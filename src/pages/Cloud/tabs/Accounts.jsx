@@ -146,7 +146,7 @@ function LinkAccountModal({ onClose, onLinked }) {
           {provider === 'gcp' ? (
             <>
               <p style={{ fontSize: 12, color: '#64748b', margin: '8px 0 10px', lineHeight: 1.6 }}>
-                Paste or upload the service account <span className="mono">key.json</span> with the required read-only IAM roles.
+                Paste the service account <span className="mono">key.json</span> with the required read-only IAM roles.
               </p>
               <textarea
                 rows={3}
@@ -155,18 +155,6 @@ function LinkAccountModal({ onClose, onLinked }) {
                 onChange={e => setKeyJson(e.target.value)}
                 placeholder='{ "type": "service_account", "project_id": "…", … }'
               />
-              <label className="btn" style={{ marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, cursor: 'pointer' }}>
-                📁 Upload key.json
-                <input
-                  type="file"
-                  accept="application/json"
-                  style={{ display: 'none' }}
-                  onChange={e => {
-                    const file = e.target.files?.[0]
-                    if (file) setKeyJson(`(uploaded: ${file.name})`)
-                  }}
-                />
-              </label>
             </>
           ) : (
             <>
@@ -192,13 +180,10 @@ function LinkAccountModal({ onClose, onLinked }) {
           <StepLabel n={4} text="Validate & connect" done={stepDone[4]} />
           <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
             <button
-              className="btn"
+              className="btn p"
               onClick={handleValidate}
-              disabled={status === 'VALIDATING' || status === 'CONNECTED' || !projectId || !displayName || !credsDone}
-              style={{ width: '100%', fontSize: 13, fontWeight: 600, padding: '10px',
-                opacity: (!projectId || !displayName || !credsDone) ? 0.45 : 1,
-                cursor: (!projectId || !displayName || !credsDone) ? 'not-allowed' : 'pointer',
-              }}
+              disabled={status === 'VALIDATING' || status === 'CONNECTED'}
+              style={{ width: '100%', fontSize: 13, fontWeight: 600, padding: '10px' }}
             >
               {status === 'VALIDATING' ? '⟳ Validating…' : 'Validate credentials'}
             </button>
