@@ -146,7 +146,7 @@ function LinkAccountModal({ onClose, onLinked }) {
           {provider === 'gcp' ? (
             <>
               <p style={{ fontSize: 12, color: '#64748b', margin: '8px 0 10px', lineHeight: 1.6 }}>
-                Paste or upload the service account <span className="mono">key.json</span> with the required read-only IAM roles.
+                Paste the service account <span className="mono">key.json</span> with the required read-only IAM roles.
               </p>
               <textarea
                 rows={3}
@@ -155,18 +155,6 @@ function LinkAccountModal({ onClose, onLinked }) {
                 onChange={e => setKeyJson(e.target.value)}
                 placeholder='{ "type": "service_account", "project_id": "…", … }'
               />
-              <label className="btn" style={{ marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, cursor: 'pointer' }}>
-                📁 Upload key.json
-                <input
-                  type="file"
-                  accept="application/json"
-                  style={{ display: 'none' }}
-                  onChange={e => {
-                    const file = e.target.files?.[0]
-                    if (file) setKeyJson(`(uploaded: ${file.name})`)
-                  }}
-                />
-              </label>
             </>
           ) : (
             <>
@@ -192,13 +180,10 @@ function LinkAccountModal({ onClose, onLinked }) {
           <StepLabel n={4} text="Validate & connect" done={stepDone[4]} />
           <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
             <button
-              className="btn"
+              className="btn p"
               onClick={handleValidate}
-              disabled={status === 'VALIDATING' || status === 'CONNECTED' || !projectId || !displayName || !credsDone}
-              style={{ width: '100%', fontSize: 13, fontWeight: 600, padding: '10px',
-                opacity: (!projectId || !displayName || !credsDone) ? 0.45 : 1,
-                cursor: (!projectId || !displayName || !credsDone) ? 'not-allowed' : 'pointer',
-              }}
+              disabled={status === 'VALIDATING' || status === 'CONNECTED'}
+              style={{ width: '100%', fontSize: 13, fontWeight: 600, padding: '10px' }}
             >
               {status === 'VALIDATING' ? '⟳ Validating…' : 'Validate credentials'}
             </button>
@@ -401,56 +386,6 @@ export default function Accounts() {
 
   return (
     <>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18, marginBottom: 18 }}>
-        {accounts.map(a => (
-          <div key={a.id} className="card">
-            <div className="card-h">
-              <h3>
-                <span style={{ fontSize: 13, fontWeight: 700, color: a.providerColor, marginRight: 8 }}>{a.provider}</span>
-                {a.name}
-              </h3>
-              <StatusBadge status={a.status} cls={a.statusCls} />
-            </div>
-            <div style={{ padding: '8px 0 4px' }}>
-              <div style={{ fontSize: 11, color: 'var(--txt3)', marginBottom: 10 }}>
-                <span className="mono">{a.accountId}</span> · {a.region}
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 14 }}>
-                {[
-                  { label: 'Critical', val: a.findings.critical, color: 'var(--crit)' },
-                  { label: 'High',     val: a.findings.high,     color: 'var(--high)' },
-                  { label: 'Medium',   val: a.findings.medium,   color: 'var(--med)'  },
-                  { label: 'Low',      val: a.findings.low,      color: 'var(--txt3)' },
-                ].map(f => (
-                  <div key={f.label} style={{ textAlign: 'center', padding: '8px 4px', background: 'var(--bg3)', borderRadius: 6 }}>
-                    <div style={{ fontSize: 20, fontWeight: 700, color: f.color }}>{f.val}</div>
-                    <div style={{ fontSize: 10, color: 'var(--txt3)', marginTop: 2 }}>{f.label}</div>
-                  </div>
-                ))}
-              </div>
-              <div style={{ marginBottom: 10 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--txt3)', marginBottom: 4 }}>
-                  <span>Compliance score</span>
-                  <span style={{ fontWeight: 700, color: a.complianceCls === 'ok' ? 'var(--ok)' : 'var(--high)' }}>{a.compliance}%</span>
-                </div>
-                <div className="pb">
-                  <i style={{ width: `${a.compliance}%`, background: a.complianceCls === 'ok' ? 'var(--ok)' : a.compliance >= 70 ? 'var(--high)' : 'var(--crit)' }} />
-                </div>
-              </div>
-              <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: 11, color: 'var(--txt3)', marginBottom: 6 }}>Active services</div>
-                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                  {a.services.map(s => <span key={s} className="ch">{s}</span>)}
-                </div>
-              </div>
-              <div style={{ fontSize: 11, color: 'var(--txt3)', borderTop: '1px solid var(--border)', paddingTop: 10, display: 'flex', justifyContent: 'space-between' }}>
-                <span>Last scan: {a.lastScan}</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
       <div className="card">
         <div className="card-h">
           <h3>Account summary <span className="meta" style={{ fontWeight: 400, marginLeft: 8 }}>{totalFindings} total findings across {accounts.length} accounts</span></h3>
@@ -458,7 +393,7 @@ export default function Accounts() {
         </div>
         <table>
           <thead>
-            <tr>{['Account', 'Provider', 'Account ID', 'Region', 'Critical', 'High', 'Compliance', 'Last scan', 'Status', ''].map(h => <th key={h}>{h}</th>)}</tr>
+            <tr>{['Account', 'Provider', 'Account ID', 'Region', 'Critical', 'High', 'Last scan', 'Status', ''].map(h => <th key={h}>{h}</th>)}</tr>
           </thead>
           <tbody>
             {accounts.map(a => (
@@ -469,12 +404,6 @@ export default function Accounts() {
                 <td style={{ fontSize: 12, color: 'var(--txt3)' }}>{a.region}</td>
                 <td className="mono" style={{ color: a.findings.critical > 0 ? 'var(--crit)' : 'var(--txt3)', fontWeight: 700 }}>{a.findings.critical}</td>
                 <td className="mono" style={{ color: a.findings.high > 0 ? 'var(--high)' : 'var(--txt3)', fontWeight: 600 }}>{a.findings.high}</td>
-                <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div className="pb" style={{ width: 60 }}><i style={{ width: `${a.compliance}%`, background: a.complianceCls === 'ok' ? 'var(--ok)' : 'var(--high)' }} /></div>
-                    <span className="mono" style={{ fontSize: 11 }}>{a.compliance}%</span>
-                  </div>
-                </td>
                 <td className="mono" style={{ fontSize: 11, color: 'var(--txt3)' }}>{a.lastScan}</td>
                 <td><StatusBadge status={a.status} cls={a.statusCls} /></td>
                 <td>

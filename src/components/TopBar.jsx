@@ -1,4 +1,3 @@
-import SearchBar from './SearchBar.jsx'
 import { Icons } from '../shared/icons.jsx'
 
 export default function TopBar({ title, subtitle }) {
@@ -8,7 +7,6 @@ export default function TopBar({ title, subtitle }) {
         {title && <h1 dangerouslySetInnerHTML={{ __html: title }} />}
         {subtitle && <p dangerouslySetInnerHTML={{ __html: subtitle }} />}
       </div>
-      <SearchBar />
       <div className="tb-acts">
         <div className="rtag">
           <div className="dot" style={{ background: 'var(--ok)' }} />

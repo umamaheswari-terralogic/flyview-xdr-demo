@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MetricCard from "../../../components/MetricCard";
 import StatusBadge from "../../../components/StatusBadge";
-import { Icons } from "../../../shared/icons";
+import { KpiCard } from "../../Devices/tabs/_prototypeShared.jsx";
 
 const USERS = [
   { name: 'John Doe', email: 'john.d@acme.com', dept: 'Finance', risk: 87, riskCls: 'cr', mfa: 'TOTP', login: '09:14', status: 'ACTIVE', statusCls: 'ok', "identityProvider": "okta", "externalId": "00u1venkateshBAB01" },
@@ -33,11 +32,9 @@ export default function IdentityOverview() {
 
   return (
     <>
-      <div className="kg k2">
-        <MetricCard cls="ok" num="930" desc="Total managed users" label="Directory" foot="" icon={Icons.user} />
-        {/* <MetricCard cls="cr" num="4" desc="High-risk users" label="High Risk" foot="<b>▲ +1</b> today" icon={Icons.alert} /> */}
-        {/* <MetricCard cls="hi" num="1" desc="User in offboarding" label="Offboarding" foot="≤15min deprovision" icon={Icons.user} /> */}
-        <MetricCard cls="ok" num="12" desc="" label="MFA Gap Detection" foot="" icon={Icons.lock} />
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <KpiCard color="emerald" icon="user" label="DIRECTORY" value="930" sub="Total managed users" />
+        <KpiCard color="emerald" icon="lock" label="MFA GAP DETECTION" value="12" sub="Users without MFA enrolled" />
       </div>
 
       <div className="card" style={{ marginBottom: 18 }}>

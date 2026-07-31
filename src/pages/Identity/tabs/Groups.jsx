@@ -5,8 +5,8 @@ import { IdentityService } from "../../../services/IdentityService.js";
 export default function GroupsTab() {
   const [groups, setGroups] = useState([])
   const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
   const [search, setSearch] = useState('')
+  const navigate = useNavigate()
 
   const q = search.trim().toLowerCase()
   const filtered = q.length < 3

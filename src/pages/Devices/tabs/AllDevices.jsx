@@ -108,11 +108,9 @@ export default function AllDevices() {
 --- end original implementation --- */
 
 // Ported from AllDevicesTab in src/assets/flyview-windows-prototype_15.html
-export default function AllDevices() {
+export default function AllDevices({ onView }) {
   const devices = devicesSeed
   const [platformFilter, setPlatformFilter] = useState('All')
-  const [, setViewingId] = useState(null)
-  const onView = (id) => setViewingId(id)
 
   const filtered = devices.filter((d) => {
     if (platformFilter === 'Windows') return d.os.startsWith('Windows')

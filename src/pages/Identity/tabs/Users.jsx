@@ -19,8 +19,8 @@ function fmtLastLogin(iso) {
 export default function UsersTab() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
   const [search, setSearch] = useState('')
+  const navigate = useNavigate()
 
   const q = search.trim().toLowerCase()
   const filtered = q.length < 3
