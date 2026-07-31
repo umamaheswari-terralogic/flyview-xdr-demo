@@ -19,6 +19,7 @@ function fmtLastLogin(iso) {
 export default function UsersTab() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -30,11 +31,16 @@ export default function UsersTab() {
 
   if (loading) return <div className="loading-state">Loading users…</div>
 
+  const filtered = users.filter(u =>
+    !search || u.displayName.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()) || u.department.toLowerCase().includes(search.toLowerCase())
+  )
+
   return (
     <div className="card">
       <div className="card-h">
         <h3>Users</h3>
         <div style={{ display: 'flex', gap: 8 }}>
+          <input className="srch" placeholder="Search users…" value={search} onChange={e => setSearch(e.target.value)} />
           <div className="seg">
             <button className="on">All</button>
             {/* <button>High Risk</button><button>Offboarding</button> */}
@@ -45,7 +51,7 @@ export default function UsersTab() {
       <table>
         <thead><tr>{['User', 'Department', 'Title', 'Identity Provider', 'Status', ''].map(h=><th key={h}>{h}</th>)}</tr></thead>
         <tbody>
-          {users.map(u => (
+          {filtered.map(u => (
             <tr key={u.externalId}>
               <td>
                 <div style={{ fontWeight: 600 }}>{u.displayName}</div>

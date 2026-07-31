@@ -79,9 +79,9 @@ const MODULE_CONFIG = {
     tabs: ['Incident Reports', 'Compliance', 'Posture', 'Executive Summary'],
   },
   '/settings': {
-    title: 'Settings — connectors, agents, team',
-    subtitle: 'System configuration · Integrations · Agent management',
-    tabs: ['Connectors', 'Agents', 'Notifications', 'Integrations', 'Team'],
+    title: 'Settings — agent management',
+    subtitle: 'Endpoint agent inventory · status · control',
+    tabs: ['Agent Management'],
   },
 }
 

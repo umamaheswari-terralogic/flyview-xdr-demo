@@ -21,7 +21,7 @@ const NAV = [
   ]},
   { group: 'Compliance', items: [
     { key: 'privacy', label: 'Privacy', icon: Icons.lock, path: '/privacy', badge: 1, badgeCls: 'me' },
-    { key: 'aispm', label: 'AI-SPM', icon: Icons.clock, path: '/aispm', badge: 3, badgeCls: 'hi' },
+    // { key: 'aispm', label: 'AI-SPM', icon: Icons.clock, path: '/aispm', badge: 3, badgeCls: 'hi' },
   ]},
 ]
 
@@ -74,14 +74,6 @@ export default function Sidebar() {
                 >
                   {item.icon}
                   {!collapsed && item.label}
-                  {!collapsed && item.badge && (
-                    <span className="nb" style={{ background: `var(--${item.badgeCls}L)`, color: `var(--${item.badgeCls})` }}>
-                      {item.badge}
-                    </span>
-                  )}
-                  {collapsed && item.badge && (
-                    <span className="nb nb-dot" style={{ background: `var(--${item.badgeCls})` }} />
-                  )}
                 </a>
               ))}
             </div>

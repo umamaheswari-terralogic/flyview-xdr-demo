@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MetricCard from "../../../components/MetricCard";
 import StatusBadge from "../../../components/StatusBadge";
@@ -24,6 +24,12 @@ function RowBar({ label, pct, color, val }) {
 
 export default function IdentityOverview() {
   const navigate = useNavigate()
+  const [search, setSearch] = useState('')
+
+  const filteredUsers = USERS.filter(u =>
+    !search || u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()) || u.dept.toLowerCase().includes(search.toLowerCase())
+  )
+
   return (
     <>
       <div className="kg k2">
@@ -37,6 +43,7 @@ export default function IdentityOverview() {
         <div className="card-h">
           <h3>User Directory</h3>
           <div style={{ display: 'flex', gap: 8 }}>
+            <input className="srch" placeholder="Search users…" value={search} onChange={e => setSearch(e.target.value)} />
             <div className="seg">
               <button className="on">All</button>
               {/* <button>High Risk</button><button>Offboarding</button> */}
@@ -47,7 +54,7 @@ export default function IdentityOverview() {
         <table>
           <thead><tr>{['User', 'Dept', 'Identity Provider', 'Last Login', 'Status', ''].map(h => <th key={h}>{h}</th>)}</tr></thead>
           <tbody>
-            {USERS.map(u => (
+            {filteredUsers.map(u => (
               <tr key={u.email}>
                 <td><div style={{ fontWeight: 600 }}>{u.name}</div><div style={{ fontSize: 11, color: 'var(--txt3)' }}>{u.email}</div></td>
                 <td>{u.dept}</td>

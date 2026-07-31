@@ -16,6 +16,7 @@ const APP_NAMES = {
 export default function RolesTab() {
   const [roles, setRoles] = useState([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -27,18 +28,23 @@ export default function RolesTab() {
 
   if (loading) return <div className="loading-state">Loading roles…</div>
 
+  const filtered = roles.filter(r =>
+    !search || r.name.toLowerCase().includes(search.toLowerCase()) || r.description.toLowerCase().includes(search.toLowerCase()) || r.scope.toLowerCase().includes(search.toLowerCase())
+  )
+
   return (
     <div className="card">
       <div className="card-h">
         <h3>Roles</h3>
         <div style={{ display: 'flex', gap: 8 }}>
+          <input className="srch" placeholder="Search roles…" value={search} onChange={e => setSearch(e.target.value)} />
           <button className="btn p">+ New Role</button>
         </div>
       </div>
       <table>
         <thead><tr>{['Name', 'Description', 'Scope', 'System Role', ''].map(h=><th key={h}>{h}</th>)}</tr></thead>
         <tbody>
-          {roles.map(r => (
+          {filtered.map(r => (
             <tr key={r._id}>
               <td>
                 <div style={{ fontWeight: 600 }}>{r.name}</div>
