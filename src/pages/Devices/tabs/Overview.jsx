@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Ico, KpiCard, devicesSeed } from './_prototypeShared.jsx'
 
 /* --- original implementation (kept for reference) ---
@@ -137,10 +136,8 @@ export default function DevicesOverview() {
 --- end original implementation --- */
 
 // Ported from OverviewTab in src/assets/flyview-windows-prototype_15.html
-export default function DevicesOverview() {
+export default function DevicesOverview({ onView }) {
   const devices = devicesSeed
-  const [, setViewingId] = useState(null)
-  const onView = (id) => setViewingId(id)
 
   const encrypted = devices.filter((d) => d.checks.some((c) => (c.name === 'BitLocker encryption' || c.name === 'FileVault encryption') && c.pass)).length
   const win = devices.filter((d) => d.os.startsWith('Windows')).length

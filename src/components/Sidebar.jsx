@@ -57,7 +57,6 @@ export default function Sidebar() {
           <div className="t-av">TL</div>
           {!collapsed && <div>
             <div className="t-name">Terralogic</div>
-            <div className="t-sub">▾</div>
           </div>}
         </div>
 
