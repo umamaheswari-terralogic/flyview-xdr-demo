@@ -21,7 +21,7 @@ const NAV = [
   ]},
   { group: 'Compliance', items: [
     { key: 'privacy', label: 'Privacy', icon: Icons.lock, path: '/privacy', badge: 1, badgeCls: 'me' },
-    // { key: 'aispm', label: 'AI-SPM', icon: Icons.clock, path: '/aispm', badge: 3, badgeCls: 'hi' },
+    { key: 'aispm', label: 'AI-SPM', icon: Icons.clock, path: '/aispm', badge: 3, badgeCls: 'hi' },
   ]},
 ]
 
