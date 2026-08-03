@@ -25,9 +25,10 @@ export default function IdentityOverview() {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
 
-  const filteredUsers = USERS.filter(u =>
-    !search || u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()) || u.dept.toLowerCase().includes(search.toLowerCase())
-  )
+  const q = search.trim().toLowerCase()
+  const filtered = q.length < 3
+    ? USERS
+    : USERS.filter(u => u.name.toLowerCase().includes(q))
 
   return (
     <>
@@ -40,10 +41,8 @@ export default function IdentityOverview() {
         <div className="card-h">
           <h3>User Directory</h3>
           <div style={{ display: 'flex', gap: 8 }}>
-            <input className="srch" placeholder="Search users…" value={search} onChange={e => setSearch(e.target.value)} />
             <div className="seg">
-              <button className="on">All</button>
-              {/* <button>High Risk</button><button>Offboarding</button> */}
+              <input className="srch" placeholder="Search users…" value={search} onChange={e => setSearch(e.target.value)} />
             </div>
             <button className="btn p">Invite user</button>
           </div>
@@ -51,7 +50,7 @@ export default function IdentityOverview() {
         <table>
           <thead><tr>{['User', 'Dept', 'Identity Provider', 'Last Login', 'Status', ''].map(h => <th key={h}>{h}</th>)}</tr></thead>
           <tbody>
-            {filteredUsers.map(u => (
+            {filtered.map(u => (
               <tr key={u.email}>
                 <td><div style={{ fontWeight: 600 }}>{u.name}</div><div style={{ fontSize: 11, color: 'var(--txt3)' }}>{u.email}</div></td>
                 <td>{u.dept}</td>

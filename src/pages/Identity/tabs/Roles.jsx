@@ -19,6 +19,13 @@ export default function RolesTab() {
   const [search, setSearch] = useState('')
   const navigate = useNavigate()
 
+  const q = search.trim().toLowerCase()
+  const filtered = q.length < 3
+    ? roles
+    : roles.filter(r =>
+        (r.name || '').toLowerCase().includes(q)
+      )
+
   useEffect(() => {
     IdentityService.getRoles().then(data => {
       setRoles(data)
@@ -28,16 +35,14 @@ export default function RolesTab() {
 
   if (loading) return <div className="loading-state">Loading roles…</div>
 
-  const filtered = roles.filter(r =>
-    !search || r.name.toLowerCase().includes(search.toLowerCase()) || r.description.toLowerCase().includes(search.toLowerCase()) || r.scope.toLowerCase().includes(search.toLowerCase())
-  )
-
   return (
     <div className="card">
       <div className="card-h">
         <h3>Roles</h3>
         <div style={{ display: 'flex', gap: 8 }}>
-          <input className="srch" placeholder="Search roles…" value={search} onChange={e => setSearch(e.target.value)} />
+          <div className="seg">
+            <input className="srch" placeholder="Search name…" value={search} onChange={e => setSearch(e.target.value)} />
+          </div>
           <button className="btn p">+ New Role</button>
         </div>
       </div>
@@ -62,6 +67,13 @@ export default function RolesTab() {
               </td>
             </tr>
           ))}
+          {filtered.length === 0 && (
+            <tr>
+              <td colSpan={5} style={{ padding: '18px', textAlign: 'center', color: 'var(--txt3)' }}>
+                No roles match “{search.trim()}”
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

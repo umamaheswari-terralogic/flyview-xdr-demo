@@ -22,6 +22,13 @@ export default function UsersTab() {
   const [search, setSearch] = useState('')
   const navigate = useNavigate()
 
+  const q = search.trim().toLowerCase()
+  const filtered = q.length < 3
+    ? users
+    : users.filter(u =>
+        (u.displayName || '').toLowerCase().includes(q)
+      )
+
   useEffect(() => {
     IdentityService.getUsers().then(data => {
       setUsers(data)
@@ -31,19 +38,13 @@ export default function UsersTab() {
 
   if (loading) return <div className="loading-state">Loading users…</div>
 
-  const filtered = users.filter(u =>
-    !search || u.displayName.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()) || u.department.toLowerCase().includes(search.toLowerCase())
-  )
-
   return (
     <div className="card">
       <div className="card-h">
         <h3>Users</h3>
         <div style={{ display: 'flex', gap: 8 }}>
-          <input className="srch" placeholder="Search users…" value={search} onChange={e => setSearch(e.target.value)} />
           <div className="seg">
-            <button className="on">All</button>
-            {/* <button>High Risk</button><button>Offboarding</button> */}
+            <input className="srch" placeholder="Search name…" value={search} onChange={e => setSearch(e.target.value)} />
           </div>
           <button className="btn p">Invite user</button>
         </div>
@@ -72,6 +73,13 @@ export default function UsersTab() {
               </td>
             </tr>
           ))}
+          {filtered.length === 0 && (
+            <tr>
+              <td colSpan={6} style={{ padding: '18px', textAlign: 'center', color: 'var(--txt3)' }}>
+                No users match “{search.trim()}”
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

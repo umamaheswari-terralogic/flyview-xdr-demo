@@ -8,6 +8,13 @@ export default function GroupsTab() {
   const [search, setSearch] = useState('')
   const navigate = useNavigate()
 
+  const q = search.trim().toLowerCase()
+  const filtered = q.length < 3
+    ? groups
+    : groups.filter(g =>
+        (g.name || '').toLowerCase().includes(q)
+      )
+
   useEffect(() => {
     IdentityService.getGroups().then(data => {
       setGroups(data)
@@ -17,16 +24,14 @@ export default function GroupsTab() {
 
   if (loading) return <div className="loading-state">Loading groups…</div>
 
-  const filtered = groups.filter(g =>
-    !search || g.name.toLowerCase().includes(search.toLowerCase()) || g.description.toLowerCase().includes(search.toLowerCase()) || g.type.toLowerCase().includes(search.toLowerCase())
-  )
-
   return (
     <div className="card">
       <div className="card-h">
         <h3>Groups</h3>
         <div style={{ display: 'flex', gap: 8 }}>
-          <input className="srch" placeholder="Search groups…" value={search} onChange={e => setSearch(e.target.value)} />
+          <div className="seg">
+            <input className="srch" placeholder="Search name…" value={search} onChange={e => setSearch(e.target.value)} />
+          </div>
           <button className="btn p">+ New Group</button>
         </div>
       </div>
@@ -56,6 +61,13 @@ export default function GroupsTab() {
               </td>
             </tr>
           ))}
+          {filtered.length === 0 && (
+            <tr>
+              <td colSpan={6} style={{ padding: '18px', textAlign: 'center', color: 'var(--txt3)' }}>
+                No groups match “{search.trim()}”
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

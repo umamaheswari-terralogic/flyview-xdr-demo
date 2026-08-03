@@ -46,7 +46,7 @@ const MODULE_CONFIG = {
   '/identity': {
     title: 'Identity — <b>4 high-risk</b> users of 930',
     subtitle: 'IAM · SSO · MFA · PAM · SCIM provisioning',
-    tabs: ['Overview', 'Users', 'Groups', 'Roles', 'Applications', 'Identity Mapping'],
+    tabs: ['Overview', 'Users', 'Groups', 'Roles', 'Applications'],
   },
   '/cloud': {
     title: 'Cloud — <b>7 critical</b> misconfigurations',
