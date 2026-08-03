@@ -28,7 +28,7 @@ const NAV = [
 const BOTTOM_NAV = [
   // { key: 'clients', label: 'Clients', icon: Icons.building, path: '/clients' },
   // { key: 'reports', label: 'Reports', icon: Icons.file, path: '/reports' },
-  { key: 'settings', label: 'Settings', icon: Icons.settings, path: '/settings' },
+  // { key: 'settings', label: 'Settings', icon: Icons.settings, path: '/settings' },
 ]
 
 export default function Sidebar() {

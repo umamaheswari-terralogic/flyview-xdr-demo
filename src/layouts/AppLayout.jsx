@@ -36,7 +36,7 @@ const MODULE_CONFIG = {
   '/devices': {
     title: 'Devices — <b>12 non-compliant</b> of 847 enrolled',
     subtitle: 'MDM · macOS · iOS · Android · Windows',
-    tabs: ['Overview', 'All Devices', 'Enrollment' /*, 'Profiles', 'Applications', 'Compliance Policies' */],
+    tabs: ['Overview', 'All Devices', 'Enrollment', 'Agent Management' /*, 'Profiles', 'Applications', 'Compliance Policies' */],
   },
   '/monitor': {
     title: 'Monitor — <b>5 active alerts</b> · 98.2% uptime',
@@ -79,9 +79,10 @@ const MODULE_CONFIG = {
     tabs: ['Incident Reports', 'Compliance', 'Posture', 'Executive Summary'],
   },
   '/settings': {
-    title: 'Settings — agent management',
-    subtitle: 'Endpoint agent inventory · status · control',
-    tabs: ['Agent Management'],
+    title: 'Settings',
+    subtitle: '',
+    // Agent Management moved to the Devices module — tabs: ['Agent Management'],
+    tabs: [],
   },
 }
 

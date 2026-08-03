@@ -1,13 +1,9 @@
-// Agent Management moved to the Devices module — see src/pages/Devices/tabs/AgentManagement.jsx
-// Original implementation kept below for reference.
-
-/*
 import { useState } from 'react'
-import { useOutletContext } from 'react-router-dom'
-import StatusBadge from '../../components/StatusBadge.jsx'
-import { devicesSeed } from '../Devices/tabs/_prototypeShared.jsx'
+import StatusBadge from '../../../components/StatusBadge.jsx'
+import { devicesSeed } from './_prototypeShared.jsx'
 
 // Agent inventory derived from the endpoint fleet — one MDM agent per enrolled device.
+// Moved here from the Settings module (was Settings > Agent Management tab).
 const AGENTS_SEED = devicesSeed.map(d => ({
   id: `AGT-${d.serial}`,
   deviceName: d.name,
@@ -103,7 +99,7 @@ function AgentDetail({ agent, onClose, onToggle }) {
   )
 }
 
-function AgentManagementTab() {
+export default function AgentManagement() {
   const [agents, setAgents] = useState(AGENTS_SEED)
   const [selected, setSelected] = useState(null)
 
@@ -152,20 +148,4 @@ function AgentManagementTab() {
       )}
     </>
   )
-}
-
-// ── Main Settings page ────────────────────────────────────────────
-export default function Settings() {
-  const { activeTab } = useOutletContext()
-
-  return (
-    <>
-      {activeTab === 'Agent Management' && <AgentManagementTab />}
-    </>
-  )
-}
-*/
-
-export default function Settings() {
-  return null
 }
